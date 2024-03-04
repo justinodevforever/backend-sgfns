@@ -9,12 +9,12 @@ const {
   logar,
   createUser,
   searchUser,
-  getUser,
   getAllUser,
   upDateUser,
   deleteUser,
   verifyToken,
   getUserPorBi,
+  getUser,
 } = require("../controllers/controllerUser");
 
 const router = Router();

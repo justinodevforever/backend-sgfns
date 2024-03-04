@@ -10,10 +10,10 @@ const { authorization } = require("../../authorization/auth");
 
 const router = Router();
 
-router.post("/user/permissao", authorization, createUsuarioPermissoes);
-router.get("/user/permissao", authorization, getUsuariosPermissoes);
-router.get("/user/permissao/:id", authorization, getUsuarioPermissoes);
-router.delete("/user/permissao/:id", authorization, deleteUsuarioPermissoes);
-router.put("/user/permissao/:id", authorization, updateUsuarioPermissoes);
+router.post("/permissaousuario", authorization, createUsuarioPermissoes);
+router.get("/permissaousuario", authorization, getUsuariosPermissoes);
+router.get("/permissaousuario/:id", authorization, getUsuarioPermissoes);
+router.delete("/permissaousuario/:id", authorization, deleteUsuarioPermissoes);
+router.put("/permissaousuario/:id", authorization, updateUsuarioPermissoes);
 
 module.exports = router;

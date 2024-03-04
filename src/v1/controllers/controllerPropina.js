@@ -70,6 +70,71 @@ const createPropina = async (req, res) => {
     res.json({ message: error });
   }
 };
+const verDivida = async (req, res) => {
+  const { bi } = req.body;
+  try {
+    const meses = [
+      "Outubro",
+      "Novembro",
+      "Dezembro",
+      "Janeiro",
+      "Fevereiro",
+      "Março",
+      "Abril",
+      "Maio",
+      "Junho",
+      "Julho",
+    ];
+    const agora = Date.now();
+    const date = new Date(agora);
+
+    let [mesHoje, c] = date
+      .toLocaleTimeString("pt-BR", { month: "long" })
+      .split(" ");
+
+    const [ano, dia] = date
+      .toLocaleTimeString("pt-BR", { year: "numeric" })
+      .split(",");
+
+    const response = await Propina.findAll({
+      include: [
+        { model: usuario },
+        {
+          model: Mes,
+        },
+        { model: Estudante, where: { bi } },
+        {
+          model: AnoLetivo,
+          where: {
+            ano: {
+              [Op.like]: `%${ano}%`,
+            },
+          },
+        },
+      ],
+    });
+
+    let mesesAll = [];
+    let mesesAll1 = [];
+    response.map((prop) => {
+      mesesAll.push(prop.Me.mes);
+    });
+
+    for (let mes = 0; mes < meses.length; mes++) {
+      if (meses[mes].toLowerCase() === mesHoje.toLowerCase()) break;
+
+      if (!mesesAll.some((me) => me.includes(meses[mes]))) {
+        mesesAll1.push(meses[mes]);
+      }
+    }
+
+    if (mesesAll1.length <= 0) res.json({ message: "Sem dívida" });
+
+    res.json({ dividas: mesesAll1, message: "está com dívida" });
+  } catch (error) {
+    console.log({ mensage: error });
+  }
+};
 
 const getPropinasMensal = async (req, res) => {
   const { bi, mes, ano } = req.body;
@@ -317,4 +382,5 @@ module.exports = {
   getPropinasAnual,
   getPropinasMensal,
   getPropinaEspecifico,
+  verDivida,
 };
