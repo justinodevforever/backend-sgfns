@@ -20,6 +20,9 @@ const Estudante = sequelize.define("Estudantes", {
     type: DataTypes.STRING,
     unique: true,
   },
+  periodo: {
+    type: DataTypes.STRING,
+  },
 });
 
 usuario.hasMany(Estudante, {

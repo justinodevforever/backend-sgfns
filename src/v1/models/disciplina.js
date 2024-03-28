@@ -37,14 +37,6 @@ Disciplina.belongsTo(AnoFrequencia, {
   foreignKey: "fk_ano",
   targetId: "id",
 });
-AnoLetivo.hasMany(Disciplina, {
-  foreignKey: "fk_anoLetivo",
-  sourceKey: "id",
-});
-Disciplina.belongsTo(AnoLetivo, {
-  foreignKey: "fk_anoLetivo",
-  targetId: "id",
-});
 Semestre.hasMany(Disciplina, {
   foreignKey: "fk_semestre",
   sourceKey: "id",

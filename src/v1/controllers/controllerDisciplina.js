@@ -7,8 +7,8 @@ const Semestre = require("../models/semestre");
 
 const createDisciplina = async (req, res) => {
   try {
-    const { nome, fk_ano, fk_curso, fk_semestre, fk_anoLetivo } = req.body;
-    if (!nome || !fk_anoLetivo || !fk_curso || !fk_semestre || !fk_ano) {
+    const { nome, fk_ano, fk_curso, fk_semestre } = req.body;
+    if (!nome || !fk_curso || !fk_semestre || !fk_ano) {
       return res.json({ message: "error" });
     }
 
@@ -17,9 +17,8 @@ const createDisciplina = async (req, res) => {
       fk_ano,
       fk_curso,
       fk_semestre,
-      fk_anoLetivo,
     });
-    res.status(201).json(response);
+    res.status(201).json({ response: response, message: "sucess" });
   } catch (error) {
     res.json({ message: "error" });
   }
@@ -29,9 +28,6 @@ const getDisciplinas = async (req, res) => {
   try {
     const response = await Disciplina.findAll({
       include: [
-        {
-          model: AnoLetivo,
-        },
         {
           model: Semestre,
         },
@@ -48,8 +44,8 @@ const getDisciplinas = async (req, res) => {
 };
 const DisciplinasPorAnoCurso = async (req, res) => {
   try {
-    const { ano, curso, semestre, anoLetivo } = req.body;
-    if (!ano || !curso || !semestre || !anoLetivo) {
+    const { ano, curso, semestre } = req.body;
+    if (!ano || !curso || !semestre) {
       return res.json({ message: "error" });
     }
     const response = await Disciplina.findAll({
@@ -73,12 +69,6 @@ const DisciplinasPorAnoCurso = async (req, res) => {
             ano,
           },
         },
-        {
-          model: AnoLetivo,
-          where: {
-            ano: anoLetivo,
-          },
-        },
       ],
     });
 
@@ -95,9 +85,6 @@ const DisciplinasEspecifico = async (req, res) => {
     }
     const response = await Disciplina.findAll({
       include: [
-        {
-          model: AnoLetivo,
-        },
         {
           model: Semestre,
         },
@@ -124,9 +111,6 @@ const searchDisciplina = async (req, res) => {
     const response = await Disciplina.findOne({
       include: [
         {
-          model: AnoLetivo,
-        },
-        {
           model: Semestre,
         },
         { model: Cursos },
@@ -151,11 +135,9 @@ const getDisciplina = async (req, res) => {
     }
     const response = await Disciplina.findOne({
       include: [
-        {
-          model: Professor,
-        },
         { model: Cursos },
         { model: AnoFrequencia },
+        { model: Semestre },
       ],
       where: {
         id,
@@ -187,8 +169,8 @@ const deleteDisciplina = async (req, res) => {
 const upDateDisciplina = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nome, fk_ano, fk_curso, fk_semestre, fk_anoLetivo } = req.body;
-    if (!nome || !fk_anoLetivo || !fk_curso || !fk_semestre || !fk_ano || !id) {
+    const { nome, fk_ano, fk_curso, fk_semestre } = req.body;
+    if (!nome || !fk_curso || !fk_semestre || !fk_ano || !id) {
       return res.json({ message: "error" });
     }
 
@@ -197,10 +179,9 @@ const upDateDisciplina = async (req, res) => {
     resp.fk_curso = fk_curso;
     resp.fk_ano = fk_ano;
     resp.nome = nome;
-    resp.fk_anoLetivo = fk_anoLetivo;
-
     resp.fk_semestre = fk_semestre;
     resp.save();
+    res.json({ message: "sucess" });
   } catch (error) {
     res.json({ message: "error" });
   }

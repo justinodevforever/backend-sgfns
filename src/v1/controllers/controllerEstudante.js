@@ -39,10 +39,10 @@ const buscaEstudantePorBi = async (req, res) => {
   }
 };
 const createEstudante = async (req, res) => {
-  const { nome, bi, contato, fk_user, fk_curso } = req.body;
+  const { nome, bi, contato, fk_user, fk_curso, periodo } = req.body;
 
   try {
-    if (!nome || !bi || !contato || !fk_curso || !fk_user) {
+    if (!nome || !bi || !contato || !fk_curso || !fk_user || !periodo) {
       res.json({ message: "error" });
       return;
     }
@@ -62,6 +62,7 @@ const createEstudante = async (req, res) => {
       contato,
       fk_user,
       fk_curso,
+      periodo,
     });
 
     res.status(200).json({ response: response, message: "sucess" });
@@ -168,9 +169,9 @@ const deleteEstudante = async (req, res) => {
 const upDateEstudante = async (req, res) => {
   const { id } = req.params;
 
-  const { nome, contato, fk_curso } = req.body;
+  const { nome, contato, fk_curso, periodo } = req.body;
 
-  if (!nome || !contato || !fk_curso) {
+  if (!nome || !contato || !fk_curso || !periodo) {
     res.json({ message: "error" });
     return;
   }
@@ -181,6 +182,7 @@ const upDateEstudante = async (req, res) => {
     response.nome = nome;
     response.contato = contato;
     response.fk_curso = fk_curso;
+    response.periodo = periodo;
 
     response.save();
 
