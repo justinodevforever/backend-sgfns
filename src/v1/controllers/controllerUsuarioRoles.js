@@ -1,9 +1,3 @@
-const UsuarioRoles = require("../models/UsuarioRoles");
-const UsuarioSistema = require("../models/UsuarioSistema");
-const Roles = require("../models/Roles");
-const usuario = require("../models/usuario");
-const { decode } = require("jsonwebtoken");
-
 const createUsuarioRoles = async (req, res) => {
   const { fk_roles, fk_user } = req.body;
   try {
@@ -49,11 +43,6 @@ const getUsuarioRoles = async (req, res) => {
 const deleteUsuarioRoles = async (req, res) => {
   const { id } = req.params;
   try {
-    const response = await UsuarioRoles.destroy({
-      where: {
-        id,
-      },
-    });
     res.json({ msg: "Dados Removido com sucesso" });
   } catch (error) {}
 };

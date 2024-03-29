@@ -1,4 +1,3 @@
-const publicacoes = require("../../v1/models/publicacao");
 let publi = [];
 
 const removeuser = (socketId) => {

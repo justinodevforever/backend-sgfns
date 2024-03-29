@@ -1,5 +1,3 @@
-const usuario = require("../../v1/models/usuario");
-
 let online = [];
 
 const addUser = (userId, socketId) => {
@@ -29,9 +27,9 @@ const SocketUser = (socket, io) => {
 
   // enviando mensagem no usuario especifico
   socket.on("sendMessege", async (data) => {
-    const response = await usuario.findOne({
-      where: { id: data.receiveId },
-    });
+    // const response = await usuario.findOne({
+    //   where: { id: data.receiveId },
+    // });
 
     const messagem = {
       sendId: data?.sendId,
@@ -39,18 +37,18 @@ const SocketUser = (socket, io) => {
       sms: data.sms,
       createdAt: data?.createdAt,
     };
-    if (response != null || response !== undefined) {
-      const { dataValues } = await usuario.findOne({
-        where: {
-          id: data.sendId,
-        },
-      });
-      if (dataValues != null || dataValues !== undefined) {
-        socket
-          .to(users[response.dataValues.id])
-          .emit("messageReceived", messagem);
-      }
-    }
+    // if (response != null || response !== undefined) {
+    //   const { dataValues } = await usuario.findOne({
+    //     where: {
+    //       id: data.sendId,
+    //     },
+    //   });
+    //   if (dataValues != null || dataValues !== undefined) {
+    //     socket
+    //       .to(users[response.dataValues.id])
+    //       .emit("messageReceived", messagem);
+    //   }
+    // }
   });
 
   // socket.on("sendMe", ({ sendId, receiveId, sms }) => {

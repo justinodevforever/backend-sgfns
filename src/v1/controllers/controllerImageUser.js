@@ -1,6 +1,3 @@
-const image = require("../models/image");
-const usuario = require("../models/usuario");
-
 const createImageUser = async (req, res) => {
   const { fk_user, legenda } = req.body;
   try {

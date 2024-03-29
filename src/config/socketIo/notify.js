@@ -1,9 +1,3 @@
-const { Op } = require("sequelize");
-const usuario = require("../../v1/models/usuario");
-const Propina = require("../../v1/models/propina");
-const Mes = require("../../v1/models/mes");
-const AnoLetivo = require("../../v1/models/anoLetivo");
-
 let online = [];
 
 const addUser = (userId, socketId) => {
@@ -57,41 +51,41 @@ const SocketNotify = (socket, io) => {
         .toLocaleTimeString("pt-BR", { year: "numeric" })
         .split(",");
 
-      const response = await Propina.findAll({
-        include: [
-          { model: usuario },
-          {
-            model: Mes,
-          },
-          {
-            model: AnoLetivo,
-            where: {
-              ano: {
-                [Op.like]: `%${ano}%`,
-              },
-            },
-          },
-        ],
-        where: {
-          fk_estudante,
-        },
-      });
+      // const response = await Propina.findAll({
+      //   include: [
+      //     { model: usuario },
+      //     {
+      //       model: Mes,
+      //     },
+      //     {
+      //       model: AnoLetivo,
+      //       where: {
+      //         ano: {
+      //           [Op.like]: `%${ano}%`,
+      //         },
+      //       },
+      //     },
+      //   ],
+      //   where: {
+      //     fk_estudante,
+      //   },
+      // });
 
-      let mesesAll = [];
-      let mesesAll1 = [];
-      response.map((prop) => {
-        mesesAll.push(prop.Me.mes);
-      });
+      // let mesesAll = [];
+      // let mesesAll1 = [];
+      // response.map((prop) => {
+      //   mesesAll.push(prop.Me.mes);
+      // });
 
-      for (let mes = 0; mes < meses.length; mes++) {
-        if (meses[mes].toLowerCase() === mesHoje.toLowerCase()) break;
+      // for (let mes = 0; mes < meses.length; mes++) {
+      //   if (meses[mes].toLowerCase() === mesHoje.toLowerCase()) break;
 
-        if (!mesesAll.some((me) => me.includes(meses[mes]))) {
-          mesesAll1.push(meses[mes]);
-        }
-      }
+      //   if (!mesesAll.some((me) => me.includes(meses[mes]))) {
+      //     mesesAll1.push(meses[mes]);
+      //   }
+      // }
 
-      socket.emit("receivedNotify", mesesAll1);
+      // socket.emit("receivedNotify", mesesAll1);
     } catch (error) {
       console.log({ mensage: error });
     }

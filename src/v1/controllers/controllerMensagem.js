@@ -1,9 +1,3 @@
-const contactosUsuarios = require("../models/contactosUsuario");
-const mensagem = require("../models/mensagem");
-const mensage = require("../models/mensagem");
-const { Op } = require("sequelize");
-const usuario = require("../models/usuario");
-
 const getMensagem = async (req, res) => {
   const { id } = req.params;
   try {
