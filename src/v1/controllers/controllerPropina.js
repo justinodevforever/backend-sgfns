@@ -1,12 +1,3 @@
-const { where, Op } = require("sequelize");
-const AnoLetivo = require("../models/anoLetivo");
-const Cursos = require("../models/cursos");
-const Estudante = require("../models/estudante");
-const Mes = require("../models/mes");
-const Propina = require("../models/propina");
-const usuario = require("../models/usuario");
-const Semestre = require("../models/semestre");
-
 const createPropina = async (req, res) => {
   try {
     const {
@@ -41,29 +32,11 @@ const createPropina = async (req, res) => {
       res.status(201).json({ message: "error" });
       return;
     }
-    const response = await Propina.findOne({
-      include: [
-        { model: Mes, where: { id: fk_mes } },
-        { model: Semestre, where: { id: fk_semestre } },
-        { model: AnoLetivo, where: { id: fk_ano } },
-        { model: Estudante, where: { id: fk_estudante } },
-      ],
-    });
-    if (response) {
-      res.status(201).json({ message: "exist" });
-      return;
-    }
-    await Propina.create({
-      valor,
-      fk_mes,
-      fk_curso,
-      fk_estudante,
-      fk_user,
-      rupe,
-      fk_ano,
-      fk_semestre,
-      createdAt: Date.now(),
-    });
+
+    // if () {
+    //   res.status(201).json({ message: "exist" });
+    //   return;
+    // }
 
     res.status(201).json({ message: "sucess" });
   } catch (error) {
@@ -96,41 +69,41 @@ const verDivida = async (req, res) => {
       .toLocaleTimeString("pt-BR", { year: "numeric" })
       .split(",");
 
-    const response = await Propina.findAll({
-      include: [
-        { model: usuario },
-        {
-          model: Mes,
-        },
-        { model: Estudante, where: { bi } },
-        {
-          model: AnoLetivo,
-          where: {
-            ano: {
-              [Op.like]: `%${ano}%`,
-            },
-          },
-        },
-      ],
-    });
+    // const response = await Propina.findAll({
+    //   include: [
+    //     { model: usuario },
+    //     {
+    //       model: Mes,
+    //     },
+    //     { model: Estudante, where: { bi } },
+    //     {
+    //       model: AnoLetivo,
+    //       where: {
+    //         ano: {
+    //           [Op.like]: `%${ano}%`,
+    //         },
+    //       },
+    //     },
+    //   ],
+    // });
 
-    let mesesAll = [];
-    let mesesAll1 = [];
-    response.map((prop) => {
-      mesesAll.push(prop.Me.mes);
-    });
+    // let mesesAll = [];
+    // let mesesAll1 = [];
+    // response.map((prop) => {
+    //   mesesAll.push(prop.Me.mes);
+    // });
 
-    for (let mes = 0; mes < meses.length; mes++) {
-      if (meses[mes].toLowerCase() === mesHoje.toLowerCase()) break;
+    // for (let mes = 0; mes < meses.length; mes++) {
+    //   if (meses[mes].toLowerCase() === mesHoje.toLowerCase()) break;
 
-      if (!mesesAll.some((me) => me.includes(meses[mes]))) {
-        mesesAll1.push(meses[mes]);
-      }
-    }
+    //   if (!mesesAll.some((me) => me.includes(meses[mes]))) {
+    //     mesesAll1.push(meses[mes]);
+    //   }
+    // }
 
-    if (mesesAll1.length <= 0) res.json({ message: "Sem dívida" });
+    // if (mesesAll1.length <= 0) res.json({ message: "Sem dívida" });
 
-    res.json({ dividas: mesesAll1, message: "está com dívida" });
+    // res.json({ dividas: mesesAll1, message: "está com dívida" });
   } catch (error) {
     console.log({ mensage: error });
   }
@@ -139,35 +112,6 @@ const verDivida = async (req, res) => {
 const getPropinasMensal = async (req, res) => {
   const { bi, mes, ano } = req.body;
   try {
-    const response = await Propina.findOne({
-      include: [
-        {
-          model: Estudante,
-          where: {
-            bi,
-          },
-        },
-        { model: usuario },
-        { model: Semestre },
-        { model: Cursos },
-
-        {
-          model: AnoLetivo,
-          where: {
-            ano,
-          },
-        },
-        {
-          model: Mes,
-          where: {
-            mes,
-          },
-        },
-      ],
-      order: [["id", "ASC"]],
-    });
-
-    res.status(200).json(response);
   } catch (error) {
     res.json(error);
   }
@@ -175,47 +119,12 @@ const getPropinasMensal = async (req, res) => {
 const getPropinasAnual = async (req, res) => {
   const { bi, ano, semestre } = req.body;
   try {
-    const response = await Propina.findAll({
-      include: [
-        {
-          model: Estudante,
-          where: {
-            bi,
-          },
-        },
-        { model: usuario },
-        { model: Cursos },
-
-        {
-          model: AnoLetivo,
-          where: {
-            ano,
-          },
-        },
-        { model: Mes },
-      ],
-      order: [["id", "ASC"]],
-    });
-
-    res.status(200).json(response);
   } catch (error) {
     res.json(error);
   }
 };
 const getPropinas = async (req, res) => {
   try {
-    const response = await Propina.findAll({
-      include: [
-        { model: Estudante },
-        { model: usuario },
-        { model: Cursos },
-        { model: AnoLetivo },
-        { model: Mes },
-      ],
-      order: [["id", "ASC"]],
-    });
-
-    res.status(200).json(response);
   } catch (error) {
     res.json(error);
   }
@@ -223,22 +132,6 @@ const getPropinas = async (req, res) => {
 const getPropina = async (req, res) => {
   try {
     const { id } = req.params;
-
-    const response = await Propina.findOne({
-      include: [
-        { model: Estudante },
-        { model: usuario },
-        { model: Cursos },
-        { model: AnoLetivo },
-        { model: Mes },
-        { model: Semestre },
-      ],
-      where: {
-        id,
-      },
-    });
-
-    res.status(200).json(response);
   } catch (error) {
     res.json(error);
   }
@@ -246,22 +139,6 @@ const getPropina = async (req, res) => {
 const getPropinaEspecifico = async (req, res) => {
   try {
     const { id } = req.body;
-
-    const response = await Propina.findOne({
-      include: [
-        { model: Estudante },
-        { model: usuario },
-        { model: Cursos },
-        { model: AnoLetivo },
-        { model: Mes },
-        { model: Semestre },
-      ],
-      where: {
-        id,
-      },
-    });
-
-    res.status(200).json(response);
   } catch (error) {
     res.json(error);
   }
@@ -270,12 +147,6 @@ const getPropinaEspecifico = async (req, res) => {
 const deletePropina = async (req, res) => {
   try {
     const { id } = req.params;
-
-    await Propina.destroy({
-      where: {
-        id,
-      },
-    });
   } catch (error) {
     res.json(error);
   }
@@ -287,12 +158,7 @@ const upDatePropina = async (req, res) => {
     if (!fk_ano || !fk_mes || !rupe) {
       return res.json({ message: "Error" });
     }
-    const resp = await Propina.findByPk(id);
 
-    resp.fk_mes = fk_mes;
-    resp.fk_ano = fk_ano;
-    resp.rupe = rupe;
-    resp.save();
     res.json({ message: "Sucess" });
   } catch (error) {
     res.json({ message: "Error" });
@@ -310,63 +176,63 @@ const getEstudantePropina = async (req, res) => {
 
     const { ano, id } = req.params;
 
-    if (Number(mesHoje) === Number(1)) {
-      mesHoje = 12;
-      const response = await Propina.findAll({
-        include: [
-          { model: usuario },
-          {
-            model: Mes,
-            where: {
-              algarismo: {
-                [Op.eq]: `${Number(mesHoje)}`,
-              },
-            },
-          },
-          { model: AnoLetivo },
-        ],
-        where: {
-          [Op.and]: {
-            fk_ano: ano,
-          },
-        },
-      });
-      if (!response[0]) {
-        res.json({
-          Mensagem: "Deves Fazer o Pagamento das tuas Propinas",
-          m: response[0],
-        });
-      } else if (response[0]) {
-        res.json({ Mensagem: "Situação da Propina Legal" });
-      }
-      return;
-    }
+    // if (Number(mesHoje) === Number(1)) {
+    //   mesHoje = 12;
+    //   const response = await Propina.findAll({
+    //     include: [
+    //       { model: usuario },
+    //       {
+    //         model: Mes,
+    //         where: {
+    //           algarismo: {
+    //             [Op.eq]: `${Number(mesHoje)}`,
+    //           },
+    //         },
+    //       },
+    //       { model: AnoLetivo },
+    //     ],
+    //     where: {
+    //       [Op.and]: {
+    //         fk_ano: ano,
+    //       },
+    //     },
+    //   });
+    //   if (!response[0]) {
+    //     res.json({
+    //       Mensagem: "Deves Fazer o Pagamento das tuas Propinas",
+    //       m: response[0],
+    //     });
+    //   } else if (response[0]) {
+    //     res.json({ Mensagem: "Situação da Propina Legal" });
+    //   }
+    //   return;
+    // }
 
-    const response = await Propina.findAll({
-      include: [
-        { model: usuario },
-        {
-          model: Mes,
-          where: {
-            algarismo: {
-              [Op.eq]: `${Number(mesHoje) - 1}`,
-            },
-          },
-        },
-        { model: AnoLetivo },
-      ],
-      where: {
-        fk_ano: ano,
-      },
-    });
+    // const response = await Propina.findAll({
+    //   include: [
+    //     { model: usuario },
+    //     {
+    //       model: Mes,
+    //       where: {
+    //         algarismo: {
+    //           [Op.eq]: `${Number(mesHoje) - 1}`,
+    //         },
+    //       },
+    //     },
+    //     { model: AnoLetivo },
+    //   ],
+    //   where: {
+    //     fk_ano: ano,
+    //   },
+    // });
 
-    if (!response[0]) {
-      res.json({
-        Mensagem: "Deves Fazer o Pagamento das tuas Propinas",
-      });
-    } else if (response[0]) {
-      res.json({ Mensagem: "Situação da Propina Legal" });
-    }
+    // if (!response[0]) {
+    //   res.json({
+    //     Mensagem: "Deves Fazer o Pagamento das tuas Propinas",
+    //   });
+    // } else if (response[0]) {
+    //   res.json({ Mensagem: "Situação da Propina Legal" });
+    // }
   } catch (error) {
     res.json({ mensage: error });
   }

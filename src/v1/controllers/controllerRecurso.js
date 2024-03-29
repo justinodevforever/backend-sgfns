@@ -1,11 +1,3 @@
-const AnoFrequencia = require("../models/anoFrequencia");
-const AnoLetivo = require("../models/anoLetivo");
-const Cursos = require("../models/cursos");
-const Disciplina = require("../models/disciplina");
-const Estudante = require("../models/estudante");
-const Recurso = require("../models/recurso");
-const Semestre = require("../models/semestre");
-
 const createRecurso = async (req, res) => {
   const {
     valor,
@@ -29,18 +21,7 @@ const createRecurso = async (req, res) => {
       fk_ano !== 0 ||
       rupe !== 0
     ) {
-      const response = await Recurso.create({
-        valor,
-        fk_curso,
-        fk_disciplina,
-        fk_estudante,
-        fk_frequencia,
-        fk_semestre,
-        fk_ano,
-        data: Date.now(),
-        rupe,
-      });
-      res.status(201).json({ response: response, message: "sucess" });
+      res.status(201).json({ message: "sucess" });
     } else {
       res.status(201).json({ message: "error" });
     }
@@ -52,68 +33,20 @@ const createRecurso = async (req, res) => {
 const getRecursoEspecifico = async (req, res) => {
   try {
     const { id } = req.body;
-    const response = await Recurso.findOne({
-      include: [
-        { model: Estudante },
-        { model: AnoFrequencia },
-        { model: Semestre },
-        { model: Disciplina },
-        { model: Cursos },
-        { model: AnoLetivo },
-      ],
-      where: {
-        id,
-      },
-    });
-
-    res.status(200).json(response);
   } catch (error) {}
 };
 const getRecurso = async (req, res) => {
   try {
     const { id } = req.params;
-    const response = await Recurso.findOne({
-      include: [
-        { model: Estudante },
-        { model: AnoFrequencia },
-        { model: Semestre },
-        { model: Disciplina },
-        { model: Cursos },
-        { model: AnoLetivo },
-      ],
-      where: {
-        id,
-      },
-    });
-
-    res.status(200).json(response);
   } catch (error) {}
 };
 const getRecursos = async (req, res) => {
   try {
-    const response = await Recurso.findAll({
-      include: [
-        { model: Estudante },
-        { model: AnoFrequencia },
-        { model: Semestre },
-        { model: Disciplina },
-        { model: Cursos },
-        { model: AnoLetivo },
-      ],
-    });
-
-    res.status(200).json(response);
   } catch (error) {}
 };
 const deleteRecursos = async (req, res) => {
   try {
     const { id } = req.params;
-
-    await Recurso.destroy({
-      where: {
-        id,
-      },
-    });
   } catch (error) {}
 };
 
@@ -138,15 +71,6 @@ const upDateRecurso = async (req, res) => {
       fk_ano !== 0 ||
       fk_semestre !== 0
     ) {
-      const response = await Recurso.findByPk(id);
-
-      response.fk_disciplina = fk_disciplina;
-      response.fk_frequencia = fk_frequencia;
-      response.fk_semestre = fk_semestre;
-      response.fk_ano = fk_ano;
-      response.rupe = rupe;
-
-      response.save();
       res.status(200).json({ message: "sucess" });
     } else {
       res.json({ message: "error" });
@@ -162,18 +86,6 @@ const buscarCadeira = async (req, res) => {
     return res.json({ message: "error" });
   }
   try {
-    const response = await Recurso.findOne({
-      include: [
-        { model: Estudante, where: { bi } },
-        { model: AnoFrequencia, where: { ano: frequencia } },
-        { model: Semestre, where: { nome: semestre } },
-        { model: Disciplina, where: { nome: disciplina } },
-        { model: Cursos, where: { curso } },
-        { model: AnoLetivo, where: { ano } },
-      ],
-    });
-
-    res.status(200).json(response);
   } catch (error) {
     return res.json({ message: "error" });
   }

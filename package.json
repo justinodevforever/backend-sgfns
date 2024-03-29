@@ -12,6 +12,7 @@
   "author": "Justino Chinilila Chitombi",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^5.11.0",
     "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
@@ -26,5 +27,8 @@
     "postgres": "^3.4.3",
     "sequelize": "^6.31.1",
     "socket.io": "^4.6.1"
+  },
+  "devDependencies": {
+    "prisma": "^5.11.0"
   }
 }

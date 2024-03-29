@@ -1,3 +1,5 @@
 node_modules
 .env
+src/v1/models
+src/v1/database
 

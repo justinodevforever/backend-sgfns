@@ -1,12 +1,3 @@
-const { Op } = require("sequelize");
-const AnoLetivo = require("../models/anoLetivo");
-const AnoFrequencia = require("../models/anoFrequencia");
-const Cursos = require("../models/cursos");
-const Estudante = require("../models/estudante");
-const Reconfirmacao = require("../models/reconfirmacao");
-const usuario = require("../models/usuario");
-const Semestre = require("../models/semestre");
-
 const createReconfirmacao = async (req, res) => {
   try {
     const {
@@ -39,18 +30,8 @@ const createReconfirmacao = async (req, res) => {
       res.status(201).json({ message: "error" });
       return;
     }
-    const response = await Reconfirmacao.create({
-      valor,
-      fk_curso,
-      fk_estudante,
-      fk_user,
-      fk_anoLetivo: fk_ano,
-      ano: Date.now(),
-      fk_semestre,
-      fk_anoFrequencia: fk_frequencia,
-      rupe,
-    });
-    res.status(201).json({ response: response, message: "sucess" });
+
+    res.status(201).json({ message: "sucess" });
   } catch (error) {
     res.json(error);
   }
@@ -58,19 +39,6 @@ const createReconfirmacao = async (req, res) => {
 
 const getReconfirmacoes = async (req, res) => {
   try {
-    const response = await Reconfirmacao.findAll({
-      include: [
-        { model: Estudante },
-        { model: usuario },
-        { model: Cursos },
-        { model: AnoLetivo },
-        { model: Semestre },
-        { model: AnoFrequencia },
-      ],
-      order: [["id", "DESC"]],
-    });
-
-    res.status(200).json(response);
   } catch (error) {
     res.json(error);
   }
@@ -78,36 +46,6 @@ const getReconfirmacoes = async (req, res) => {
 const getReconfirmacaoRelatorio = async (req, res) => {
   try {
     const { ano, semestre, bi } = req.body;
-
-    const response = await Reconfirmacao.findOne({
-      include: [
-        {
-          model: Estudante,
-
-          where: {
-            bi,
-          },
-        },
-
-        { model: usuario },
-        { model: Cursos },
-        {
-          model: AnoLetivo,
-          where: {
-            ano,
-          },
-        },
-        {
-          model: Semestre,
-          where: {
-            nome: semestre,
-          },
-        },
-        { model: AnoFrequencia },
-      ],
-    });
-
-    res.status(200).json(response);
   } catch (error) {
     res.json(error);
   }
@@ -115,22 +53,6 @@ const getReconfirmacaoRelatorio = async (req, res) => {
 const getReconfirmacaoEspecifico = async (req, res) => {
   try {
     const { id } = req.body;
-
-    const response = await Reconfirmacao.findOne({
-      include: [
-        { model: Estudante },
-        { model: usuario },
-        { model: Cursos },
-        { model: AnoLetivo },
-        { model: AnoFrequencia },
-        { model: Semestre },
-      ],
-      where: {
-        id,
-      },
-    });
-
-    res.status(200).json(response);
   } catch (error) {
     res.json(error);
   }
@@ -138,20 +60,6 @@ const getReconfirmacaoEspecifico = async (req, res) => {
 const getReconfirmacao = async (req, res) => {
   try {
     const { id } = req.params;
-
-    const response = await Reconfirmacao.findOne({
-      include: [
-        { model: Estudante },
-        { model: usuario },
-        { model: Cursos },
-        { model: AnoLetivo },
-      ],
-      where: {
-        id,
-      },
-    });
-
-    res.status(200).json(response);
   } catch (error) {
     res.json(error);
   }
@@ -160,12 +68,6 @@ const getReconfirmacao = async (req, res) => {
 const deleteReconfirmacao = async (req, res) => {
   try {
     const { id } = req.params;
-
-    await Reconfirmacao.destroy({
-      where: {
-        id,
-      },
-    });
   } catch (error) {
     res.json(error);
   }
@@ -183,18 +85,6 @@ const upDateReconfirmacao = async (req, res) => {
       fk_anoFrequencia,
       ano,
     } = req.body;
-
-    const resp = await Reconfirmacao.findByPk(id);
-
-    resp.fk_curso = fk_curso;
-    resp.fk_estudante = fk_estudante;
-    resp.fk_user = fk_user;
-    resp.valor = valor;
-    resp.fk_ano = fk_ano;
-    resp.rupe = rupe;
-    resp.ano = ano;
-    resp.fk_anoFrequencia = fk_anoFrequencia;
-    resp.save();
   } catch (error) {
     res.json(error);
   }

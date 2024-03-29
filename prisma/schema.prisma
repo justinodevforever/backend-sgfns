@@ -1,0 +1,337 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User{
+  id Int @id @default(autoincrement())
+  email String
+  nome String
+}
+model UserSystem{
+  id String @id @default(uuid())
+  nome String
+}
+model Role{
+  id String @id @default(uuid())
+  role String @unique
+  users UserRoles[]
+}
+model Usuario{
+  id String @id @default(uuid())
+  nome String
+  email String @unique
+  password String
+  bi String @unique
+  contacto String 
+  roles UserRoles[]
+  permissions UserPermission[]
+  estudante Estudante[]
+  profile ProfileUser[]
+  publicacao Publicacao[]
+  comentario Comentario[]
+   linkeComentario LinkComentarioPublicacao[]
+   linkComunicado LinkComunicado[]
+   linkPublicacao LinkPublicacao[]
+   propina Propina[]
+    servico Servico[]
+}
+model UserRoles{
+  id String @id @default(uuid())
+  user Usuario @relation( fields: [fk_user], references: [id])
+  fk_user String
+  role Role @relation(fields: [fk_role], references: [id])
+  fk_role String
+}
+model Permission {
+  id String @id @default(uuid())
+  permissao String
+  users UserPermission []
+}
+
+model UserPermission {
+  id String @id @default(uuid())
+  user Usuario @relation(fields: [fk_user], references: [id])
+  fk_user String
+  permission Permission @relation(fields: [fk_permission], references: [id])
+  fk_permission String
+} 
+model TipoServico{
+  id String @id @default(uuid())
+  tipo String @unique
+  valor Decimal
+   servico Servico[]
+}
+model AnoFrequencia{
+  id String @id @default(uuid())
+  ano String @unique
+  disciplina Disciplina[]
+  curso CursoFrequencia[]
+    exameEspecial ExameEspecial[]
+     cadeiraAtrasos CadeiraAtraso[]
+    recursos Recurso[]
+    
+}
+model AnoLectivo{
+  id String @id @default(uuid())
+  ano String @unique
+    exameEspecial ExameEspecial[]
+     cadeiraAtrasos CadeiraAtraso[]
+    recursos Recurso[]
+    propina Propina[]
+     servico Servico[]
+}
+model Estudante{
+  id String @id @default(uuid())
+  nome String 
+  contacto String @unique
+  bi String @unique
+  periodo String
+
+  user Usuario @relation(fields: [fk_user], references: [id])
+  fk_user String @unique
+curso Curso @relation(fields: [fk_curso],references: [id])
+  fk_curso String @unique
+    exameEspecial ExameEspecial[]
+     cadeiraAtrasos CadeiraAtraso[]
+    recursos Recurso[]
+    propina Propina[]
+     servico Servico[]
+}
+model Contacto{
+  id String @id @default(uuid())
+  nome String 
+}
+model Curso{
+  id String @id @default(uuid())
+  curso String @unique
+  disciplinas DisciplinaCurso[]
+  frquencias CursoFrequencia[]
+  estudantes Estudante[]
+    exameEspecial ExameEspecial[]
+    cadeiraAtrasos CadeiraAtraso[]
+    recursos Recurso[]
+     servico Servico[]
+}
+model Declaracao{
+  id String @id @default(uuid())
+  nome String 
+  desc String
+}
+model Semestre{
+  id String @id @default(uuid())
+  nome String @unique
+  numero Int
+  disciplinas Disciplina[]
+    exameEspecial ExameEspecial[]
+     cadeiraAtrasos CadeiraAtraso[]
+    recursos Recurso[]
+    propina Propina[]
+   
+}
+model Disciplina{
+  id String @id @default(uuid())
+  nome String @unique
+frequencia AnoFrequencia @relation(fields: [fk_ano],references: [id])
+  fk_ano String
+semestre Semestre @relation(fields: [fk_semestre],references: [id])
+  fk_semestre String
+  cursos DisciplinaCurso[]
+  exameEspecial ExameEspecial[]
+   cadeiraAtrasos CadeiraAtraso[]
+    recursos Recurso[]
+}
+model ExameEspecial{
+  id String @id @default(uuid())
+  valor String @unique
+  createdAt DateTime @default(now())
+  rupe BigInt
+
+estudante Estudante @relation(fields: [fk_estudante],references: [id])
+  fk_estudante String 
+AnoFrequncia AnoFrequencia @relation(fields: [fk_frquencia],references: [id])
+  fk_frquencia String
+anoLectivo AnoLectivo @relation(fields: [fk_ano],references: [id])
+  fk_ano String
+Curso Curso @relation(fields: [fk_curso],references: [id])
+  fk_curso String
+disciplina Disciplina @relation(fields: [fk_disciplina],references: [id])
+  fk_disciplina String 
+semestre Semestre @relation(fields: [fk_semestre],references: [id])
+  fk_semestre String
+
+}
+model CadeiraAtraso{
+  id String @id @default(uuid())
+  valor String @unique
+  createdAt DateTime @default(now())
+  rupe BigInt
+
+estudante Estudante @relation(fields: [fk_estudante],references: [id])
+  fk_estudante String 
+AnoFrequncia AnoFrequencia @relation(fields: [fk_frquencia],references: [id])
+  fk_frquencia String
+anoLectivo AnoLectivo @relation(fields: [fk_ano],references: [id])
+  fk_ano String
+Curso Curso @relation(fields: [fk_curso],references: [id])
+  fk_curso String
+disciplina Disciplina @relation(fields: [fk_disciplina],references: [id])
+  fk_disciplina String 
+semestre Semestre @relation(fields: [fk_semestre],references: [id])
+  fk_semestre String
+
+}
+model Recurso{
+  id String @id @default(uuid())
+  valor String @unique
+  createdAt DateTime @default(now())
+  rupe BigInt
+
+estudante Estudante @relation(fields: [fk_estudante],references: [id])
+  fk_estudante String 
+AnoFrequncia AnoFrequencia @relation(fields: [fk_frquencia],references: [id])
+  fk_frquencia String
+anoLectivo AnoLectivo @relation(fields: [fk_ano],references: [id])
+  fk_ano String
+Curso Curso @relation(fields: [fk_curso],references: [id])
+  fk_curso String
+disciplina Disciplina @relation(fields: [fk_disciplina],references: [id])
+  fk_disciplina String 
+semestre Semestre @relation(fields: [fk_semestre],references: [id])
+  fk_semestre String
+
+}
+model ProfileUser{
+  id String @id @default(uuid())
+  nome String @unique
+  legenda String
+  usuario Usuario @relation(fields: [fk_user], references: [id])
+  fk_user String @unique
+
+}
+model ProfilePublicacao{
+  id String @id @default(uuid())
+  nome String @unique
+  legenda String
+  publicacao Publicacao @relation(fields: [fk_publicacao], references: [id])
+  fk_publicacao String @unique
+
+}
+model Publicacao{
+  id String @id @default(uuid())
+  publicacao String @unique
+  createdAt DateTime @default(now())
+  usuario Usuario @relation(fields: [fk_user], references: [id])
+  fk_user String 
+  comentario Comentario[]
+  profilePublicacao ProfilePublicacao[]
+linkPublicacao LinkPublicacao[]
+}
+model Comentario{
+  id String @id @default(uuid())
+  comentario String 
+  createdAt DateTime @default(now())
+  usuario Usuario @relation(fields: [fk_user], references: [id])
+  fk_user String 
+  publicacao Publicacao @relation(fields: [fk_publicacao], references: [id])
+  fk_publicacao String 
+  linkeComentario LinkComentarioPublicacao[]
+
+}
+model LinkComentarioPublicacao{
+  id String @id @default(uuid())
+  linke Boolean?
+  createdAt DateTime @default(now())
+  usuario Usuario @relation(fields: [fk_user], references: [id])
+  fk_user String 
+  comentario Comentario @relation(fields: [fk_comentario], references: [id])
+  fk_comentario String 
+
+}
+model LinkPublicacao{
+  id String @id @default(uuid())
+  linke Boolean?
+  createdAt DateTime @default(now())
+  usuario Usuario @relation(fields: [fk_user], references: [id])
+  fk_user String 
+  publicacao Publicacao @relation(fields: [fk_publicacao], references: [id])
+  fk_publicacao String 
+
+}
+model LinkComunicado{
+  id String @id @default(uuid())
+  linke Boolean?
+  createdAt DateTime @default(now())
+  usuario Usuario @relation(fields: [fk_user], references: [id])
+  fk_user String 
+
+}
+model Mes{
+  id String @id @default(uuid())
+  mes String?
+  algarismo Int
+  propina Propina[]
+}
+model Propina{
+  id String @id @default(uuid())
+  valor String @unique
+  createdAt DateTime @default(now())
+  rupe BigInt
+
+estudante Estudante @relation(fields: [fk_estudante],references: [id])
+  fk_estudante String 
+anoLectivo AnoLectivo @relation(fields: [fk_ano],references: [id])
+  fk_ano String
+mes Mes @relation(fields: [fk_mes],references: [id])
+  fk_mes String
+semestre Semestre @relation(fields: [fk_semestre],references: [id])
+  fk_semestre String
+usuario Usuario @relation(fields: [fk_user],references: [id])
+  fk_user String
+
+}
+model Servico{
+  id String @id @default(uuid())
+  tipo String
+  dataSolicitacao DateTime @default(now())
+  dataValidacao DateTime
+  formaPagamento String 
+ 
+
+estudante Estudante @relation(fields: [fk_estudante],references: [id])
+  fk_estudante String 
+anoLectivo AnoLectivo @relation(fields: [fk_ano],references: [id])
+  fk_ano String
+curso Curso @relation(fields: [fk_curso],references: [id])
+  fk_curso String
+usuario Usuario @relation(fields: [fk_user],references: [id])
+  fk_user String
+tipoServico TipoServico @relation(fields: [fk_tipo],references: [id])
+  fk_tipo String
+
+}
+
+model DisciplinaCurso{
+  id String @id @default(uuid())
+  curso Curso @relation(fields: [fk_curso], references: [id])
+  fk_curso String
+disciplina Disciplina @relation(fields: [fk_disciplina],references: [id])
+  fk_disciplina String
+}
+model CursoFrequencia{
+  id String @id @default(uuid())
+  curso Curso @relation(fields: [fk_curso], references: [id])
+  fk_curso String
+frequencia AnoFrequencia @relation(fields: [fk_ano],references: [id])
+  fk_ano String
+}
