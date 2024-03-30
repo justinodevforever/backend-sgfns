@@ -5,6 +5,12 @@ const prisma = new PrismaClient();
 
 const getUser = async (req, res) => {
   const { id } = req.params;
+  const user = await prisma.usuario.findFirst({
+    where: {
+      id,
+    },
+  });
+  res.json(user);
   try {
   } catch (error) {
     res.json({ mensage: error.mensage });
@@ -14,8 +20,13 @@ const getUser = async (req, res) => {
 const getUserPorBi = async (req, res) => {
   const { bi } = req.body;
   try {
+    const user = prisma.usuario.findFirst({
+      where: {
+        bi,
+      },
+    });
   } catch (error) {
-    res.status(401).json({ mensage: error.mensage });
+    res.json({ mensage: error.mensage });
   }
 };
 
@@ -59,8 +70,14 @@ const createUser = async (req, res) => {
 const getUserEspecific = async (req, res) => {
   const { id } = req.id;
   try {
+    const user = await prisma.usuario.findFirst({
+      where: {
+        id,
+      },
+    });
+    res.json(user);
   } catch (error) {
-    res.status(401).json({ mensage: error.mensage });
+    res.json({ mensage: error.mensage });
   }
 };
 
@@ -69,7 +86,7 @@ const getAllUser = async (req, res) => {
     const response = await prisma.usuario.findMany();
     res.json(response);
   } catch (error) {
-    res.status(401).json({ mensage: error.mensage });
+    res.json({ mensage: error.mensage });
   }
 };
 
@@ -77,7 +94,7 @@ const deleteUser = async (req, res) => {
   const { id } = req.params;
   try {
   } catch (error) {
-    res.status(401).json({ mensage: error.mensage });
+    res.json({ mensage: error.mensage });
   }
 };
 
@@ -130,7 +147,7 @@ const logar = async (req, res) => {
       }
     }
   } catch (error) {
-    res.status(201).json({ mensage: error.mensage });
+    res.json({ mensage: error.mensage });
   }
 };
 
@@ -142,15 +159,22 @@ const verifyToken = async (req, res) => {
     });
     return res.json(token);
   } catch (error) {
-    return res.status(401).json(error);
+    return res.json(error);
   }
 };
 
 async function searchUser(req, res) {
   const { nome } = req.body;
+  const user = await prisma.usuario.findFirst({
+    where: {
+      nome,
+    },
+  });
+
+  res.json(user);
   try {
   } catch (error) {
-    res.status(401).json({ mensage: error.mensage });
+    res.json({ mensage: error.mensage });
   }
 }
 

@@ -1,3 +1,7 @@
+const { PrismaClient } = require("@prisma/client");
+
+const prisma = new PrismaClient();
+
 let online = [];
 
 const addUser = (userId, socketId) => {
@@ -27,9 +31,9 @@ const SocketUser = (socket, io) => {
 
   // enviando mensagem no usuario especifico
   socket.on("sendMessege", async (data) => {
-    // const response = await usuario.findOne({
-    //   where: { id: data.receiveId },
-    // });
+    const response = await prisma.usuario.findFirst({
+      where: { id: data.receiveId },
+    });
 
     const messagem = {
       sendId: data?.sendId,
@@ -37,30 +41,26 @@ const SocketUser = (socket, io) => {
       sms: data.sms,
       createdAt: data?.createdAt,
     };
-    // if (response != null || response !== undefined) {
-    //   const { dataValues } = await usuario.findOne({
-    //     where: {
-    //       id: data.sendId,
-    //     },
-    //   });
-    //   if (dataValues != null || dataValues !== undefined) {
-    //     socket
-    //       .to(users[response.dataValues.id])
-    //       .emit("messageReceived", messagem);
-    //   }
-    // }
+    if (response != null || response !== undefined) {
+      const user = await prisma.usuario.findFirst({
+        where: {
+          id: data.sendId,
+        },
+      });
+      if (user != null || user !== undefined) {
+        socket.to(users[response.id]).emit("messageReceived", messagem);
+      }
+    }
   });
 
-  // socket.on("sendMe", ({ sendId, receiveId, sms }) => {
-  //   const user = getUser(receiveId);
-  //   socket.to(user.socketId).emit("getMe", {
-  //     sendId,
-  //     sms,
-  //   });
-  // });
+  socket.on("sendMe", ({ sendId, receiveId, sms }) => {
+    const user = getUser(receiveId);
+    socket.to(user.socketId).emit("getMe", {
+      sendId,
+      sms,
+    });
+  });
   socket.on("disconnect", () => {
-    console.log("disconectado");
-
     removeuser(socket.id);
     socket.emit("getUsers", online);
   });
