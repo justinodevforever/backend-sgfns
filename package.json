@@ -6,9 +6,7 @@
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "nodemon src/index.js",
-    "vercel-build": "npx prisma migrate deploy",
-    "postinstall": "prisma generate",
-    "build": "prisma generate && <actual-build-command>"
+    "vercel-build": "npx prisma migrate deploy"
   },
   "keywords": [],
   "author": "Justino Chinilila Chitombi",
