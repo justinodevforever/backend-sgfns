@@ -1,3 +1,6 @@
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+
 const createAnoLetivo = async (req, res) => {
   try {
   } catch (error) {
@@ -13,6 +16,11 @@ const getAnoLetivos = async (req, res) => {
 };
 const getAnoLetivo = async (req, res) => {
   try {
+    const user = await prisma.anoLectivo.findFirst({
+      where: {
+        id,
+      },
+    });
   } catch (error) {
     res.json(error);
   }
