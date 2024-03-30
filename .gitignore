@@ -3,3 +3,4 @@ node_modules
 src/v1/models
 src/v1/database
 
+.vercel

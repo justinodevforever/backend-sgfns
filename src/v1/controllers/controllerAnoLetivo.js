@@ -21,6 +21,7 @@ const getAnoLetivo = async (req, res) => {
         id,
       },
     });
+    res.json(user);
   } catch (error) {
     res.json(error);
   }
