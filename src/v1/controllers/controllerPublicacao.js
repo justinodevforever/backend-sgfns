@@ -26,8 +26,6 @@ const getPublicacoes = async (req, res) => {
       include: {
         usuario: {},
       },
-      skip: skip,
-      teke: teke,
     });
     res.json(response);
   } catch (error) {
