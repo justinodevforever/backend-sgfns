@@ -1,3 +1,6 @@
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+
 const createImagePublicacao = async (req, res) => {
   const { fk_publicacao } = req.body;
 
@@ -5,7 +8,14 @@ const createImagePublicacao = async (req, res) => {
     const filename = req.file;
 
     if (filename !== undefined) {
-      res.status(200).json("response");
+      const response = await prisma.profilePublicacao.create({
+        data: {
+          fk_publicacao,
+          legenda: "",
+          nome: filename,
+        },
+      });
+      res.status(200).json(response);
     } else {
       res.status(200).json("response");
     }
@@ -16,8 +26,14 @@ const createImagePublicacao = async (req, res) => {
 
 const getImagePublicacao = async (req, res) => {
   try {
+    const response = await prisma.profilePublicacao.findMany({
+      include: {
+        publicacao: {},
+      },
+    });
+    res.json(response);
   } catch (error) {
-    res.status(401).json({ mensage: error.mensage });
+    res.json({ mensage: error });
   }
 };
 

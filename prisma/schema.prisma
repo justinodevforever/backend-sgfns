@@ -224,7 +224,7 @@ model ProfilePublicacao{
   nome String @unique
   legenda String
   publicacao Publicacao @relation(fields: [fk_publicacao], references: [id])
-  fk_publicacao String @unique
+  fk_publicacao String 
 
 }
 model Publicacao{
