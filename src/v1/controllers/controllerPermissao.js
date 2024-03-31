@@ -1,18 +1,38 @@
+const { PrismaClient } = require("@prisma/client");
+
+const prisma = new PrismaClient();
+
 const createPermissao = async (req, res) => {
   const { permissao } = req.body;
   try {
-    res.status(201).json({ msg: "Dados Salvo com sucesso!" });
-  } catch (error) {}
+    if (!permissao) return;
+    const response = await prisma.permission.create({
+      data: {
+        permissao: permissao,
+      },
+    });
+    res.status(201).json({ message: "sucess" });
+  } catch (error) {
+    res.json({ message: "error", error: error });
+  }
 };
 
 const getPermissoes = async (req, res) => {
   try {
+    const response = await prisma.permission.findMany();
+    res.json(response);
   } catch (error) {}
 };
 
 const getPermissao = async (req, res) => {
   const { id } = req.params;
   try {
+    const response = await prisma.permission.findFirst({
+      where: {
+        id,
+      },
+    });
+    res.json(response);
   } catch (error) {}
 };
 const deletePermissao = async (req, res) => {

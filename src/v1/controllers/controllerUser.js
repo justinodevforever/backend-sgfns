@@ -6,6 +6,10 @@ const prisma = new PrismaClient();
 const getUser = async (req, res) => {
   const { id } = req.params;
   const user = await prisma.usuario.findFirst({
+    include: {
+      permissions: true,
+      comentario: true,
+    },
     where: {
       id,
     },
@@ -21,6 +25,10 @@ const getUserPorBi = async (req, res) => {
   const { bi } = req.body;
   try {
     const user = prisma.usuario.findFirst({
+      include: {
+        permissions: true,
+        comentario: true,
+      },
       where: {
         bi,
       },
@@ -83,7 +91,12 @@ const getUserEspecific = async (req, res) => {
 
 const getAllUser = async (req, res) => {
   try {
-    const response = await prisma.usuario.findMany();
+    const response = await prisma.usuario.findMany({
+      include: {
+        permissions: true,
+        comentario: true,
+      },
+    });
     res.json(response);
   } catch (error) {
     res.json({ mensage: error.mensage });

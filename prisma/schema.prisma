@@ -45,6 +45,9 @@ model Usuario{
    linkPublicacao LinkPublicacao[]
    propina Propina[]
     servico Servico[]
+    messagem Messagem[]
+    sender ContactUser[] @relation("Sender")
+  receiver ContactUser[] @relation("Receiver")
 }
 model UserRoles{
   id String @id @default(uuid())
@@ -108,10 +111,7 @@ curso Curso @relation(fields: [fk_curso],references: [id])
     propina Propina[]
      servico Servico[]
 }
-model Contacto{
-  id String @id @default(uuid())
-  nome String 
-}
+
 model Curso{
   id String @id @default(uuid())
   curso String @unique
@@ -276,11 +276,32 @@ model LinkComunicado{
   fk_user String 
 
 }
+
+model ContactUser {
+  id String @id @default(uuid())
+  seguir Boolean
+  sender Usuario @relation("Sender", fields: [sendId], references: [id])
+  sendId String
+  receiver Usuario @relation("Receiver", fields: [receiveId], references: [id])
+  receiveId String
+  messagem Messagem[]
+}
 model Mes{
   id String @id @default(uuid())
   mes String?
   algarismo Int
   propina Propina[]
+}
+model Messagem{
+  id String @id @default(uuid())
+  sms String
+  createdAt DateTime @default(now())
+  lida Boolean?
+  user Usuario @relation(fields: [sendId],references: [id])
+  sendId String
+conactUSaer ContactUser @relation(fields: [contactId],references: [id])
+  contactId String
+  
 }
 model Propina{
   id String @id @default(uuid())
