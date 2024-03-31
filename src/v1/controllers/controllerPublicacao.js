@@ -1,19 +1,35 @@
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+
 const createPublicacao = async (req, res) => {
   try {
     const { publicacao, fk_user } = req.body;
     if (publicacao != undefined || publicacao != "") {
+      await prisma.publicacao.create({
+        data: {
+          publicacao,
+          fk_user,
+        },
+      });
     }
+    res.status(201).json({ message: "sucesso" });
   } catch (error) {
-    console.log(error.mensagens);
+    res.json({ message: "error" });
   }
 };
 
 const getPublicacoes = async (req, res) => {
-  const { page = 1 } = req.query;
+  const { skip, teke } = req.query;
 
-  const limit = 10;
-  let lastPage = 1;
   try {
+    const response = await prisma.publicacao.findMany({
+      include: {
+        usuario: {},
+      },
+      skip: skip,
+      teke: teke,
+    });
+    res.json(response);
   } catch (error) {
     res.status(201).json(error);
   }
@@ -35,6 +51,12 @@ const upDatePublicacao = async (req, res) => {
   const { id } = req.params;
   try {
     const { publicacao, fk_user } = req.body;
+
+    await prisma.publicacao.update({
+      data: {
+        publicacao,
+      },
+    });
   } catch (error) {
     res.status(201).json(error);
   }
@@ -44,6 +66,15 @@ const getPublicacao = async (req, res) => {
   const { id } = req.params;
 
   try {
+    const response = await prisma.publicacao.findFirst({
+      include: {
+        usuario: {},
+      },
+      where: {
+        id,
+      },
+    });
+    res.json(response);
   } catch (error) {
     res.status(201).json(error);
   }
@@ -52,6 +83,11 @@ const getPublicacao = async (req, res) => {
 const deletePublicacao = async (req, res) => {
   const { id } = req.params;
   try {
+    await prisma.publicacao.delete({
+      where: {
+        id,
+      },
+    });
   } catch (error) {
     res.status(201).json(error);
   }

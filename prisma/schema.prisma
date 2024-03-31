@@ -284,7 +284,7 @@ model ContactUser {
   sendId String
   receiver Usuario @relation("Receiver", fields: [receiveId], references: [id])
   receiveId String
-  messagem Messagem[]
+  contactUser Messagem[]
 }
 model Mes{
   id String @id @default(uuid())
