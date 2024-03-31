@@ -5,13 +5,13 @@ const prisma = new PrismaClient();
 
 const getUser = async (req, res) => {
   const { id } = req.params;
-  const user = await prisma.usuario.findFirst({
+  const user = await prisma.userPermission.findMany({
     include: {
-      permissions: true,
-      comentario: true,
+      user: {},
+      permission: {},
     },
     where: {
-      id,
+      fk_user: id,
     },
   });
   res.json(user);
@@ -24,7 +24,7 @@ const getUser = async (req, res) => {
 const getUserPorBi = async (req, res) => {
   const { bi } = req.body;
   try {
-    const user = prisma.usuario.findFirst({
+    const user = await prisma.usuario.findFirst({
       include: {
         permissions: true,
         comentario: true,
@@ -33,8 +33,9 @@ const getUserPorBi = async (req, res) => {
         bi,
       },
     });
+    res.json(user);
   } catch (error) {
-    res.json({ mensage: error.mensage });
+    res.status(500).json({ mensage: "error" });
   }
 };
 
@@ -71,7 +72,7 @@ const createUser = async (req, res) => {
     }
     // res.json("Userexistente");
   } catch (error) {
-    res.json({ mensage: error.mensage });
+    res.json({ mensage: error });
   }
 };
 

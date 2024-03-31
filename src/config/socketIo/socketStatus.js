@@ -1,3 +1,7 @@
+const { PrismaClient } = require("@prisma/client");
+
+const prisma = new PrismaClient();
+
 let users = [];
 
 const connectedUser = (socket) => {
@@ -35,20 +39,19 @@ const SocketStatus = (socket, io) => {
 
 const SocketMensage = (socket, io) => {
   socket.on("notifyMessage", async (data) => {
-    // console.log(data);
-    // const response = await usuario.findOne({
-    //   where: { id: data.receiveId },
-    // });
-    // if (response != null || response !== undefined) {
-    //   const { dataValues } = await usuario.findOne({
-    //     where: {
-    //       id: data.sendId,
-    //     },
-    //   });
-    //   if (dataValues != null || dataValues !== undefined) {
-    //     io.to(usersSms[response.dataValues.id]).emit("receiverNotify", data);
-    //   }
-    // }
+    const response = await prisma.usuario.findFirst({
+      where: { id: data.receiveId },
+    });
+    if (response != null || response !== undefined) {
+      const res = await prisma.usuario.findFirst({
+        where: {
+          id: data.sendId,
+        },
+      });
+      if (res != null || res !== undefined) {
+        io.to(usersSms[response.id]).emit("receiverNotify", data);
+      }
+    }
   });
 };
 
