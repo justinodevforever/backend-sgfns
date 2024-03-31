@@ -93,7 +93,11 @@ const getAllUser = async (req, res) => {
   try {
     const response = await prisma.usuario.findMany({
       include: {
-        permissions: true,
+        permissions: {
+          include: {
+            permission: true,
+          },
+        },
         comentario: true,
       },
     });
@@ -154,6 +158,7 @@ const logar = async (req, res) => {
           User: loginpass,
           token: token,
           refreshToken: refresh_token,
+          message: "sucess",
         });
       } else {
         res.status(201).json({ mensage: "email ou senha Errada" });
