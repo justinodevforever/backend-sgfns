@@ -1,6 +1,19 @@
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+
 const getEstudante = async (req, res) => {
   const { id } = req.params;
   try {
+    const response = await prisma.estudante.findFirst({
+      include: {
+        curso: {},
+        user: true,
+      },
+      where: {
+        id,
+      },
+    });
+    res.json(response);
   } catch (error) {
     res.status(401).json({ message: "error" });
   }
@@ -8,6 +21,17 @@ const getEstudante = async (req, res) => {
 const buscaEstudantePorBi = async (req, res) => {
   const { bi } = req.body;
   try {
+    console.log(bi, "dddd");
+    const response = await prisma.estudante.findFirst({
+      include: {
+        curso: {},
+        user: true,
+      },
+      where: {
+        bi,
+      },
+    });
+    res.json(response);
   } catch (error) {
     res.json({ message: "error" });
   }
@@ -20,15 +44,32 @@ const createEstudante = async (req, res) => {
       res.json({ message: "error" });
       return;
     }
-
+    const response = await prisma.estudante.create({
+      data: {
+        nome,
+        bi,
+        contacto: contato,
+        fk_curso,
+        fk_user,
+        periodo,
+      },
+    });
+    res.json(response);
     res.status(200).json({ message: "sucess" });
   } catch (error) {
-    res.status(401).json({ message: "error" });
+    res.status(401).json({ message: error });
   }
 };
 
 const getEstudantes = async (req, res) => {
   try {
+    const response = await prisma.estudante.findMany({
+      include: {
+        curso: {},
+        user: true,
+      },
+    });
+    res.json(response);
   } catch (error) {
     res.json({ message: "error" });
   }
@@ -37,16 +78,46 @@ const getEstudantes = async (req, res) => {
 const getEstudanteBi = async (req, res) => {
   try {
     const { bi } = req.body;
+    const response = await prisma.estudante.findFirst({
+      include: {
+        curso: {},
+        user: true,
+      },
+      where: {
+        bi,
+      },
+    });
+    res.json(response);
   } catch (error) {}
 };
 const getEstudanteEspecifico = async (req, res) => {
   try {
     const { id } = req.body;
+    const response = await prisma.estudante.findFirst({
+      include: {
+        curso: {},
+        user: true,
+      },
+      where: {
+        id,
+      },
+    });
+    res.json(response);
   } catch (error) {}
 };
 const getAllEstudante = async (req, res) => {
   const { fk_user } = req.body;
   try {
+    const response = await prisma.estudante.findMany({
+      include: {
+        curso: {},
+        user: true,
+      },
+      where: {
+        fk_user,
+      },
+    });
+    res.json(response);
   } catch (error) {
     res.status(401).json({ mensage: error.mensage });
   }
@@ -54,6 +125,16 @@ const getAllEstudante = async (req, res) => {
 const getEstudantePorUsuario = async (req, res) => {
   const { fk_user } = req.body;
   try {
+    const response = await prisma.estudante.findFirst({
+      include: {
+        curso: {},
+        user: true,
+      },
+      where: {
+        fk_user,
+      },
+    });
+    res.json(response);
   } catch (error) {
     res.status(401).json({ mensage: error.mensage });
   }
@@ -62,6 +143,12 @@ const getEstudantePorUsuario = async (req, res) => {
 const deleteEstudante = async (req, res) => {
   const { id } = req.params;
   try {
+    const response = await prisma.estudante.delete({
+      where: {
+        id,
+      },
+    });
+    res.json(response);
     res.status(200).json({ user: "Removido Com sucesso" });
   } catch (error) {
     res.status(401).json({ mensage: error.mensage });
@@ -79,6 +166,18 @@ const upDateEstudante = async (req, res) => {
   }
 
   try {
+    const response = await prisma.estudante.update({
+      data: {
+        nome,
+        contacto: contato,
+        fk_curso,
+        periodo,
+      },
+      where: {
+        id,
+      },
+    });
+    res.json(response);
     res.status(200).json({ message: "sucess" });
   } catch (error) {
     res.json({ message: "error" });
@@ -88,6 +187,16 @@ const searchEstudante = async (req, res) => {
   const { nome } = req.body;
   try {
     if (nome !== "") {
+      const response = await prisma.estudante.findFirst({
+        include: {
+          curso: {},
+          user: true,
+        },
+        where: {
+          nome,
+        },
+      });
+      res.json(response);
     }
   } catch (error) {
     res.json({ mensage: "error" });

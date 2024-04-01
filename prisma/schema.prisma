@@ -102,9 +102,9 @@ model Estudante{
   periodo String
 
   user Usuario @relation(fields: [fk_user], references: [id])
-  fk_user String @unique
+  fk_user String 
 curso Curso @relation(fields: [fk_curso],references: [id])
-  fk_curso String @unique
+  fk_curso String 
     exameEspecial ExameEspecial[]
      cadeiraAtrasos CadeiraAtraso[]
     recursos Recurso[]

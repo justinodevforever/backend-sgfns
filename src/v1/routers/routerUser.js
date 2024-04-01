@@ -23,7 +23,7 @@ router.post("/logar", logar);
 router.post("/user", createUser);
 router.post("/search/user", authorization, searchUser);
 router.get("/user/:id", authorization, getUser);
-router.get("/user", getAllUser);
+router.get("/user", authorization, getAllUser);
 router.put("/user/:id", authorization, upDateUser);
 router.delete("/user/:id", authorization, deleteUser);
 router.post("/refresh", verifyRefreshToken, verifyToken);
