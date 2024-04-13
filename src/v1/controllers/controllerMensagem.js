@@ -8,9 +8,14 @@ const getMensagem = async (req, res) => {
       where: {
         id,
       },
+      include: {
+        user: true,
+        conactUSaer,
+      },
     });
+    res.json(response);
   } catch (error) {
-    res.status(400).json({ mensage: error.mensage });
+    res.json(error);
   }
 };
 
@@ -27,16 +32,21 @@ const createMensagem = async (req, res) => {
     });
     res.json({ message: "sucess" });
   } catch (error) {
-    res.status(400).json({ mensage: "error" });
+    res.json({ mensage: "error" });
   }
 };
 
 const getMensagens = async (req, res) => {
   try {
-    const response = await prisma.messagem.findMany();
-    res.json(response);
+    const response = await prisma.messagem.findMany({
+      include: {
+        user: true,
+        conactUSaer,
+      },
+    });
+    // res.json("response");
   } catch (error) {
-    res.json({ mensage: error.mensage });
+    res.json(error);
   }
 };
 const getMensagemporNome = async (req, res) => {
@@ -46,10 +56,14 @@ const getMensagemporNome = async (req, res) => {
       where: {
         contactId,
       },
+      include: {
+        user: true,
+        conactUSaer,
+      },
     });
     res.json(response);
   } catch (error) {
-    res.json({ mensage: error.mensage });
+    res.json(error);
   }
 };
 const getMensagemNaoLida = async (req, res) => {
@@ -59,10 +73,14 @@ const getMensagemNaoLida = async (req, res) => {
       where: {
         contactId,
       },
+      include: {
+        user: true,
+        conactUSaer,
+      },
     });
     res.json(response);
   } catch (error) {
-    res.json({ mensage: error.mensage });
+    res.json(error);
   }
 };
 const getMensagemporNomeOrder = async (req, res) => {
@@ -72,10 +90,14 @@ const getMensagemporNomeOrder = async (req, res) => {
       where: {
         contactId,
       },
+      include: {
+        user: true,
+        conactUSaer,
+      },
     });
     res.json(response);
   } catch (error) {
-    res.json({ mensage: error.mensage });
+    res.json(error);
   }
 };
 
@@ -85,7 +107,7 @@ const deleteMensagem = async (req, res) => {
     await prisma.messagem.delete(id);
     res.status(200).json({ user: "Removido Com sucesso" });
   } catch (error) {
-    res.json({ mensage: error.mensage });
+    res.json(error);
   }
 };
 

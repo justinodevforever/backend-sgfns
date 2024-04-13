@@ -29,6 +29,9 @@ const getContactsusuario = async (req, res) => {
         receiveId,
         sendId,
       },
+      include: {
+        user: true,
+      },
     });
     res.json(response);
   } catch (error) {
