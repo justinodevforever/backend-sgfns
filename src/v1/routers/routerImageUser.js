@@ -8,6 +8,7 @@ const {
   removeImageUser,
   getImagesUser,
   imagesUser,
+  upDateImageUSer,
 } = require("../controllers/controllerImageUser");
 
 const router = Router();
@@ -20,5 +21,6 @@ router.post(
 router.delete("/image/user/:id", authorization, removeImageUser);
 router.post("/images/user", authorization, getImagesUser);
 router.get("/images/user", authorization, imagesUser);
+router.put("/images/:id", authorization, upDateImageUSer);
 
 module.exports = router;

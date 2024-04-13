@@ -1,9 +1,19 @@
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+
 const createDisciplina = async (req, res) => {
   try {
-    const { nome, fk_ano, fk_curso, fk_semestre } = req.body;
-    if (!nome || !fk_curso || !fk_semestre || !fk_ano) {
+    const { nome, fk_ano, fk_semestre } = req.body;
+    if (!nome || !fk_semestre || !fk_ano) {
       return res.json({ message: "error" });
     }
+    await prisma.disciplina.create({
+      data: {
+        nome,
+        fk_ano,
+        fk_semestre,
+      },
+    });
 
     res.status(201).json({ message: "sucess" });
   } catch (error) {
@@ -13,6 +23,8 @@ const createDisciplina = async (req, res) => {
 
 const getDisciplinas = async (req, res) => {
   try {
+    const response = await prisma.disciplina.findMany();
+    res.status(200).json(response);
   } catch (error) {
     res.json({ message: "error" });
   }
@@ -23,6 +35,24 @@ const DisciplinasPorAnoCurso = async (req, res) => {
     if (!ano || !curso || !semestre) {
       return res.json({ message: "error" });
     }
+    const response = await prisma.disciplina.findFirst({
+      include: [
+        {
+          cursos: {
+            where: {
+              curso,
+            },
+          },
+          semestre: {
+            semestre,
+          },
+        },
+      ],
+      where: {
+        nome,
+      },
+    });
+    res.status(200).json(response);
   } catch (error) {
     res.json({ message: "error" });
   }

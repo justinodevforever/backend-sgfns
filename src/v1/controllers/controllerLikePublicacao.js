@@ -1,7 +1,18 @@
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+
 const createLikePublicacao = async (req, res) => {
   const { like, fk_publicacao, fk_user } = req.body;
 
   try {
+    await prisma.linkPublicacao.create({
+      data: {
+        linke,
+        fk_publicacao,
+        fk_user,
+      },
+    });
+    res.status(201).json({ message: "sucess" });
   } catch (error) {
     res.status(201).json(error);
   }
@@ -9,6 +20,13 @@ const createLikePublicacao = async (req, res) => {
 
 const getLikePublicacoes = async (req, res) => {
   try {
+    const response = await prisma.linkPublicacao.findMany({
+      include: {
+        publicacao: {},
+        usuario: {},
+      },
+    });
+    res.status(200).json(response);
   } catch (error) {
     res.status(201).json(error);
   }
@@ -18,6 +36,16 @@ const getLikePublicacao = async (req, res) => {
   const { id } = req.params;
 
   try {
+    const response = await prisma.linkPublicacao.findFirst({
+      include: {
+        publicacao: {},
+        usuario: {},
+      },
+      where: {
+        id,
+      },
+    });
+    res.status(200).json(response);
   } catch (error) {
     res.status(201).json(error);
   }
@@ -27,6 +55,17 @@ const getLikePublicacaoEspecific = async (req, res) => {
   const { fk_user, fk_publicacao } = req.body;
 
   try {
+    const response = await prisma.linkPublicacao.findFirst({
+      include: {
+        publicacao: {},
+        usuario: {},
+      },
+      where: {
+        fk_publicacao,
+        fk_user,
+      },
+    });
+    res.status(200).json(response);
   } catch (error) {
     res.status(201).json(error);
   }
@@ -34,6 +73,17 @@ const getLikePublicacaoEspecific = async (req, res) => {
 const getLikePublicacaoEspecificUser = async (req, res) => {
   const { fk_user, cliclike } = req.body;
   try {
+    const response = await prisma.linkPublicacao.findFirst({
+      include: {
+        publicacao: {},
+        usuario: {},
+      },
+      where: {
+        linke: cliclike,
+        fk_user,
+      },
+    });
+    res.status(200).json(response);
   } catch (error) {
     res.status(201).json(error);
   }
@@ -44,6 +94,15 @@ const upDateLikePublicacao = async (req, res) => {
   const { like } = req.body;
 
   try {
+    await prisma.linkPublicacao.update({
+      data: {
+        linke,
+      },
+      where: {
+        id,
+      },
+    });
+    res.json({ message: "sucess" });
   } catch (error) {
     res.status(201).json(error);
   }
@@ -52,6 +111,7 @@ const upDateLikePublicacao = async (req, res) => {
 const deleteLikePublicacao = async (req, res) => {
   const { id } = req.params;
   try {
+    await prisma.linkPublicacao.delete(id);
   } catch (error) {
     res.status(201).json(error);
   }
@@ -60,6 +120,13 @@ const CountLikePublicacao = async (req, res) => {
   const { fk_publicacao, like } = req.body;
 
   try {
+    const response = await prisma.linkPublicacao.count({
+      where: {
+        fk_publicacao,
+        linke,
+      },
+    });
+    res.status(200).json(response);
   } catch (error) {
     res.status(201).json(error);
   }

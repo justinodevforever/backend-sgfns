@@ -137,7 +137,8 @@ const logar = async (req, res) => {
         email,
       },
     });
-    if (!User) {
+
+    if (!User || User === null) {
       res.status(201).json({ mensage: "email ou senha Errada" });
     } else {
       if (password === null || typeof password === undefined)

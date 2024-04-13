@@ -44,6 +44,15 @@ const createEstudante = async (req, res) => {
       res.json({ message: "error" });
       return;
     }
+    const resp = await prisma.estudante.findFirst({
+      where: {
+        bi,
+      },
+    });
+    if (resp) {
+      res.json({ message: "exist" });
+      return;
+    }
     const response = await prisma.estudante.create({
       data: {
         nome,
@@ -57,7 +66,7 @@ const createEstudante = async (req, res) => {
     res.json(response);
     res.status(200).json({ message: "sucess" });
   } catch (error) {
-    res.status(401).json({ message: error });
+    res.json({ message: error });
   }
 };
 
@@ -119,7 +128,7 @@ const getAllEstudante = async (req, res) => {
     });
     res.json(response);
   } catch (error) {
-    res.status(401).json({ mensage: error.mensage });
+    res.json({ mensage: error.mensage });
   }
 };
 const getEstudantePorUsuario = async (req, res) => {
@@ -136,7 +145,7 @@ const getEstudantePorUsuario = async (req, res) => {
     });
     res.json(response);
   } catch (error) {
-    res.status(401).json({ mensage: error.mensage });
+    res.json({ mensage: error.mensage });
   }
 };
 
@@ -151,7 +160,7 @@ const deleteEstudante = async (req, res) => {
     res.json(response);
     res.status(200).json({ user: "Removido Com sucesso" });
   } catch (error) {
-    res.status(401).json({ mensage: error.mensage });
+    res.json({ mensage: error.mensage });
   }
 };
 

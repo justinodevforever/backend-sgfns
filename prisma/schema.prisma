@@ -13,11 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User{
-  id Int @id @default(autoincrement())
-  email String
-  nome String
-}
+
 model UserSystem{
   id String @id @default(uuid())
   nome String
@@ -153,7 +149,7 @@ semestre Semestre @relation(fields: [fk_semestre],references: [id])
 }
 model ExameEspecial{
   id String @id @default(uuid())
-  valor String @unique
+  valor String
   createdAt DateTime @default(now())
   rupe BigInt
 
@@ -193,7 +189,7 @@ semestre Semestre @relation(fields: [fk_semestre],references: [id])
 }
 model Recurso{
   id String @id @default(uuid())
-  valor String @unique
+  valor String
   createdAt DateTime @default(now())
   rupe BigInt
 
@@ -216,7 +212,7 @@ model ProfileUser{
   nome String @unique
   legenda String
   usuario Usuario @relation(fields: [fk_user], references: [id])
-  fk_user String @unique
+  fk_user String
 
 }
 model ProfilePublicacao{
@@ -229,7 +225,7 @@ model ProfilePublicacao{
 }
 model Publicacao{
   id String @id @default(uuid())
-  publicacao String @unique
+  publicacao String
   createdAt DateTime @default(now())
   usuario Usuario @relation(fields: [fk_user], references: [id])
   fk_user String 
@@ -305,7 +301,7 @@ conactUSaer ContactUser @relation(fields: [contactId],references: [id])
 }
 model Propina{
   id String @id @default(uuid())
-  valor String @unique
+  valor String
   createdAt DateTime @default(now())
   rupe BigInt
 
