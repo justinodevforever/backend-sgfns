@@ -1,3 +1,6 @@
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+
 const createPropina = async (req, res) => {
   try {
     const {
@@ -32,12 +35,31 @@ const createPropina = async (req, res) => {
       res.status(201).json({ message: "error" });
       return;
     }
+    const resp = await prisma.propina.findFirst({
+      where: {
+        fk_ano,
+        fk_mes,
+        fk_estudante,
+      },
+    });
 
-    // if () {
-    //   res.status(201).json({ message: "exist" });
-    //   return;
-    // }
-
+    if (resp) {
+      res.status(201).json({ message: "exist" });
+      return;
+    }
+    await prisma.propina.create({
+      data: {
+        rupe,
+        valor,
+        anoLectivo,
+        fk_ano,
+        createdAt: Date.now(),
+        fk_estudante,
+        fk_mes,
+        fk_user,
+        fk_semestre,
+      },
+    });
     res.status(201).json({ message: "sucess" });
   } catch (error) {
     res.json({ message: error });
@@ -69,41 +91,42 @@ const verDivida = async (req, res) => {
       .toLocaleTimeString("pt-BR", { year: "numeric" })
       .split(",");
 
-    // const response = await Propina.findAll({
-    //   include: [
-    //     { model: usuario },
-    //     {
-    //       model: Mes,
-    //     },
-    //     { model: Estudante, where: { bi } },
-    //     {
-    //       model: AnoLetivo,
-    //       where: {
-    //         ano: {
-    //           [Op.like]: `%${ano}%`,
-    //         },
-    //       },
-    //     },
-    //   ],
-    // });
+    const response = await prisma.propina.findMany({
+      where: {
+        estudante: {
+          bi,
+        },
+        anoLectivo: {
+          ano: {
+            contains: ano,
+          },
+        },
+      },
+      include: {
+        usuario: true,
+        mes: true,
+        estudante: true,
+        anoLectivo: true,
+      },
+    });
 
-    // let mesesAll = [];
-    // let mesesAll1 = [];
-    // response.map((prop) => {
-    //   mesesAll.push(prop.Me.mes);
-    // });
+    let mesesAll = [];
+    let mesesAll1 = [];
+    response.map((prop) => {
+      mesesAll.push(prop.Me.mes);
+    });
 
-    // for (let mes = 0; mes < meses.length; mes++) {
-    //   if (meses[mes].toLowerCase() === mesHoje.toLowerCase()) break;
+    for (let mes = 0; mes < meses.length; mes++) {
+      if (meses[mes].toLowerCase() === mesHoje.toLowerCase()) break;
 
-    //   if (!mesesAll.some((me) => me.includes(meses[mes]))) {
-    //     mesesAll1.push(meses[mes]);
-    //   }
-    // }
+      if (!mesesAll.some((me) => me.includes(meses[mes]))) {
+        mesesAll1.push(meses[mes]);
+      }
+    }
 
-    // if (mesesAll1.length <= 0) res.json({ message: "Sem dívida" });
+    if (mesesAll1.length <= 0) res.json({ message: "Sem dívida" });
 
-    // res.json({ dividas: mesesAll1, message: "está com dívida" });
+    res.json({ dividas: mesesAll1, message: "está com dívida" });
   } catch (error) {
     console.log({ mensage: error });
   }
@@ -112,6 +135,26 @@ const verDivida = async (req, res) => {
 const getPropinasMensal = async (req, res) => {
   const { bi, mes, ano } = req.body;
   try {
+    const response = await prisma.propina.findFirst({
+      where: {
+        estudante: {
+          bi,
+        },
+        anoLectivo: {
+          ano,
+        },
+        mes: {
+          mes,
+        },
+      },
+      include: {
+        estudante: true,
+        mes: true,
+        anoLectivo: true,
+        usuario: true,
+      },
+    });
+    res.json(response);
   } catch (error) {
     res.json(error);
   }
@@ -119,12 +162,41 @@ const getPropinasMensal = async (req, res) => {
 const getPropinasAnual = async (req, res) => {
   const { bi, ano, semestre } = req.body;
   try {
+    const response = await prisma.propina.findMany({
+      where: {
+        estudante: {
+          bi,
+        },
+        anoLectivo: {
+          ano,
+        },
+        mes: {
+          mes,
+        },
+      },
+      include: {
+        estudante: true,
+        mes: true,
+        anoLectivo: true,
+        usuario: true,
+      },
+    });
+    res.json(response);
   } catch (error) {
     res.json(error);
   }
 };
 const getPropinas = async (req, res) => {
   try {
+    const response = await prisma.propina.findMany({
+      include: {
+        estudante: true,
+        mes: true,
+        anoLectivo: true,
+        usuario: true,
+      },
+    });
+    res.json(response);
   } catch (error) {
     res.json(error);
   }
@@ -132,6 +204,18 @@ const getPropinas = async (req, res) => {
 const getPropina = async (req, res) => {
   try {
     const { id } = req.params;
+    const response = await prisma.propina.findFirst({
+      where: {
+        id,
+      },
+      include: {
+        estudante: true,
+        mes: true,
+        anoLectivo: true,
+        usuario: true,
+      },
+    });
+    res.json(response);
   } catch (error) {
     res.json(error);
   }
@@ -139,6 +223,18 @@ const getPropina = async (req, res) => {
 const getPropinaEspecifico = async (req, res) => {
   try {
     const { id } = req.body;
+    const response = await prisma.propina.findFirst({
+      where: {
+        id,
+      },
+      include: {
+        estudante: true,
+        mes: true,
+        anoLectivo: true,
+        usuario: true,
+      },
+    });
+    res.json(response);
   } catch (error) {
     res.json(error);
   }
@@ -147,6 +243,8 @@ const getPropinaEspecifico = async (req, res) => {
 const deletePropina = async (req, res) => {
   try {
     const { id } = req.params;
+    const response = await prisma.propina.findFirst(id);
+    res.json(response);
   } catch (error) {
     res.json(error);
   }
@@ -158,6 +256,16 @@ const upDatePropina = async (req, res) => {
     if (!fk_ano || !fk_mes || !rupe) {
       return res.json({ message: "Error" });
     }
+    const response = await prisma.propina.update({
+      where: {
+        id,
+      },
+      data: {
+        fk_ano,
+        fk_mes,
+        rupe,
+      },
+    });
 
     res.json({ message: "Sucess" });
   } catch (error) {
@@ -176,63 +284,57 @@ const getEstudantePropina = async (req, res) => {
 
     const { ano, id } = req.params;
 
-    // if (Number(mesHoje) === Number(1)) {
-    //   mesHoje = 12;
-    //   const response = await Propina.findAll({
-    //     include: [
-    //       { model: usuario },
-    //       {
-    //         model: Mes,
-    //         where: {
-    //           algarismo: {
-    //             [Op.eq]: `${Number(mesHoje)}`,
-    //           },
-    //         },
-    //       },
-    //       { model: AnoLetivo },
-    //     ],
-    //     where: {
-    //       [Op.and]: {
-    //         fk_ano: ano,
-    //       },
-    //     },
-    //   });
-    //   if (!response[0]) {
-    //     res.json({
-    //       Mensagem: "Deves Fazer o Pagamento das tuas Propinas",
-    //       m: response[0],
-    //     });
-    //   } else if (response[0]) {
-    //     res.json({ Mensagem: "Situação da Propina Legal" });
-    //   }
-    //   return;
-    // }
+    if (Number(mesHoje) === Number(1)) {
+      mesHoje = 12;
+      const response = await prisma.propina.findMany({
+        where: {
+          mes: {
+            algarismo: `${Number(mesHoje)}`,
+          },
+          fk_ano: ano,
+        },
+        include: {
+          usuario: true,
+          anoLectivo: true,
+          mes: true,
+        },
+      });
+      if (!response[0]) {
+        res.json({
+          Mensagem: "Deves Fazer o Pagamento das tuas Propinas",
+          m: response[0],
+        });
+      } else if (response[0]) {
+        res.json({ Mensagem: "Situação da Propina Legal" });
+      }
+      return;
+    }
 
-    // const response = await Propina.findAll({
-    //   include: [
-    //     { model: usuario },
-    //     {
-    //       model: Mes,
-    //       where: {
-    //         algarismo: {
-    //           [Op.eq]: `${Number(mesHoje) - 1}`,
-    //         },
-    //       },
-    //     },
-    //     { model: AnoLetivo },
-    //   ],
-    //   where: {
-    //     fk_ano: ano,
-    //   },
-    // });
+    const response = await Propina.findAll({
+      include: [
+        { model: usuario },
+        {
+          model: Mes,
+          where: {
+            algarismo: {
+              [Op.eq]: `${Number(mesHoje) - 1}`,
+            },
+          },
+        },
+        { model: AnoLetivo },
+      ],
+      where: {
+        fk_ano: ano,
+      },
+    });
 
-    // if (!response[0]) {
-    //   res.json({
-    //     Mensagem: "Deves Fazer o Pagamento das tuas Propinas",
-    //   });
-    // } else if (response[0]) {
-    //   res.json({ Mensagem: "Situação da Propina Legal" });
-    // }
+    if (!response[0]) {
+      res.json({
+        Mensagem: "Deves Fazer o Pagamento das tuas Propinas",
+      });
+    } else if (response[0]) {
+      res.json({ Mensagem: "Situação da Propina Legal" });
+    }
   } catch (error) {
     res.json({ mensage: error });
   }

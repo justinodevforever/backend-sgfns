@@ -97,7 +97,9 @@ const getEstudanteBi = async (req, res) => {
       },
     });
     res.json(response);
-  } catch (error) {}
+  } catch (error) {
+    res.json(error);
+  }
 };
 const getEstudanteEspecifico = async (req, res) => {
   try {
