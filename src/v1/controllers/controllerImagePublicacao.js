@@ -6,13 +6,14 @@ const createImagePublicacao = async (req, res) => {
 
   try {
     const filename = req.file;
+    console.log(filename.filename, fk_publicacao);
 
     if (filename !== undefined) {
       const response = await prisma.profilePublicacao.create({
         data: {
           fk_publicacao,
-          legenda: "",
-          nome: filename,
+          legenda: "hghg",
+          nome: filename.filename,
         },
       });
       res.status(200).json(response);
@@ -20,7 +21,7 @@ const createImagePublicacao = async (req, res) => {
       res.status(200).json("response");
     }
   } catch (error) {
-    res.status(401).json({ mensage: error.mensage });
+    res.json({ mensage: error.mensage });
   }
 };
 

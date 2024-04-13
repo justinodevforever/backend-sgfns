@@ -5,14 +5,14 @@ const createPublicacao = async (req, res) => {
   try {
     const { publicacao, fk_user } = req.body;
     if (publicacao != undefined || publicacao != "") {
-      await prisma.publicacao.create({
+      const response = await prisma.publicacao.create({
         data: {
           publicacao,
           fk_user,
         },
       });
+      res.status(201).json(response);
     }
-    res.status(201).json({ message: "sucesso" });
   } catch (error) {
     res.json({ message: "error" });
   }

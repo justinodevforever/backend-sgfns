@@ -246,7 +246,7 @@ model Comentario{
 }
 model LinkComentarioPublicacao{
   id String @id @default(uuid())
-  linke Boolean?
+  like Boolean?
   createdAt DateTime @default(now())
   usuario Usuario @relation(fields: [fk_user], references: [id])
   fk_user String 
@@ -256,7 +256,7 @@ model LinkComentarioPublicacao{
 }
 model LinkPublicacao{
   id String @id @default(uuid())
-  linke Boolean?
+  like Boolean?
   createdAt DateTime @default(now())
   usuario Usuario @relation(fields: [fk_user], references: [id])
   fk_user String 
@@ -266,7 +266,7 @@ model LinkPublicacao{
 }
 model LinkComunicado{
   id String @id @default(uuid())
-  linke Boolean?
+  like Boolean?
   createdAt DateTime @default(now())
   usuario Usuario @relation(fields: [fk_user], references: [id])
   fk_user String 

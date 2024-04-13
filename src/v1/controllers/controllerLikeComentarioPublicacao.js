@@ -7,7 +7,7 @@ const createLikeComentarioPublicacao = async (req, res) => {
   try {
     await prisma.linkComentarioPublicacao.create({
       data: {
-        linke,
+        like,
         fk_comentario,
         fk_user,
       },
@@ -32,6 +32,10 @@ const getLikeComentarioPublicacao = async (req, res) => {
 
   try {
     const response = await prisma.linkComentarioPublicacao.findFirst({
+      include: {
+        usuario: {},
+        comentario: {},
+      },
       where: {
         id,
       },
@@ -46,7 +50,7 @@ const getLikeComentarioPublicacaoEspecific = async (req, res) => {
   const { fk_user, fk_comentario } = req.body;
 
   try {
-    const response = await prisma.linkComentarioPublicacao.findFirst({
+    const response = await prisma.linkComentarioPublicacao.findMany({
       include: {
         usuario: {},
         comentario: {},
@@ -66,7 +70,7 @@ const getLikeComentarioPublicacaoEspecificUser = async (req, res) => {
   try {
     const response = await prisma.linkComentarioPublicacao.findFirst({
       where: {
-        linke: cliclike,
+        like: cliclike,
         fk_user,
       },
     });
@@ -83,7 +87,7 @@ const upDateLikeComentarioPublicacao = async (req, res) => {
   try {
     const response = await prisma.linkComentarioPublicacao.update({
       data: {
-        linke,
+        like,
       },
       where: {
         id,
@@ -110,7 +114,7 @@ const CountLikeComentarioPublicacao = async (req, res) => {
     const response = await prisma.linkComentarioPublicacao.count({
       where: {
         fk_comentario,
-        linke,
+        like: true,
       },
     });
     res.json(response);

@@ -4,29 +4,49 @@ const prisma = new PrismaClient();
 const getComentarioPublicacao = async (req, res) => {
   const { id } = req.params;
   try {
-    const response = await prisma.comentario.create({
-      data: {
-        comentario: {},
+    const response = await prisma.comentario.findFirst({
+      include: {
+        usuario: {},
         publicacao: {},
       },
+      where: {
+        id,
+      },
+      skip: 6,
+      take: 3,
     });
-  } catch (error) {}
+    res.json(response);
+  } catch (error) {
+    res.json(error);
+  }
 };
 const createComentarioPublicacao = async (req, res) => {
   const { comentario, fk_user, fk_publicacao } = req.body;
   try {
-    if (!comentario) {
+    if (!comentario || !fk_publicacao || !fk_user) {
       res.json("Campo Vazio");
       return;
     }
-    await prisma.comentario.create({
+    const resp = await prisma.comentario.create({
       data: {
         comentario,
         fk_user,
         fk_publicacao,
       },
     });
-  } catch (error) {}
+    const response = await prisma.comentario.findFirst({
+      include: {
+        usuario: {},
+        publicacao: {},
+      },
+      where: {
+        id: resp.id,
+      },
+    });
+    res.json(response);
+  } catch (error) {
+    res.json(error);
+  }
 };
 
 const getComentariosPublicacoes = async (req, res) => {
@@ -41,6 +61,7 @@ const getComentariosPublicacoes = async (req, res) => {
       skip: skip,
       teke: teke,
     });
+    res.json(response);
   } catch (error) {
     res.json({ message: "error" });
   }
@@ -78,6 +99,10 @@ const getComentSpecific = async (req, res) => {
   const { skip, teke } = req.query;
   try {
     const response = await prisma.comentario.findMany({
+      include: {
+        usuario: {},
+        publicacao: {},
+      },
       where: {
         fk_publicacao,
       },

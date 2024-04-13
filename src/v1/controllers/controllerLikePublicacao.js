@@ -7,7 +7,7 @@ const createLikePublicacao = async (req, res) => {
   try {
     await prisma.linkPublicacao.create({
       data: {
-        linke,
+        like,
         fk_publicacao,
         fk_user,
       },
@@ -55,7 +55,7 @@ const getLikePublicacaoEspecific = async (req, res) => {
   const { fk_user, fk_publicacao } = req.body;
 
   try {
-    const response = await prisma.linkPublicacao.findFirst({
+    const response = await prisma.linkPublicacao.findMany({
       include: {
         publicacao: {},
         usuario: {},
@@ -79,7 +79,7 @@ const getLikePublicacaoEspecificUser = async (req, res) => {
         usuario: {},
       },
       where: {
-        linke: cliclike,
+        like: cliclike,
         fk_user,
       },
     });
@@ -96,7 +96,7 @@ const upDateLikePublicacao = async (req, res) => {
   try {
     await prisma.linkPublicacao.update({
       data: {
-        linke,
+        like,
       },
       where: {
         id,
@@ -123,7 +123,7 @@ const CountLikePublicacao = async (req, res) => {
     const response = await prisma.linkPublicacao.count({
       where: {
         fk_publicacao,
-        linke,
+        like: true,
       },
     });
     res.status(200).json(response);
