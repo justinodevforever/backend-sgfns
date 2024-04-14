@@ -9,9 +9,9 @@ const createImageUser = async (req, res) => {
       res.json({ message: "error" });
       return;
     }
-    const response = await prisma.profileUser.create({
+    await prisma.profileUser.create({
       data: {
-        nome: filename,
+        nome: filename.filename,
         legenda,
         fk_user,
       },
@@ -25,10 +25,14 @@ const createImageUser = async (req, res) => {
 const getImagesUser = async (req, res) => {
   const { fk_user } = req.body;
   try {
-    const response = await prisma.profileUser.findFirst({
+    const response = await prisma.profileUser.findMany({
+      include: {
+        usuario: true,
+      },
       where: {
         fk_user,
       },
+      orderBy: [{ id: "desc" }],
     });
     res.json(response);
   } catch (error) {
@@ -37,7 +41,11 @@ const getImagesUser = async (req, res) => {
 };
 const imagesUser = async (req, res) => {
   try {
-    const response = await prisma.profileUser.findMany();
+    const response = await prisma.profileUser.findMany({
+      include: {
+        usuario,
+      },
+    });
     res.json(response);
   } catch (error) {
     res.json({ mensage: error });
@@ -47,7 +55,7 @@ const imagesUser = async (req, res) => {
 const removeImageUser = async (req, res) => {
   const { id } = req.params;
   try {
-    const response = await prisma.profileUser.delete(id);
+    const response = await prisma.profileUser.delete({ where: { id } });
     res.json(response);
   } catch (error) {
     res.json({ mensage: error });

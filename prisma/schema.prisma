@@ -211,6 +211,7 @@ model ProfileUser{
   id String @id @default(uuid())
   nome String @unique
   legenda String
+  createdAt DateTime @default(now())
   usuario Usuario @relation(fields: [fk_user], references: [id])
   fk_user String
 

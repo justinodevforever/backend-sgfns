@@ -17,7 +17,7 @@ router.post(
   multer(multerConfig).single("file"),
   createImagePublicacao
 );
-router.post("/images/publication", authorization, getImagePublication);
+router.post("/image/publication/specific", authorization, getImagePublication);
 router.get("/image/publication", authorization, getImagePublicacao);
 router.put("/image/publication/:id", authorization, updateImagePublicacao);
 router.delete("/image/publication/:id", authorization, deleteImagePublicacao);

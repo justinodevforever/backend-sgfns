@@ -6,7 +6,6 @@ const createImagePublicacao = async (req, res) => {
 
   try {
     const filename = req.file;
-    console.log(filename.filename, fk_publicacao);
 
     if (filename !== undefined) {
       const response = await prisma.profilePublicacao.create({
@@ -41,7 +40,15 @@ const getImagePublicacao = async (req, res) => {
 const getImagePublication = async (req, res) => {
   const { fk_publicacao } = req.body;
   try {
-  } catch (error) {}
+    const response = await prisma.profilePublicacao.findFirst({
+      where: {
+        fk_publicacao,
+      },
+    });
+    res.json(response);
+  } catch (error) {
+    res.json({ message: error });
+  }
 };
 
 const updateImagePublicacao = async (req, res) => {
@@ -49,16 +56,27 @@ const updateImagePublicacao = async (req, res) => {
   const { id } = req.params;
   try {
     const { filename } = req.file;
+    await prisma.profilePublicacao.update({
+      data: {
+        fk_publicacao,
+        nome: filename,
+      },
+      where: {
+        id,
+      },
+    });
+    res.json();
   } catch (error) {
-    res.status(401).json({ mensage: error.mensage });
+    res.json({ mensage: error.mensage });
   }
 };
 
 const deleteImagePublicacao = async (req, res) => {
   const { id } = req.params;
   try {
+    await prisma.profilePublicacao.delete({ where: { id } });
   } catch (error) {
-    res.status(401).json({ mensage: error.mensage });
+    res.json({ mensage: error.mensage });
   }
 };
 
