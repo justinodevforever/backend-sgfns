@@ -86,10 +86,6 @@ app.use(
   express.static(path.resolve(__dirname, "src", "public", "upload"))
 );
 
-//routers
-app.get("/", (req, res) => {
-  res.json("ddddddddddddddddddd");
-});
 app.use("/api/v1", roueterUser);
 app.use("/api/v1", routerComentarioPublicacao);
 app.use("/api/v1", routerPublicacao);

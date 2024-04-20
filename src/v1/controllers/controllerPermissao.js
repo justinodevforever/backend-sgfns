@@ -21,7 +21,9 @@ const getPermissoes = async (req, res) => {
   try {
     const response = await prisma.permission.findMany();
     res.json(response);
-  } catch (error) {}
+  } catch (error) {
+    res.json(error)
+  }
 };
 
 const getPermissao = async (req, res) => {
@@ -38,14 +40,33 @@ const getPermissao = async (req, res) => {
 const deletePermissao = async (req, res) => {
   const { id } = req.params;
   try {
-  } catch (error) {}
+    await prisma.permission.delete({
+      where:{
+        id
+      }
+    })
+  } catch (error) {
+    res.json(error)
+  }
 };
 const updatePermissao = async (req, res) => {
   const { id } = req.params;
   const { permissao } = req.body;
 
   try {
-  } catch (error) {}
+    await prisma.permission.update({
+      data:{
+        permissao
+         
+      },
+where:{
+  id
+}
+    })
+    res.json({message:"sucess"})
+  } catch (error) {
+    res.json(error)
+  }
 };
 
 module.exports = {

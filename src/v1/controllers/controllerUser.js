@@ -122,6 +122,16 @@ const upDateUser = async (req, res) => {
   const { nome, email, contacto, bi } = req.body;
 
   try {
+    await prisma.usuario.update({
+      data: {
+        nome,
+        contacto,
+        bi,
+      },
+      where:{
+        id
+      }
+    });
     res.status(200).json({ mensage: "Dados atualizados com sucesso" });
   } catch (error) {
     res.status(201).json({ mensage: error.mensage });

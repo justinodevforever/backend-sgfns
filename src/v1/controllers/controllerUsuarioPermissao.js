@@ -3,15 +3,15 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const createUsuarioPermissoes = async (req, res) => {
-  const { fk_permissao, fk_user } = req.body;
+  const { fk_permission, fk_user } = req.body;
   try {
-    if (!fk_permissao || !fk_user) {
+    if (!fk_permission || !fk_user) {
       res.json({ message: "error" });
       return;
     }
     const response = await prisma.userPermission.create({
       data: {
-        fk_permission: fk_permissao,
+        fk_permission,
         fk_user,
       },
     });
@@ -36,6 +36,30 @@ const getUsuariosPermissoes = async (req, res) => {
   }
 };
 
+const getUsuarioPermissoesChat = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const response = await prisma.userPermission.findMany({
+      include: {
+        user: true,
+        permission: true,
+      },
+      where: {
+        permission: {
+          OR: [
+            {
+              permissao: "secretário",
+            },
+            {
+              permissao: "admin",
+            },
+          ],
+        },
+      },
+    });
+    res.json(response);
+  } catch (error) {}
+};
 const getUsuarioPermissoes = async (req, res) => {
   const { id } = req.params;
   try {
@@ -54,15 +78,28 @@ const getUsuarioPermissoes = async (req, res) => {
 const deleteUsuarioPermissoes = async (req, res) => {
   const { id } = req.params;
   try {
+    await prisma.userPermission.delete({ where: { id } });
     res.json({ msg: "Dados Removido com sucesso" });
   } catch (error) {}
 };
 const updateUsuarioPermissoes = async (req, res) => {
   const { id } = req.params;
-  const { fk_permissao, fk_user } = req.body;
+  const { fk_permission, fk_user } = req.body;
 
   try {
-  } catch (error) {}
+    await prisma.userPermission.update({
+      data: {
+        fk_permission,
+        fk_user,
+      },
+      where: {
+        id,
+      },
+    });
+    res.json({ message: "sucess" });
+  } catch (error) {
+    res.json(error);
+  }
 };
 
 module.exports = {
@@ -71,4 +108,5 @@ module.exports = {
   getUsuarioPermissoes,
   deleteUsuarioPermissoes,
   updateUsuarioPermissoes,
+  getUsuarioPermissoesChat,
 };

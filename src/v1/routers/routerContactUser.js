@@ -8,6 +8,7 @@ const {
   Contactusuariopecific,
   deleteContactUsuario,
   upDateContactUsuario,
+  findContact,
 } = require("../controllers/controllerContactoUsuario");
 
 const router = Router();
@@ -19,5 +20,6 @@ router.get("/contact/user/:userId", authorization, ContactUsuario);
 router.post("/contact/users/specific", authorization, Contactusuariopecific);
 router.delete("/contact/user/:id", authorization, deleteContactUsuario);
 router.put("/contact/user/:id", authorization, upDateContactUsuario);
+router.post("/contact/findUser/", authorization, findContact);
 
 module.exports = router;

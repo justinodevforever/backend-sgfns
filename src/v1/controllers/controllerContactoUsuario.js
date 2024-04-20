@@ -4,18 +4,18 @@ const prisma = new PrismaClient();
 const createContactUsuario = async (req, res) => {
   const { sendId, receiveId, seguir } = req.body;
   try {
-    if (!sendId || !receiveId || !seguir) {
+    if (!sendId || !receiveId) {
       res.json({ message: "error" });
       return;
     }
-    await prisma.contactUser.create({
+    const response = await prisma.contactUser.create({
       data: {
         sendId,
         receiveId,
-        seguir,
+        seguir: true,
       },
     });
-    res.json({ messae: "sucess" });
+    res.json({ messae: "sucess", response: response });
   } catch (error) {
     res.json({ mensage: "error" });
   }
@@ -25,17 +25,14 @@ const getContactsusuario = async (req, res) => {
 
   try {
     const response = await prisma.contactUser.findMany({
-      where: {
-        receiveId,
-        sendId,
-      },
       include: {
-        user: true,
+        sender: true,
+        receiver: true,
       },
     });
     res.json(response);
   } catch (error) {
-    res.json({ mensage: error.mensage });
+    res.json({ mensage: error });
   }
 };
 
@@ -43,6 +40,11 @@ const getContactUsuario = async (req, res) => {
   const { id } = req.params;
   try {
     const response = await prisma.contactUser.findFirst({
+      include: {
+        sender: true,
+        receiver: true,
+      },
+
       where: {
         id,
       },
@@ -53,17 +55,62 @@ const getContactUsuario = async (req, res) => {
   }
 };
 const ContactUsuario = async (req, res) => {
+  const { userId } = req.params;
+
   try {
-    const response = await prisma.contactUser.findMany();
+    const response = await prisma.contactUser.findMany({
+      include: {
+        sender: true,
+
+        receiver: true,
+      },
+      where: {
+        OR: [
+          {
+            sendId: userId,
+          },
+          {
+            receiveId: userId,
+          },
+        ],
+      },
+    });
+
     res.json(response);
   } catch (error) {
-    res.json({ mensage: error.mensage });
+    res.json({ mensage: error });
   }
 };
 const Contactusuariopecific = async (req, res) => {
   const { contactId, userId } = req.body;
   try {
-    const response = await prisma.contactUser.findMany();
+    const response = await prisma.contactUser.findMany({
+      include: {
+        sender: true,
+        receiver: true,
+        contact: true,
+      },
+      where: {
+        contactId,
+        userId,
+      },
+    });
+    res.json(response);
+  } catch (error) {
+    res.json({ mensage: error.mensage });
+  }
+};
+const findContact = async (req, res) => {
+  const { fk_user } = req.body;
+  try {
+    const response = await prisma.contactUser.findMany({
+      include: {
+        sender: true,
+
+        receiver: true,
+        contact: true,
+      },
+    });
     res.json(response);
   } catch (error) {
     res.json({ mensage: error.mensage });
@@ -104,4 +151,5 @@ module.exports = {
   upDateContactUsuario,
   ContactUsuario,
   Contactusuariopecific,
+  findContact,
 };
