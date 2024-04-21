@@ -45,6 +45,7 @@ const imagesUser = async (req, res) => {
       include: {
         usuario,
       },
+      orderBy: [{ id: "desc" }],
     });
     res.json(response);
   } catch (error) {

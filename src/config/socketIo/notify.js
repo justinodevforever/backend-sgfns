@@ -1,3 +1,6 @@
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+
 let online = [];
 
 const addUser = (userId, socketId) => {
@@ -51,41 +54,39 @@ const SocketNotify = (socket, io) => {
         .toLocaleTimeString("pt-BR", { year: "numeric" })
         .split(",");
 
-      // const response = await Propina.findAll({
-      //   include: [
-      //     { model: usuario },
-      //     {
-      //       model: Mes,
-      //     },
-      //     {
-      //       model: AnoLetivo,
-      //       where: {
-      //         ano: {
-      //           [Op.like]: `%${ano}%`,
-      //         },
-      //       },
-      //     },
-      //   ],
-      //   where: {
-      //     fk_estudante,
-      //   },
-      // });
+      const response = await prisma.propina.findMany({
+        where: {
+          fk_estudante,
+          anoLectivo: {
+            ano: {
+              contains: ano,
+            },
+          },
+        },
 
-      // let mesesAll = [];
-      // let mesesAll1 = [];
-      // response.map((prop) => {
-      //   mesesAll.push(prop.Me.mes);
-      // });
+        include: {
+          usuario: true,
+          mes: true,
+          estudante: true,
+          anoLectivo: true,
+        },
+      });
 
-      // for (let mes = 0; mes < meses.length; mes++) {
-      //   if (meses[mes].toLowerCase() === mesHoje.toLowerCase()) break;
+      let mesesAll = [];
+      let mesesAll1 = [];
+      response.map((prop) => {
+        mesesAll.push(prop.Me.mes);
+      });
 
-      //   if (!mesesAll.some((me) => me.includes(meses[mes]))) {
-      //     mesesAll1.push(meses[mes]);
-      //   }
-      // }
+      for (let mes = 0; mes < meses.length; mes++) {
+        if (meses[mes].toLowerCase() === mesHoje.toLowerCase()) break;
 
-      // socket.emit("receivedNotify", mesesAll1);
+        if (!mesesAll.some((me) => me.includes(meses[mes]))) {
+          mesesAll1.push(meses[mes]);
+        }
+      }
+
+      socket.emit("receivedNotify", mesesAll1);
     } catch (error) {
       console.log({ mensage: error });
     }

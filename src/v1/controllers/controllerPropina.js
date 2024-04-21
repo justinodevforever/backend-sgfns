@@ -102,6 +102,7 @@ const verDivida = async (req, res) => {
           },
         },
       },
+
       include: {
         usuario: true,
         mes: true,

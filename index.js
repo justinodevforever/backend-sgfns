@@ -36,6 +36,7 @@ const routerCursoFrequencia = require("./src/v1/routers/routerCursoFrequencia");
 const routerRecurso = require("./src/v1/routers/routerRecurso");
 const routerCadeiraAtraso = require("./src/v1/routers/routerCadeiraAtraso");
 const routerExameEspecial = require("./src/v1/routers/routerExameEspecial");
+const routerPropina = require("./src/v1/routers/routerPropina");
 
 const {
   SocketUser,
@@ -97,7 +98,7 @@ app.use("/api/v1", routerImageUSer);
 app.use("/api/v1", routerContactUser);
 app.use("/api/v1", routerImagePublicacao);
 app.use("/api/v1", routerImagePublicacao);
-
+app.use("/api/v1", routerPropina);
 app.use("/api/v1", routerDeclaracoes);
 app.use("/api/v1", routerLikePublicacao);
 app.use("/api/v1", routerLikeComunicado);

@@ -24,6 +24,6 @@ router.put("/propina/:id", authorization, upDatePropina);
 router.get("/propina/:id", authorization, getPropina);
 router.get("/estudante/propina/:id/:ano", authorization, getEstudantePropina);
 router.get("/propina/especifico", authorization, getPropinaEspecifico);
-router.post("/ver/divida", authorization, verDivida);
+router.post("/divida", authorization, verDivida);
 
 module.exports = router;
