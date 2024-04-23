@@ -16,7 +16,7 @@ const router = Router();
 router.post("/contact/user", authorization, createContactUsuario);
 router.get("/contact/user", authorization, getContactsusuario);
 router.get("/contact/users/:id", authorization, getContactUsuario);
-router.get("/contact/users/:userId", authorization, ContactUsuario);
+router.get("/contact/user/:userId", authorization, ContactUsuario);
 router.post("/contact/users/specific", authorization, Contactusuariopecific);
 router.delete("/contact/user/:id", authorization, deleteContactUsuario);
 router.put("/contact/user/:id", authorization, upDateContactUsuario);
