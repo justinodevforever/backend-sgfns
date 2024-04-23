@@ -14,10 +14,6 @@ datasource db {
 }
 
 
-model UserSystem{
-  id String @id @default(uuid())
-  nome String
-}
 model Role{
   id String @id @default(uuid())
   role String @unique
@@ -321,7 +317,7 @@ usuario Usuario @relation(fields: [fk_user],references: [id])
 model Servico{
   id String @id @default(uuid())
   tipo String
-  dataSolicitacao DateTime @default(now())
+  dataSolicitacao DateTime
   dataValidacao DateTime
   formaPagamento String 
  

@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 const getMensagem = async (req, res) => {
   const { id } = req.params;
   try {
-    const response = await prisma.messagem.findFirst({
+    const response = await prisma.findFirst({
       where: {
         id,
       },
