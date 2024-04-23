@@ -25,7 +25,6 @@ const routerUsuarioPermissao = require("./src/v1/routers/routerUsuarioPermissoes
 const routerAnoFrequencia = require("./src/v1/routers/routerAnoFrequencia");
 const routerAnoLetivo = require("./src/v1/routers/routerAnoLetivo");
 const routerCurso = require("./src/v1/routers/routerCurso");
-const routerCursoDisciplina = require("./src/v1/routers/routerCursoDisplina");
 const routerDisciplina = require("./src/v1/routers/routerDisciplina");
 const routerMes = require("./src/v1/routers/routerMes");
 const routerReconfirmacao = require("./src/v1/routers/routerReconfirmacao");
@@ -110,7 +109,6 @@ app.use("/api/v1", routerPermissao);
 app.use("/api/v1", routerAnoFrequencia);
 app.use("/api/v1", routerAnoLetivo);
 app.use("/api/v1", routerCurso);
-app.use("/api/v1", routerCursoDisciplina);
 app.use("/api/v1", routerDisciplina);
 app.use("/api/v1", routerUsuarioPermissao);
 app.use("/api/v1", routerCursoFrequencia);
