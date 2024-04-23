@@ -36,28 +36,31 @@ const DisciplinasPorAnoCurso = async (req, res) => {
       return res.json({ message: "error" });
     }
     const response = await prisma.disciplina.findMany({
-      include: [
-        {
-          cursos: {
-            where: {
+      include: {
+        cursos: true,
+        semestre: true,
+        frequencia: true,
+      },
+
+      where: {
+        frequencia: {
+          ano,
+        },
+        semestre: {
+          nome: semestre,
+        },
+        cursos: {
+          every: {
+            curso: {
               curso,
             },
           },
-          semestre: {
-            semestre,
-          },
-          frequencia: {
-            ano,
-          },
         },
-      ],
-      where: {
-        nome,
       },
     });
     res.status(200).json(response);
   } catch (error) {
-    res.json({ message: "error" });
+    res.json({ message: "erroree" });
   }
 };
 const DisciplinasEspecifico = async (req, res) => {
