@@ -35,7 +35,7 @@ const DisciplinasPorAnoCurso = async (req, res) => {
     if (!ano || !curso || !semestre) {
       return res.json({ message: "error" });
     }
-    const response = await prisma.disciplina.findFirst({
+    const response = await prisma.disciplina.findMany({
       include: [
         {
           cursos: {
@@ -45,6 +45,9 @@ const DisciplinasPorAnoCurso = async (req, res) => {
           },
           semestre: {
             semestre,
+          },
+          frequencia: {
+            ano,
           },
         },
       ],
@@ -73,6 +76,12 @@ const searchDisciplina = async (req, res) => {
     if (!nome) {
       return res.json({ message: "error" });
     }
+    const response = await prisma.disciplina.findFirst({
+      where: {
+        nome,
+      },
+    });
+    res.json(response);
   } catch (error) {
     res.json({ message: "error" });
   }

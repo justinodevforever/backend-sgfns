@@ -34,7 +34,7 @@ const SocketUser = (socket, io) => {
     const response = await prisma.usuario.findFirst({
       where: { id: data.receiveId },
     });
-
+    console.log(response);
     const messagem = {
       sendId: data?.sendId,
       receiveId: data?.receiveId,

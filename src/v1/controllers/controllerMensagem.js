@@ -28,6 +28,7 @@ const createMensagem = async (req, res) => {
         sms,
         contactId,
         sendId,
+        createdAt: Date.now(),
       },
     });
     res.json({ message: "sucess" });
@@ -44,7 +45,7 @@ const getMensagens = async (req, res) => {
         conactUSaer,
       },
     });
-    // res.json("response");
+    res.json("response");
   } catch (error) {
     res.json(error);
   }
