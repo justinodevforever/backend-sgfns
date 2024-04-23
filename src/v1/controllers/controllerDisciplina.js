@@ -3,8 +3,8 @@ const prisma = new PrismaClient();
 
 const createDisciplina = async (req, res) => {
   try {
-    const { nome, fk_ano, fk_semestre } = req.body;
-    if (!nome || !fk_semestre || !fk_ano) {
+    const { nome, fk_ano, fk_semestre, fk_curso } = req.body;
+    if (!nome || !fk_semestre || !fk_curso || !fk_ano) {
       return res.json({ message: "error" });
     }
     await prisma.disciplina.create({
@@ -12,6 +12,7 @@ const createDisciplina = async (req, res) => {
         nome,
         fk_ano,
         fk_semestre,
+        fk_curso,
       },
     });
 
@@ -49,12 +50,8 @@ const DisciplinasPorAnoCurso = async (req, res) => {
         semestre: {
           nome: semestre,
         },
-        cursos: {
-          every: {
-            curso: {
-              curso,
-            },
-          },
+        curso: {
+          curso,
         },
       },
     });

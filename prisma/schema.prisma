@@ -111,7 +111,7 @@ curso Curso @relation(fields: [fk_curso],references: [id])
 model Curso{
   id String @id @default(uuid())
   curso String @unique
-  disciplinas DisciplinaCurso[]
+  disciplinas Disciplina[]
   frquencias CursoFrequencia[]
   estudantes Estudante[]
     exameEspecial ExameEspecial[]
@@ -142,7 +142,8 @@ frequencia AnoFrequencia @relation(fields: [fk_ano],references: [id])
   fk_ano String
 semestre Semestre @relation(fields: [fk_semestre],references: [id])
   fk_semestre String
-  cursos DisciplinaCurso[]
+curso Curso @relation(fields: [fk_curso],references: [id])
+  fk_curso String
   exameEspecial ExameEspecial[]
    cadeiraAtrasos CadeiraAtraso[]
     recursos Recurso[]
@@ -338,13 +339,7 @@ tipoServico TipoServico @relation(fields: [fk_tipo],references: [id])
 
 }
 
-model DisciplinaCurso{
-  id String @id @default(uuid())
-  curso Curso @relation(fields: [fk_curso], references: [id])
-  fk_curso String
-disciplina Disciplina @relation(fields: [fk_disciplina],references: [id])
-  fk_disciplina String
-}
+
 model CursoFrequencia{
   id String @id @default(uuid())
   curso Curso @relation(fields: [fk_curso], references: [id])
