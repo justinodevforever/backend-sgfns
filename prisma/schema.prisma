@@ -211,7 +211,6 @@ model ProfileUser{
   id String @id @default(uuid())
   nome String @unique
   legenda String
-  createdAt DateTime @default(now())
   usuario Usuario @relation(fields: [fk_user], references: [id])
   fk_user String
 
@@ -302,7 +301,7 @@ conactUSaer ContactUser @relation(fields: [contactId],references: [id])
 }
 model Propina{
   id String @id @default(uuid())
-  valor String
+  valor Int?
   createdAt DateTime @default(now())
   rupe BigInt
 

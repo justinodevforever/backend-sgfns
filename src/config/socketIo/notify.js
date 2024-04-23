@@ -75,7 +75,7 @@ const SocketNotify = (socket, io) => {
       let mesesAll = [];
       let mesesAll1 = [];
       response.map((prop) => {
-        mesesAll.push(prop.Me.mes);
+        mesesAll.push(prop.mes.mes);
       });
 
       for (let mes = 0; mes < meses.length; mes++) {

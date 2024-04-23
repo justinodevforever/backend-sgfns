@@ -128,9 +128,9 @@ const upDateUser = async (req, res) => {
         contacto,
         bi,
       },
-      where:{
-        id
-      }
+      where: {
+        id,
+      },
     });
     res.status(200).json({ mensage: "Dados atualizados com sucesso" });
   } catch (error) {

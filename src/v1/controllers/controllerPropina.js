@@ -17,17 +17,17 @@ const createPropina = async (req, res) => {
     if (
       valor === 0 ||
       valor === undefined ||
-      fk_ano === 0 ||
+      fk_ano === "" ||
       fk_ano === undefined ||
-      fk_curso === 0 ||
+      fk_curso === "" ||
       fk_curso === undefined ||
-      fk_estudante === 0 ||
+      fk_estudante === "" ||
       fk_estudante === undefined ||
-      fk_mes === 0 ||
+      fk_mes === "" ||
       fk_mes === undefined ||
-      fk_semestre === 0 ||
+      fk_semestre === "" ||
       fk_semestre === undefined ||
-      fk_user === 0 ||
+      fk_user === "" ||
       fk_user === undefined ||
       rupe === 0 ||
       fk_ano === null
@@ -47,22 +47,20 @@ const createPropina = async (req, res) => {
       res.status(201).json({ message: "exist" });
       return;
     }
-    await prisma.propina.create({
+    const response = await prisma.propina.create({
       data: {
         rupe,
-        valor,
-        anoLectivo,
+        valor: "1900",
         fk_ano,
-        createdAt: Date.now(),
         fk_estudante,
         fk_mes,
-        fk_user,
         fk_semestre,
+        fk_user,
       },
     });
-    res.status(201).json({ message: "sucess" });
+    res.status(201).json({ message: "sucess", response: response });
   } catch (error) {
-    res.json({ message: error });
+    res.json(error);
   }
 };
 const verDivida = async (req, res) => {
@@ -114,7 +112,7 @@ const verDivida = async (req, res) => {
     let mesesAll = [];
     let mesesAll1 = [];
     response.map((prop) => {
-      mesesAll.push(prop.Me.mes);
+      mesesAll.push(prop.mes.mes);
     });
 
     for (let mes = 0; mes < meses.length; mes++) {
@@ -161,27 +159,10 @@ const getPropinasMensal = async (req, res) => {
   }
 };
 const getPropinasAnual = async (req, res) => {
-  const { bi, ano, semestre } = req.body;
+  const { bi, ano } = req.body;
   try {
-    const response = await prisma.propina.findMany({
-      where: {
-        estudante: {
-          bi,
-        },
-        anoLectivo: {
-          ano,
-        },
-        mes: {
-          mes,
-        },
-      },
-      include: {
-        estudante: true,
-        mes: true,
-        anoLectivo: true,
-        usuario: true,
-      },
-    });
+    console.log(bi);
+    const response = await prisma.propina.findMany();
     res.json(response);
   } catch (error) {
     res.json(error);
@@ -189,14 +170,7 @@ const getPropinasAnual = async (req, res) => {
 };
 const getPropinas = async (req, res) => {
   try {
-    const response = await prisma.propina.findMany({
-      include: {
-        estudante: true,
-        mes: true,
-        anoLectivo: true,
-        usuario: true,
-      },
-    });
+    const response = await prisma.propina.findMany();
     res.json(response);
   } catch (error) {
     res.json(error);
