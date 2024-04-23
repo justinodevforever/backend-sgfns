@@ -21,7 +21,6 @@ const getEstudante = async (req, res) => {
 const buscaEstudantePorBi = async (req, res) => {
   const { bi } = req.body;
   try {
-    console.log(bi, "dddd");
     const response = await prisma.estudante.findFirst({
       include: {
         curso: {},

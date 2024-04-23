@@ -61,7 +61,6 @@ const ContactUsuario = async (req, res) => {
     const response = await prisma.contactUser.findMany({
       include: {
         sender: true,
-
         receiver: true,
       },
       where: {

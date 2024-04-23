@@ -159,10 +159,27 @@ const getPropinasMensal = async (req, res) => {
   }
 };
 const getPropinasAnual = async (req, res) => {
-  const { bi, ano } = req.body;
+  const { bi, ano, semestre } = req.body;
   try {
-    console.log(bi);
-    const response = await prisma.propina.findMany();
+    const response = await prisma.propina.findMany({
+      where: {
+        estudante: {
+          bi,
+        },
+        anoLectivo: {
+          ano,
+        },
+        mes: {
+          mes,
+        },
+      },
+      include: {
+        estudante: true,
+        mes: true,
+        anoLectivo: true,
+        usuario: true,
+      },
+    });
     res.json(response);
   } catch (error) {
     res.json(error);
@@ -170,7 +187,14 @@ const getPropinasAnual = async (req, res) => {
 };
 const getPropinas = async (req, res) => {
   try {
-    const response = await prisma.propina.findMany();
+    const response = await prisma.propina.findMany({
+      include: {
+        estudante: true,
+        mes: true,
+        anoLectivo: true,
+        usuario: true,
+      },
+    });
     res.json(response);
   } catch (error) {
     res.json(error);
