@@ -34,7 +34,7 @@ const DisciplinasPorAnoCurso = async (req, res) => {
   try {
     const { ano, curso, semestre } = req.body;
     if (!ano || !curso || !semestre) {
-      return res.json({ message: "error" });
+      return res.json({ message: "error no" });
     }
     const response = await prisma.disciplina.findMany({
       include: {
