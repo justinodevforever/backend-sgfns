@@ -12,6 +12,7 @@ const createDisciplina = async (req, res) => {
         nome,
         fk_ano,
         fk_semestre,
+        fk_curso,
       },
     });
 
