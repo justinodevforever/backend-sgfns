@@ -20,10 +20,11 @@ const getEstudante = async (req, res) => {
 };
 const buscaEstudantePorBi = async (req, res) => {
   const { bi } = req.body;
+  console.log(bi);
   try {
     const response = await prisma.estudante.findFirst({
       include: {
-        curso: {},
+        curso: true,
         user: true,
       },
       where: {

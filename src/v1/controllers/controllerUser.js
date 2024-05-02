@@ -3,6 +3,19 @@ const jwt = require("jsonwebtoken");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
+const getUserSomente = async (req, res) => {
+  const { id } = req.params;
+  const user = await prisma.usuario.findFirst({
+    where: {
+      id,
+    },
+  });
+  res.json(user);
+  try {
+  } catch (error) {
+    res.json({ mensage: error });
+  }
+};
 const getUser = async (req, res) => {
   const { id } = req.params;
   const user = await prisma.userPermission.findMany({
@@ -149,32 +162,31 @@ const logar = async (req, res) => {
     });
 
     if (!User || User === null) {
-      res.status(201).json({ mensage: "email ou senha Errada" });
+      return res.status(201).json({ mensage: "email ou senha Errada" });
     } else {
       if (password === null || typeof password === undefined)
-        res.status(201).json({ mensage: "email ou senha Errada" });
+        return res.status(201).json({ mensage: "email ou senha Errada" });
       const verifyPassord = await bcrypt.compare(password, User.password);
-      if (verifyPassord) {
-        const refresh_token = await jwt.sign(
-          { id: User.id },
-          process.env.KEY_SECRET_REFRESHTOKEN,
-          {
-            expiresIn: "24h",
-          }
-        );
-        const token = await jwt.sign({ id: User.id }, process.env.KEY_SECRET, {
-          expiresIn: "2h",
-        });
-        const { password: _, ...loginpass } = User;
-        res.json({
-          User: loginpass,
-          token: token,
-          refreshToken: refresh_token,
-          message: "sucess",
-        });
-      } else {
-        res.status(201).json({ mensage: "email ou senha Errada" });
-      }
+      if (!verifyPassord)
+        return res.status(201).json({ mensage: "email ou senha Errada" });
+
+      const refresh_token = await jwt.sign(
+        { id: User.id },
+        process.env.KEY_SECRET_REFRESHTOKEN,
+        {
+          expiresIn: "24h",
+        }
+      );
+      const token = await jwt.sign({ id: User.id }, process.env.KEY_SECRET, {
+        expiresIn: "2h",
+      });
+      const { password: _, ...loginpass } = User;
+      res.json({
+        User: loginpass,
+        token: token,
+        refreshToken: refresh_token,
+        message: "sucess",
+      });
     }
   } catch (error) {
     res.json({ mensage: error.mensage });
@@ -219,4 +231,5 @@ module.exports = {
   verifyToken,
   getAllUser,
   getUserPorBi,
+  getUserSomente,
 };

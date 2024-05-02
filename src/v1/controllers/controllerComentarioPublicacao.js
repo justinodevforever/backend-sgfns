@@ -12,8 +12,6 @@ const getComentarioPublicacao = async (req, res) => {
       where: {
         id,
       },
-      skip: 6,
-      take: 3,
     });
     res.json(response);
   } catch (error) {
@@ -70,11 +68,19 @@ const getComentariosPublicacoes = async (req, res) => {
 const deleteComentarioPublicacao = async (req, res) => {
   const { id } = req.params;
   try {
+    console.log(id);
+    await prisma.linkComentarioPublicacao.deleteMany({
+      where: {
+        fk_comentario: id,
+      },
+    });
     await prisma.comentario.delete({
       where: { id },
     });
     res.status(200).json({ message: "sucess" });
-  } catch (error) {}
+  } catch (error) {
+    console.log({ message: error });
+  }
 };
 
 const upDatecomentarioPublicacao = async (req, res) => {
@@ -88,6 +94,7 @@ const upDatecomentarioPublicacao = async (req, res) => {
       data: {
         comentario,
       },
+      where: { id },
     });
     res.status(200).json({ mensage: "sucess" });
   } catch (error) {
@@ -96,8 +103,15 @@ const upDatecomentarioPublicacao = async (req, res) => {
 };
 const getComentSpecific = async (req, res) => {
   const { fk_publicacao } = req.body;
-  const { skip, teke } = req.query;
+  const { page, teke } = req.query;
   try {
+    const count = await prisma.comentario.count({
+      where: {
+        fk_publicacao,
+      },
+    });
+    const limit = 5;
+    const totalPage = Math.ceil(count / limit);
     const response = await prisma.comentario.findMany({
       include: {
         usuario: {},
@@ -106,10 +120,15 @@ const getComentSpecific = async (req, res) => {
       where: {
         fk_publicacao,
       },
-      skip: skip,
-      take: teke,
+      skip: Number(page),
+      take: limit,
     });
-    res.json(response);
+    const pagination = {
+      prev_page: Number(page) - 1 >= 1 ? Number(page) - 1 : false,
+      next_page:
+        Number(page) + Number(1) > totalPage ? false : Number(page) + Number(1),
+    };
+    res.json({ response: response, pagination: pagination });
   } catch (error) {
     res.json(error);
   }

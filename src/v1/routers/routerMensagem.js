@@ -20,5 +20,5 @@ router.put("/updatemensagem/:id", authorization, upDateMensagem);
 router.delete("/deletemensagem/:id", authorization, deleteMensagem);
 router.get("/message/:contactId", authorization, getMensagemporNome);
 router.get("/message/order/:contactId", authorization, getMensagemporNomeOrder);
-router.get("/message/naolida/:contactId", authorization, getMensagemNaoLida);
+router.get("/message/naolida/:id", authorization, getMensagemNaoLida);
 module.exports = router;

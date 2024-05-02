@@ -41,8 +41,16 @@ const getContactUsuario = async (req, res) => {
   try {
     const response = await prisma.contactUser.findFirst({
       include: {
-        sender: true,
-        receiver: true,
+        sender: {
+          select: {
+            permissions: true,
+          },
+        },
+        receiver: {
+          include: {
+            permissions: true,
+          },
+        },
       },
 
       where: {
@@ -60,8 +68,24 @@ const ContactUsuario = async (req, res) => {
   try {
     const response = await prisma.contactUser.findMany({
       include: {
-        sender: true,
-        receiver: true,
+        sender: {
+          include: {
+            permissions: {
+              include: {
+                permission: true,
+              },
+            },
+          },
+        },
+        receiver: {
+          include: {
+            permissions: {
+              include: {
+                permission: true,
+              },
+            },
+          },
+        },
       },
       where: {
         OR: [
@@ -75,6 +99,46 @@ const ContactUsuario = async (req, res) => {
       },
     });
 
+    res.json(response);
+  } catch (error) {
+    res.json({ mensage: error });
+  }
+};
+const ContactusuarioSec = async (req, res) => {
+  const { secId, userId } = req.body;
+
+  try {
+    const response = await prisma.contactUser.findFirst({
+      include: {
+        sender: true,
+        receiver: true,
+      },
+      where: {
+        OR: [{ receiveId: secId }, { sendId: secId }],
+
+        OR: [{ receiveId: userId }, { sendId: userId }],
+      },
+    });
+    res.json(response);
+  } catch (error) {
+    res.json({ mensage: error });
+  }
+};
+const ContactusuarioAdmin = async (req, res) => {
+  const { adminId, userId } = req.body;
+
+  try {
+    const response = await prisma.contactUser.findFirst({
+      include: {
+        sender: true,
+        receiver: true,
+      },
+      where: {
+        OR: [{ receiveId: adminId }, { sendId: adminId }],
+
+        OR: [{ receiveId: userId }, { sendId: userId }],
+      },
+    });
     res.json(response);
   } catch (error) {
     res.json({ mensage: error });
@@ -118,9 +182,21 @@ const findContact = async (req, res) => {
 
 const deleteContactUsuario = async (req, res) => {
   const { id } = req.params;
+
   try {
+    await prisma.messagem.deleteMany({
+      where: {
+        contactId: id,
+      },
+    });
+    await prisma.contactUser.delete({
+      where: {
+        id,
+      },
+    });
+    res.json({ message: "sucess" });
   } catch (error) {
-    res.json({ mensage: error.mensage });
+    res.json({ mensage: error });
   }
 };
 
@@ -151,4 +227,6 @@ module.exports = {
   ContactUsuario,
   Contactusuariopecific,
   findContact,
+  ContactusuarioAdmin,
+  ContactusuarioSec,
 };

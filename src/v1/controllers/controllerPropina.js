@@ -50,7 +50,7 @@ const createPropina = async (req, res) => {
     const response = await prisma.propina.create({
       data: {
         rupe,
-        valor: "1900",
+        valor: 1900,
         fk_ano,
         fk_estudante,
         fk_mes,
@@ -60,11 +60,12 @@ const createPropina = async (req, res) => {
     });
     res.status(201).json({ message: "sucess", response: response });
   } catch (error) {
-    res.json(error);
+    res.json({ message: "error" });
   }
 };
 const verDivida = async (req, res) => {
   const { bi } = req.body;
+  console.log(bi);
   try {
     const meses = [
       "Outubro",

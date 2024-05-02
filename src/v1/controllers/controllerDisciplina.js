@@ -34,12 +34,13 @@ const DisciplinasPorAnoCurso = async (req, res) => {
   try {
     const { ano, curso, semestre } = req.body;
     if (!ano || !curso || !semestre) {
-      return res.json({ message: "error no" });
+      return res.json({ message: "error" });
     }
     const response = await prisma.disciplina.findMany({
       include: {
         semestre: true,
         frequencia: true,
+        curso: true,
       },
 
       where: {
@@ -56,7 +57,7 @@ const DisciplinasPorAnoCurso = async (req, res) => {
     });
     res.status(200).json(response);
   } catch (error) {
-    res.json({ message: "erroree" });
+    res.json({ message: "error" });
   }
 };
 const DisciplinasEspecifico = async (req, res) => {
@@ -91,6 +92,17 @@ const getDisciplina = async (req, res) => {
     if (!id) {
       return res.json({ message: "error" });
     }
+    const response = await prisma.disciplina.findFirst({
+      include: {
+        curso: true,
+        frequencia: true,
+        semestre: true,
+      },
+      where: {
+        id,
+      },
+    });
+    res.json(response);
   } catch (error) {
     res.json({ message: "error" });
   }
@@ -102,6 +114,12 @@ const deleteDisciplina = async (req, res) => {
     if (!id) {
       return res.json({ message: "error" });
     }
+    await prisma.disciplina.delete({
+      where: {
+        id,
+      },
+    });
+    res.json({ message: "sucess" });
   } catch (error) {
     res.json({ message: "error" });
   }
@@ -113,7 +131,15 @@ const upDateDisciplina = async (req, res) => {
     if (!nome || !fk_curso || !fk_semestre || !fk_ano || !id) {
       return res.json({ message: "error" });
     }
-
+    await prisma.disciplina.update({
+      data: {
+        nome,
+        fk_ano,
+        fk_curso,
+        fk_semestre,
+      },
+      where: { id },
+    });
     res.json({ message: "sucess" });
   } catch (error) {
     res.json({ message: "error" });

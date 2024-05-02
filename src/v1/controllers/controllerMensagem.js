@@ -4,13 +4,29 @@ const prisma = new PrismaClient();
 const getMensagem = async (req, res) => {
   const { id } = req.params;
   try {
-    const response = await prisma.findFirst({
-      where: {
-        id,
-      },
+    const response = await prisma.messagem.findMany({
       include: {
-        user: true,
-        conactUSaer,
+        conactUSaer: true,
+      },
+      where: {
+        conactUSaer: {
+          OR: [
+            {
+              sendId: id,
+            },
+            { receiveId: id },
+          ],
+        },
+        AND: [
+          {
+            lida: false,
+            NOT: [
+              {
+                sendId: id,
+              },
+            ],
+          },
+        ],
       },
     });
     res.json(response);
@@ -23,15 +39,15 @@ const createMensagem = async (req, res) => {
   const { sms, contactId, sendId } = req.body;
 
   try {
-    await prisma.messagem.create({
+    const response = await prisma.messagem.create({
       data: {
         sms,
         contactId,
         sendId,
-        createdAt: Date.now(),
+        lida: false,
       },
     });
-    res.json({ message: "sucess" });
+    res.json({ response: response, message: "sucess" });
   } catch (error) {
     res.json({ mensage: "error" });
   }
@@ -42,24 +58,7 @@ const getMensagens = async (req, res) => {
     const response = await prisma.messagem.findMany({
       include: {
         user: true,
-        conactUSaer,
-      },
-    });
-    res.json("response");
-  } catch (error) {
-    res.json(error);
-  }
-};
-const getMensagemporNome = async (req, res) => {
-  const { contactId } = req.params;
-  try {
-    const response = await prisma.messagem.findFirst({
-      where: {
-        contactId,
-      },
-      include: {
-        user: true,
-        conactUSaer,
+        conactUSaer: true,
       },
     });
     res.json(response);
@@ -67,16 +66,50 @@ const getMensagemporNome = async (req, res) => {
     res.json(error);
   }
 };
-const getMensagemNaoLida = async (req, res) => {
+const getMensagemporNome = async (req, res) => {
   const { contactId } = req.params;
   try {
-    const response = await prisma.messagem.findFirst({
+    const response = await prisma.messagem.findMany({
       where: {
         contactId,
       },
       include: {
         user: true,
-        conactUSaer,
+        conactUSaer: true,
+      },
+      orderBy: [{ createdAt: "asc" }],
+    });
+    res.json(response);
+  } catch (error) {
+    res.json(error);
+  }
+};
+const getMensagemNaoLida = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const response = await prisma.messagem.findMany({
+      where: {
+        conactUSaer: {
+          OR: [
+            {
+              sendId: id,
+            },
+            { receiveId: id },
+          ],
+        },
+        AND: [
+          {
+            lida: false,
+            NOT: [
+              {
+                sendId: id,
+              },
+            ],
+          },
+        ],
+      },
+      include: {
+        conactUSaer: true,
       },
     });
     res.json(response);
@@ -87,7 +120,7 @@ const getMensagemNaoLida = async (req, res) => {
 const getMensagemporNomeOrder = async (req, res) => {
   const { contactId } = req.params;
   try {
-    const response = await prisma.messagem.findFirst({
+    const response = await prisma.messagem.findMany({
       where: {
         contactId,
       },
@@ -114,11 +147,12 @@ const deleteMensagem = async (req, res) => {
 
 const upDateMensagem = async (req, res) => {
   const { id } = req.params;
+  const { lida } = req.body;
 
   try {
     await prisma.messagem.update({
       data: {
-        sms,
+        lida,
       },
       where: {
         id,
