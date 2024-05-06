@@ -2,8 +2,9 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const createDisciplina = async (req, res) => {
+  const { nome, fk_ano, fk_semestre, fk_curso } = req.body;
+
   try {
-    const { nome, fk_ano, fk_semestre, fk_curso } = req.body;
     if (!nome || !fk_semestre || !fk_curso || !fk_ano) {
       return res.json({ message: "error" });
     }
@@ -18,7 +19,7 @@ const createDisciplina = async (req, res) => {
 
     res.status(201).json({ message: "sucess" });
   } catch (error) {
-    res.json({ message: "error" });
+    res.json({ message: "error nnnn" });
   }
 };
 

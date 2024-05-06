@@ -2,8 +2,11 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const createSemestre = async (req, res) => {
+  const { nome, numero } = req.body;
   try {
-    const { nome, numero } = req.body;
+    if ((!nome && !numero) || numero === 0)
+      return res.json({ message: "Campo vazios" });
+    console.log(nome, numero);
     await prisma.semestre.create({
       data: {
         nome,
@@ -61,7 +64,12 @@ const buscaSemestre = async (req, res) => {
 const deleteSemestre = async (req, res) => {
   try {
     const { id } = req.params;
-    const response = await prisma.semestre.delete(id);
+    await prisma.semestre.delete({
+      where: {
+        id,
+      },
+    });
+    res.json({ message: "sucess" });
   } catch (error) {
     res.json(error);
   }
@@ -70,6 +78,7 @@ const upDateSemestre = async (req, res) => {
   try {
     const { id } = req.params;
     const { nome, numero } = req.body;
+    if (!id && !nome && numero) return res.json({ message: "error" });
     const response = await prisma.semestre.update({
       data: {
         nome,
@@ -79,9 +88,9 @@ const upDateSemestre = async (req, res) => {
         id,
       },
     });
-    res.json(response);
+    res.json({ semestre: response, message: "sucess" });
   } catch (error) {
-    res.json(error);
+    res.json({ message: "error" });
   }
 };
 

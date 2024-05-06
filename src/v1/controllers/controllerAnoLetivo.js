@@ -4,33 +4,37 @@ const prisma = new PrismaClient();
 const createAnoLetivo = async (req, res) => {
   const { ano } = req.body;
   try {
-    const response = await prisma.anoLectivo.create({
+    if (!ano) return res.json({ message: "sucess" });
+    await prisma.anoLectivo.create({
       data: {
         ano,
       },
     });
     res.json({ message: "sucess" });
   } catch (error) {
-    res.json(error);
+    res.json({ message: "error" });
   }
 };
 
 const getAnoLetivos = async (req, res) => {
   try {
-    const response = await prisma.anoLectivo.findMany();
+    const response = await prisma.anoLectivo.findMany({
+      orderBy: [{ ano: "asc" }],
+    });
     res.json(response);
   } catch (error) {
     res.json(error);
   }
 };
 const getAnoLetivo = async (req, res) => {
+  const { id } = req.params;
   try {
-    const user = await prisma.anoLectivo.findFirst({
+    const ano = await prisma.anoLectivo.findFirst({
       where: {
         id,
       },
     });
-    res.json(user);
+    res.json(ano);
   } catch (error) {
     res.json(error);
   }
@@ -52,7 +56,10 @@ const buscaAnoLetivo = async (req, res) => {
 const deleteAnoLetivo = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await prisma.anoLectivo.delete(id);
+    const user = await prisma.anoLectivo.delete({
+      where: { id },
+    });
+    res.json({ message: "sucess" });
   } catch (error) {
     res.json(error);
   }
@@ -61,6 +68,7 @@ const upDateAnoLetivo = async (req, res) => {
   try {
     const { id } = req.params;
     const { ano } = req.body;
+    if (!ano && !id) return res.json({ message: "error" });
     const user = await prisma.anoLectivo.update({
       data: {
         ano,
@@ -69,8 +77,9 @@ const upDateAnoLetivo = async (req, res) => {
         id,
       },
     });
+    res.json({ message: "sucess" });
   } catch (error) {
-    res.json(error);
+    res.json({ message: "error" });
   }
 };
 

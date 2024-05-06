@@ -65,7 +65,7 @@ const createPropina = async (req, res) => {
 };
 const verDivida = async (req, res) => {
   const { bi } = req.body;
-  console.log(bi);
+
   try {
     const meses = [
       "Outubro",
@@ -136,6 +136,12 @@ const getPropinasMensal = async (req, res) => {
   const { bi, mes, ano } = req.body;
   try {
     const response = await prisma.propina.findFirst({
+      include: {
+        estudante: true,
+        mes: true,
+        anoLectivo: true,
+        usuario: true,
+      },
       where: {
         estudante: {
           bi,
@@ -147,16 +153,10 @@ const getPropinasMensal = async (req, res) => {
           mes,
         },
       },
-      include: {
-        estudante: true,
-        mes: true,
-        anoLectivo: true,
-        usuario: true,
-      },
     });
     res.json(response);
   } catch (error) {
-    res.json(error);
+    res.json({ message: "error" });
   }
 };
 const getPropinasAnual = async (req, res) => {

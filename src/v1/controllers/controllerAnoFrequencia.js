@@ -2,21 +2,25 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 const createAnoFrequencia = async (req, res) => {
-  const { ano } = req.body;
-  await prisma.anoFrequencia.create({
-    data: {
-      ano,
-    },
-  });
   try {
+    const { ano } = req.body;
+    if (!ano) return res.json({ message: "error" });
+    await prisma.anoFrequencia.create({
+      data: {
+        ano,
+      },
+    });
+    res.json({ message: "sucess" });
   } catch (error) {
-    res.json(error);
+    res.json({ message: "error" });
   }
 };
 
 const getAnoFrequencias = async (req, res) => {
   try {
-    const response = await prisma.anoFrequencia.findMany();
+    const response = await prisma.anoFrequencia.findMany({
+      orderBy: [{ ano: "asc" }],
+    });
     res.json(response);
   } catch (error) {
     res.json(error);
@@ -92,15 +96,22 @@ const getAnoFrequencia = async (req, res) => {
 const deleteAnoFrequencia = async (req, res) => {
   try {
     const { id } = req.params;
-    await prisma.anoFrequencia.delete(id);
+    if (!id) return res.json({ message: "error" });
+    await prisma.anoFrequencia.delete({
+      where: {
+        id,
+      },
+    });
+    res.json({ message: "sucess" });
   } catch (error) {
-    res.json(error);
+    res.json({ message: "error" });
   }
 };
 const upDateAnoFrequencia = async (req, res) => {
   try {
     const { id } = req.params;
-    const { ano, semestre } = req.body;
+    const { ano } = req.body;
+    if (!ano || !id) return res.json({ message: "error" });
     await prisma.anoFrequencia.update({
       data: {
         ano,
@@ -109,8 +120,9 @@ const upDateAnoFrequencia = async (req, res) => {
         id,
       },
     });
+    res.json({ message: "sucess" });
   } catch (error) {
-    res.json(error);
+    res.json({ message: "error" });
   }
 };
 
