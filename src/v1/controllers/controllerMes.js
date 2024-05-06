@@ -4,15 +4,16 @@ const prisma = new PrismaClient();
 const createMes = async (req, res) => {
   try {
     const { mes, algarismo } = req.body;
+    if (!mes || !algarismo) return res.json({ message: "error" });
     await prisma.mes.create({
       data: {
         mes,
         algarismo,
       },
     });
-    res.status(201).json("");
+    res.status(201).json({ message: "sucess" });
   } catch (error) {
-    res.json(error);
+    res.json({ message: "error" });
   }
 };
 
@@ -27,7 +28,11 @@ const getMeses = async (req, res) => {
 const getMes = async (req, res) => {
   try {
     const { id } = req.params;
-    const response = await prisma.mes.findMany();
+    const response = await prisma.mes.findFirst({
+      where: {
+        id,
+      },
+    });
     res.json(response);
   } catch (error) {
     res.json(error);
