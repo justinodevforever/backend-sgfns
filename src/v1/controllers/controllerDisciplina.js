@@ -19,7 +19,7 @@ const createDisciplina = async (req, res) => {
 
     res.status(201).json({ message: "sucess" });
   } catch (error) {
-    res.json({ message: "error nnnn" });
+    res.json({ message: "error" });
   }
 };
 

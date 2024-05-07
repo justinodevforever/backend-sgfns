@@ -38,6 +38,7 @@ model Usuario{
    propina Propina[]
     servico Servico[]
     messagem Messagem[]
+    reconfirmacao Reconfirmacao[]
     sender ContactUser[] @relation("Sender")
   receiver ContactUser[] @relation("Receiver")
 }
@@ -75,6 +76,7 @@ model AnoFrequencia{
     exameEspecial ExameEspecial[]
      cadeiraAtrasos CadeiraAtraso[]
     recursos Recurso[]
+    reconfirmacoa Reconfirmacao[]
     
 }
 model AnoLectivo{
@@ -85,6 +87,7 @@ model AnoLectivo{
     recursos Recurso[]
     propina Propina[]
      servico Servico[]
+     reconfirmacao Reconfirmacao[]
 }
 model Estudante{
   id String @id @default(uuid())
@@ -92,7 +95,6 @@ model Estudante{
   contacto String @unique
   bi String @unique
   periodo String
-
   user Usuario @relation(fields: [fk_user], references: [id])
   fk_user String 
 curso Curso @relation(fields: [fk_curso],references: [id])
@@ -102,6 +104,7 @@ curso Curso @relation(fields: [fk_curso],references: [id])
     recursos Recurso[]
     propina Propina[]
      servico Servico[]
+     reconfirmacao Reconfirmacao[]
 }
 
 model Curso{
@@ -114,6 +117,7 @@ model Curso{
     cadeiraAtrasos CadeiraAtraso[]
     recursos Recurso[]
      servico Servico[]
+     reconfirmacao Reconfirmacao[]
 }
 model Declaracao{
   id String @id @default(uuid())
@@ -129,11 +133,12 @@ model Semestre{
      cadeiraAtrasos CadeiraAtraso[]
     recursos Recurso[]
     propina Propina[]
+    reconfirmacao Reconfirmacao[]
    
 }
 model Disciplina{
   id String @id @default(uuid())
-  nome String @unique
+  nome String
 frequencia AnoFrequencia @relation(fields: [fk_ano],references: [id])
   fk_ano String
 semestre Semestre @relation(fields: [fk_semestre],references: [id])
@@ -143,6 +148,23 @@ curso Curso @relation(fields: [fk_curso],references: [id])
   exameEspecial ExameEspecial[]
    cadeiraAtrasos CadeiraAtraso[]
     recursos Recurso[]
+}
+model Reconfirmacao {
+id String @id @default(uuid())
+valor Int
+rupe BigInt
+semestre Semestre @relation(fields: [fk_semestre],references: [id])
+  fk_semestre String
+curso Curso @relation(fields: [fk_curso],references: [id])
+  fk_curso String
+  anoLectivo AnoLectivo @relation(fields: [fk_ano],references: [id])
+  fk_ano String
+  estudante Estudante @relation(fields: [fk_estudante],references: [id])
+  fk_estudante String
+  usuario Usuario @relation(fields: [fk_user],references: [id])
+  fk_user String
+  frequencia AnoFrequencia @relation(fields: [fk_frequencia],references: [id])
+  fk_frequencia String
 }
 model ExameEspecial{
   id String @id @default(uuid())
@@ -166,7 +188,7 @@ semestre Semestre @relation(fields: [fk_semestre],references: [id])
 }
 model CadeiraAtraso{
   id String @id @default(uuid())
-  valor String @unique
+  valor String
   createdAt DateTime @default(now())
   rupe BigInt
 

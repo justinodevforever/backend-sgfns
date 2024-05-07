@@ -1,3 +1,6 @@
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+
 const createReconfirmacao = async (req, res) => {
   try {
     const {
@@ -27,10 +30,10 @@ const createReconfirmacao = async (req, res) => {
       fk_frequencia === null ||
       fk_frequencia === undefined
     ) {
-      res.status(201).json({ message: "error" });
+      res.status(201).json({ response: response, message: "error" });
       return;
     }
-
+    const response = await prisma.r;
     res.status(201).json({ message: "sucess" });
   } catch (error) {
     res.json(error);
