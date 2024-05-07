@@ -170,8 +170,8 @@ const getPropinasAnual = async (req, res) => {
         anoLectivo: {
           ano,
         },
-        mes: {
-          mes,
+        semestre: {
+          nome: semestre,
         },
       },
       include: {
