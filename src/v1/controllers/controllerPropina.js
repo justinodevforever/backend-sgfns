@@ -137,7 +137,11 @@ const getPropinasMensal = async (req, res) => {
   try {
     const response = await prisma.propina.findFirst({
       include: {
-        estudante: true,
+        estudante: {
+          include: {
+            curso: true,
+          },
+        },
         mes: true,
         anoLectivo: true,
         usuario: true,
@@ -154,14 +158,17 @@ const getPropinasMensal = async (req, res) => {
         },
       },
     });
-    res.json(response);
+    const { rupe: _, ...novo } = response;
+
+    res.json(novo);
   } catch (error) {
-    res.json({ message: "error" });
+    res.json({ message: error.message });
   }
 };
 const getPropinasAnual = async (req, res) => {
   const { bi, ano, semestre } = req.body;
   try {
+    console.log(bi, ano);
     const response = await prisma.propina.findMany({
       where: {
         estudante: {
@@ -169,9 +176,6 @@ const getPropinasAnual = async (req, res) => {
         },
         anoLectivo: {
           ano,
-        },
-        semestre: {
-          nome: semestre,
         },
       },
       include: {
@@ -181,9 +185,11 @@ const getPropinasAnual = async (req, res) => {
         usuario: true,
       },
     });
-    res.json(response);
+    const { rupe: _, ...novo } = response;
+
+    res.json(novo);
   } catch (error) {
-    res.json(error);
+    res.json({ message: error.message });
   }
 };
 const getPropinas = async (req, res) => {

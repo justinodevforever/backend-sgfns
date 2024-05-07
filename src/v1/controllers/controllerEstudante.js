@@ -20,7 +20,7 @@ const getEstudante = async (req, res) => {
 };
 const buscaEstudantePorBi = async (req, res) => {
   const { bi } = req.body;
-  console.log(bi);
+
   try {
     const response = await prisma.estudante.findFirst({
       include: {
@@ -63,10 +63,9 @@ const createEstudante = async (req, res) => {
         periodo,
       },
     });
-    res.json(response);
-    res.status(200).json({ message: "sucess" });
+    res.status(200).json({ response: response, message: "sucess" });
   } catch (error) {
-    res.json({ message: error });
+    res.json({ message: "error" });
   }
 };
 

@@ -30,49 +30,126 @@ const createReconfirmacao = async (req, res) => {
       fk_frequencia === null ||
       fk_frequencia === undefined
     ) {
-      res.status(201).json({ response: response, message: "error" });
+      res.status(201).json({ message: "error" });
       return;
     }
-    const response = await prisma.r;
-    res.status(201).json({ message: "sucess" });
+    const response = await prisma.reconfirmacao.create({
+      data: {
+        valor,
+        rupe,
+        fk_ano,
+        fk_curso,
+        fk_estudante,
+        fk_frequencia,
+        fk_semestre,
+        fk_user,
+      },
+    });
+    res.status(201).json({ response: response, message: "sucess" });
   } catch (error) {
-    res.json(error);
+    res.json({ message: "error" });
   }
 };
 
 const getReconfirmacoes = async (req, res) => {
   try {
+    const response = await prisma.reconfirmacao.findMany({
+      include: {
+        usuario: true,
+        frequencia: true,
+        semestre: true,
+        anoLectivo: true,
+        estudante: true,
+        curso: true,
+      },
+    });
+    res.json(response);
   } catch (error) {
-    res.json(error);
+    res.json({ messsage: "error" });
   }
 };
 const getReconfirmacaoRelatorio = async (req, res) => {
   try {
     const { ano, semestre, bi } = req.body;
+
+    const response = await prisma.reconfirmacao.findFirst({
+      include: {
+        usuario: true,
+        estudante: true,
+        semestre: true,
+        frequencia: true,
+        anoLectivo: true,
+        curso: true,
+      },
+      where: {
+        estudante: {
+          bi,
+        },
+        anoLectivo: {
+          ano,
+        },
+        semestre: {
+          nome: semestre,
+        },
+      },
+    });
+    res.json(response);
   } catch (error) {
-    res.json(error);
+    res.json({ message: "error" });
   }
 };
 const getReconfirmacaoEspecifico = async (req, res) => {
   try {
     const { id } = req.body;
+    const response = await prisma.reconfirmacao.findFirst({
+      include: {
+        usuario: true,
+        estudante: true,
+        semestre: true,
+        frequencia: true,
+        anoLectivo: true,
+        curso: true,
+      },
+      where: {
+        id,
+      },
+    });
+    res.json(response);
   } catch (error) {
-    res.json(error);
+    res.json({ message: "error" });
   }
 };
 const getReconfirmacao = async (req, res) => {
   try {
     const { id } = req.params;
+    const response = await prisma.reconfirmacao.findFirst({
+      include: {
+        usuario: true,
+        estudante: true,
+        semestre: true,
+        frequencia: true,
+        anoLectivo: true,
+        curso: true,
+      },
+      where: {
+        id,
+      },
+    });
+    res.json(response);
   } catch (error) {
-    res.json(error);
+    res.json({ message: "error" });
   }
 };
 
 const deleteReconfirmacao = async (req, res) => {
   try {
     const { id } = req.params;
+    await prisma.reconfirmacao.delete({
+      where: { id },
+    });
+    res.json({ message: "sucess" });
   } catch (error) {
-    res.json(error);
+    res.json({ message: "error" });
   }
 };
 const upDateReconfirmacao = async (req, res) => {
@@ -88,8 +165,23 @@ const upDateReconfirmacao = async (req, res) => {
       fk_anoFrequencia,
       ano,
     } = req.body;
+    const response = await prisma.reconfirmacao.update({
+      data: {
+        valor,
+        rupe,
+        fk_ano,
+        fk_curso,
+        fk_estudante,
+        fk_semestre,
+        fk_user,
+      },
+      where: {
+        id,
+      },
+    });
+    res.json({ message: "sucess" });
   } catch (error) {
-    res.json(error);
+    res.json({ message: "error" });
   }
 };
 
