@@ -1,3 +1,5 @@
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 const createRecurso = async (req, res) => {
   const {
     valor,
@@ -9,7 +11,7 @@ const createRecurso = async (req, res) => {
     fk_frequencia,
     fk_ano,
   } = req.body;
-
+  console.log(fk_frequencia);
   try {
     if (
       valor !== 0 ||
@@ -21,28 +23,97 @@ const createRecurso = async (req, res) => {
       fk_ano !== 0 ||
       rupe !== 0
     ) {
-      res.status(201).json({ message: "sucess" });
+      const response = await prisma.recurso.create({
+        data: {
+          rupe: 4784,
+          valor,
+          fk_ano,
+          fk_curso,
+          fk_disciplina,
+          fk_estudante,
+          fk_frquencia: fk_frequencia,
+          fk_semestre,
+        },
+      });
+      if (typeof response.rupe === "bigint") {
+        response.rupe = response.rupe.toString();
+      }
+      res.status(201).json({ response: response, message: "sucess" });
     } else {
       res.status(201).json({ message: "error" });
     }
   } catch (error) {
-    console.log(error);
+    res.json({ message: "error" });
   }
 };
 
 const getRecursoEspecifico = async (req, res) => {
   try {
     const { id } = req.body;
-  } catch (error) {}
+    const response = await prisma.recurso.findFirst({
+      include: {
+        AnoFrequncia: true,
+        anoLectivo: true,
+        Curso: true,
+        disciplina: true,
+        estudante: true,
+        semestre: true,
+      },
+      where: {
+        id,
+      },
+    });
+    if (typeof response.rupe === "bigint") {
+      response.rupe = response.rupe.toString();
+    }
+    res.json({ response: response, message: "sucess" });
+  } catch (error) {
+    res.json({ message: "error" });
+  }
 };
 const getRecurso = async (req, res) => {
   try {
     const { id } = req.params;
-  } catch (error) {}
+    const response = await prisma.recurso.findFirst({
+      include: {
+        AnoFrequncia: true,
+        anoLectivo: true,
+        Curso: true,
+        disciplina: true,
+        estudante: true,
+        semestre: true,
+      },
+      where: {
+        id,
+      },
+    });
+    if (typeof response.rupe === "bigint") {
+      response.rupe = response.rupe.toString();
+    }
+    res.json({ response: response, message: "sucess" });
+  } catch (error) {
+    res.json({ message: "error" });
+  }
 };
 const getRecursos = async (req, res) => {
   try {
-  } catch (error) {}
+    const response = await prisma.recurso.findMany({
+      include: {
+        AnoFrequncia: true,
+        anoLectivo: true,
+        Curso: true,
+        disciplina: true,
+        estudante: true,
+        semestre: true,
+      },
+    });
+    if (typeof response.rupe === "bigint") {
+      response.rupe = response.rupe.toString();
+    }
+    res.json({ response: response, message: "sucess" });
+  } catch (error) {
+    res.json({ message: "sucess" });
+  }
 };
 const deleteRecursos = async (req, res) => {
   try {
@@ -68,6 +139,7 @@ const upDateRecurso = async (req, res) => {
       rupe !== 0 ||
       fk_disciplina !== 0 ||
       fk_frequencia !== 0 ||
+      valor !== 0 ||
       fk_ano !== 0 ||
       fk_semestre !== 0
     ) {

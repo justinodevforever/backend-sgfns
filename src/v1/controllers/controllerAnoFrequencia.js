@@ -63,17 +63,15 @@ const anoFrequenciasPorAno = async (req, res) => {
 const searchFrequencia = async (req, res) => {
   try {
     const { frequencia } = req.body;
+    console.log(frequencia);
     const response = await prisma.anoFrequencia.findFirst({
-      include: {
-        curso: {},
-      },
       where: {
-        fk_ano: frequencia,
+        ano: frequencia,
       },
     });
-    res.status(200).json(response);
+    res.status(201).json(response);
   } catch (error) {
-    res.json(error);
+    res.json(error.message);
   }
 };
 const getAnoFrequencia = async (req, res) => {

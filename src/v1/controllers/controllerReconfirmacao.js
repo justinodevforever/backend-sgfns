@@ -13,19 +13,19 @@ const createReconfirmacao = async (req, res) => {
       fk_ano,
       fk_frequencia,
     } = req.body;
+    console.log(valor, rupe);
     if (
       valor === 0 ||
       rupe === 0 ||
-      valor === undefined ||
-      fk_ano === 0 ||
+      fk_ano === "" ||
       fk_ano === undefined ||
-      fk_curso === 0 ||
+      fk_curso === "" ||
       fk_curso === undefined ||
-      fk_estudante === 0 ||
+      fk_estudante === "" ||
       fk_estudante === undefined ||
-      fk_semestre === 0 ||
+      fk_semestre === "" ||
       fk_semestre === undefined ||
-      fk_user === 0 ||
+      fk_user === "" ||
       fk_user === undefined ||
       fk_frequencia === null ||
       fk_frequencia === undefined
@@ -45,6 +45,9 @@ const createReconfirmacao = async (req, res) => {
         fk_user,
       },
     });
+    if (typeof response.rupe === "bigint") {
+      response.rupe = response.rupe.toString();
+    }
     res.status(201).json({ response: response, message: "sucess" });
   } catch (error) {
     res.json({ message: "error" });
@@ -63,6 +66,9 @@ const getReconfirmacoes = async (req, res) => {
         curso: true,
       },
     });
+    if (typeof response.rupe === "bigint") {
+      response.rupe = response.rupe.toString();
+    }
     res.json(response);
   } catch (error) {
     res.json({ messsage: "error" });
@@ -93,6 +99,9 @@ const getReconfirmacaoRelatorio = async (req, res) => {
         },
       },
     });
+    if (typeof response.rupe === "bigint") {
+      response.rupe = response.rupe.toString();
+    }
     res.json(response);
   } catch (error) {
     res.json({ message: "error" });
@@ -114,6 +123,9 @@ const getReconfirmacaoEspecifico = async (req, res) => {
         id,
       },
     });
+    if (typeof response.rupe === "bigint") {
+      response.rupe = response.rupe.toString();
+    }
     res.json(response);
   } catch (error) {
     res.json({ message: "error" });
@@ -135,6 +147,9 @@ const getReconfirmacao = async (req, res) => {
         id,
       },
     });
+    if (typeof response.rupe === "bigint") {
+      response.rupe = response.rupe.toString();
+    }
     res.json(response);
   } catch (error) {
     res.json({ message: "error" });

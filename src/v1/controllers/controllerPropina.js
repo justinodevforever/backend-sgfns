@@ -112,7 +112,13 @@ const verDivida = async (req, res) => {
 
     let mesesAll = [];
     let mesesAll1 = [];
+    if (typeof response.rupe === "bigint") {
+      response.rupe = response.rupe.toString();
+    }
     response.map((prop) => {
+      if (typeof prop.rupe === "bigint") {
+        prop.rupe = prop.rupe.toString();
+      }
       mesesAll.push(prop.mes.mes);
     });
 
@@ -124,11 +130,15 @@ const verDivida = async (req, res) => {
       }
     }
 
-    if (mesesAll1.length <= 0) res.json({ message: "Sem dívida" });
+    console.log(mesesAll);
+    if (mesesAll1.length <= 0) {
+      res.json({ message: "Sem dívida" });
+      return;
+    }
 
     res.json({ dividas: mesesAll1, message: "está com dívida" });
   } catch (error) {
-    console.log({ mensage: error });
+    console.log({ mensage: error.message });
   }
 };
 
@@ -158,9 +168,13 @@ const getPropinasMensal = async (req, res) => {
         },
       },
     });
-    const { rupe: _, ...novo } = response;
+    if (response) {
+      if (typeof response.rupe === "bigint") {
+        response.rupe = response.rupe.toString();
+      }
 
-    res.json(novo);
+      res.json(response);
+    }
   } catch (error) {
     res.json({ message: error.message });
   }
@@ -185,9 +199,12 @@ const getPropinasAnual = async (req, res) => {
         usuario: true,
       },
     });
-    const { rupe: _, ...novo } = response;
-
-    res.json(novo);
+    if (response) {
+      if (typeof response.rupe === "bigint") {
+        response.rupe = response.rupe.toString();
+      }
+      res.json(response);
+    }
   } catch (error) {
     res.json({ message: error.message });
   }

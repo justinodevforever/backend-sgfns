@@ -2,7 +2,11 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const createDeclaracoes = async (req, res) => {
+  const { fk_curso, fk_ano } = req.body;
   try {
+    await prisma.declaracao.create({
+      data: {},
+    });
   } catch (error) {
     res.json(error);
   }

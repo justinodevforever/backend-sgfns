@@ -9,10 +9,10 @@ const createExameEspecial = async (req, res) => {
     fk_semestre,
     fk_curso,
     fk_disciplina,
-    fk_ano,
     fk_frequencia,
+    fk_ano,
   } = req.body;
-
+  console.log(fk_frequencia);
   try {
     if (
       valor !== 0 ||
@@ -20,28 +20,31 @@ const createExameEspecial = async (req, res) => {
       fk_disciplina !== 0 ||
       fk_estudante !== 0 ||
       fk_frequencia !== 0 ||
+      fk_semestre !== 0 ||
       fk_ano !== 0 ||
-      rupe !== 0 ||
-      fk_semestre !== 0
+      rupe !== 0
     ) {
-      await prisma.exameEspecial.create({
+      const response = await prisma.exameEspecial.create({
         data: {
+          rupe: 4784,
           valor,
-          rupe,
-          fk_estudante,
-          fk_semestre,
+          fk_ano,
           fk_curso,
           fk_disciplina,
-          fk_ano,
-          fk_frquencia,
+          fk_estudante,
+          fk_frquencia: fk_frequencia,
+          fk_semestre,
         },
       });
-      res.status(201).json({ message: "sucess" });
+      if (typeof response.rupe === "bigint") {
+        response.rupe = response.rupe.toString();
+      }
+      res.status(201).json({ response: response, message: "sucess" });
     } else {
       res.status(201).json({ message: "error" });
     }
   } catch (error) {
-    console.log(error);
+    res.json({ message: "error" });
   }
 };
 
@@ -50,18 +53,24 @@ const getExameEspecialEspecifico = async (req, res) => {
     const { id } = req.body;
     const response = await prisma.exameEspecial.findFirst({
       include: {
-        AnoFrequncia: {},
-        Curso: {},
-        disciplina: {},
-        estudante: {},
-        semestre: {},
-        anoLectivo: {},
+        AnoFrequncia: true,
+        anoLectivo: true,
+        Curso: true,
+        disciplina: true,
+        estudante: true,
+        semestre: true,
       },
       where: {
         id,
       },
     });
-  } catch (error) {}
+    if (typeof response.rupe === "bigint") {
+      response.rupe = response.rupe.toString();
+    }
+    res.json({ response: response, message: "sucess" });
+  } catch (error) {
+    res.json({ message: "error" });
+  }
 };
 
 const getExameEspecial = async (req, res) => {
@@ -69,34 +78,44 @@ const getExameEspecial = async (req, res) => {
     const { id } = req.params;
     const response = await prisma.exameEspecial.findFirst({
       include: {
-        AnoFrequncia: {},
-        Curso: {},
-        disciplina: {},
-        estudante: {},
-        semestre: {},
-        anoLectivo: {},
+        AnoFrequncia: true,
+        anoLectivo: true,
+        Curso: true,
+        disciplina: true,
+        estudante: true,
+        semestre: true,
       },
       where: {
         id,
       },
     });
-    res.json(response);
-  } catch (error) {}
+    if (typeof response.rupe === "bigint") {
+      response.rupe = response.rupe.toString();
+    }
+    res.json({ response: response, message: "sucess" });
+  } catch (error) {
+    res.json({ message: "error" });
+  }
 };
 const getExameEspecials = async (req, res) => {
   try {
     const response = await prisma.exameEspecial.findMany({
       include: {
-        AnoFrequncia: {},
-        Curso: {},
-        disciplina: {},
-        estudante: {},
-        semestre: {},
-        anoLectivo: {},
+        AnoFrequncia: true,
+        anoLectivo: true,
+        Curso: true,
+        disciplina: true,
+        estudante: true,
+        semestre: true,
       },
     });
-    res.json(response);
-  } catch (error) {}
+    if (typeof response.rupe === "bigint") {
+      response.rupe = response.rupe.toString();
+    }
+    res.json({ response: response, message: "sucess" });
+  } catch (error) {
+    res.json({ message: "sucess" });
+  }
 };
 const deleteExameEspecials = async (req, res) => {
   try {
@@ -133,7 +152,7 @@ const upDateExameEspecial = async (req, res) => {
           fk_curso,
           fk_disciplina,
           fk_estudante,
-          fk_frquencia,
+          fk_frquencia: fk_frequencia,
           fk_semestre,
         },
         where: {
@@ -157,12 +176,12 @@ const buscarCadeira = async (req, res) => {
   try {
     const response = await prisma.exameEspecial.findFirst({
       include: {
-        AnoFrequncia: {},
-        Curso: {},
-        disciplina: {},
-        estudante: {},
-        semestre: {},
-        anoLectivo: {},
+        AnoFrequncia: true,
+        Curso: true,
+        disciplina: true,
+        estudante: true,
+        semestre: true,
+        anoLectivo: true,
       },
     });
     res.json(response);

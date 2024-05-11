@@ -36,15 +36,17 @@ const getImagesUser = async (req, res) => {
     });
     res.json(response);
   } catch (error) {
-    res.json({ mensage: error });
+    res.json({ mensage: error.message });
   }
 };
 const imagesUser = async (req, res) => {
+  const { id } = req.params;
   try {
     const response = await prisma.profileUser.findMany({
       include: {
         usuario,
       },
+      where: { id },
       orderBy: [{ id: "desc" }],
     });
     res.json(response);
