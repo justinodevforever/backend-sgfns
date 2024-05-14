@@ -32,7 +32,7 @@ const createPropina = async (req, res) => {
       rupe === 0 ||
       fk_ano === null
     ) {
-      res.status(201).json({ message: "error" });
+      res.json({ message: "erroro" });
       return;
     }
     const resp = await prisma.propina.findFirst({
@@ -43,8 +43,8 @@ const createPropina = async (req, res) => {
       },
     });
 
-    if (resp) {
-      res.status(201).json({ message: "exist" });
+    if (resp?.id) {
+      res.json({ message: "exist" });
       return;
     }
     const response = await prisma.propina.create({
@@ -58,9 +58,11 @@ const createPropina = async (req, res) => {
         fk_user,
       },
     });
+    if (typeof response.rupe === "bigint")
+      response.rupe = response.rupe.toString();
     res.status(201).json({ message: "sucess", response: response });
   } catch (error) {
-    res.json({ message: "error" });
+    res.json({ message: error.message });
   }
 };
 const verDivida = async (req, res) => {

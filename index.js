@@ -36,6 +36,7 @@ const routerRecurso = require("./src/v1/routers/routerRecurso");
 const routerCadeiraAtraso = require("./src/v1/routers/routerCadeiraAtraso");
 const routerExameEspecial = require("./src/v1/routers/routerExameEspecial");
 const routerPropina = require("./src/v1/routers/routerPropina");
+const routerSolicitacao = require("./src/v1/routers/routerSolicitacao");
 
 const {
   SocketUser,
@@ -120,6 +121,7 @@ app.use("/api/v1", routerReconfirmacao);
 app.use("/api/v1", routerCadeiraAtraso);
 app.use("/api/v1", routerRecurso);
 app.use("/api/v1", routerExameEspecial);
+app.use("/api/v1", routerSolicitacao);
 
 io.on("connection", (socket) => {
   //usuario especifico conectado na rede

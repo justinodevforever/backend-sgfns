@@ -98,13 +98,14 @@ model Estudante{
   user Usuario @relation(fields: [fk_user], references: [id])
   fk_user String 
 curso Curso @relation(fields: [fk_curso],references: [id])
-  fk_curso String 
+    fk_curso String 
     exameEspecial ExameEspecial[]
-     cadeiraAtrasos CadeiraAtraso[]
+    cadeiraAtrasos CadeiraAtraso[]
     recursos Recurso[]
     propina Propina[]
-     servico Servico[]
-     reconfirmacao Reconfirmacao[]
+    servico Servico[]
+    reconfirmacao Reconfirmacao[]
+    solicitacao Solicitacao[]
 }
 
 model Curso{
@@ -364,4 +365,11 @@ model CursoFrequencia{
   fk_curso String
 frequencia AnoFrequencia @relation(fields: [fk_ano],references: [id])
   fk_ano String
+}
+model Solicitacao {
+  id String @id @default(uuid())
+  status String?
+  estudante Estudante @relation(fields: [fk_estudante], references: [id])
+  fk_estudante String
+  tipoServico String
 }

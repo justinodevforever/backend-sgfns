@@ -137,7 +137,7 @@ const getEstudantePorUsuario = async (req, res) => {
   try {
     const response = await prisma.estudante.findFirst({
       include: {
-        curso: {},
+        curso: true,
         user: true,
       },
       where: {
