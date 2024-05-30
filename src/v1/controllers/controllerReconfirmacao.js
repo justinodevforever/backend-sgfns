@@ -35,10 +35,11 @@ const createReconfirmacao = async (req, res) => {
       res.status(201).json({ message: "error" });
       return;
     }
+
     const response = await prisma.reconfirmacao.create({
       data: {
-        valor,
-        rupe,
+        valor: 2203,
+        rupe: 7728827,
         fk_ano,
         fk_curso,
         fk_estudante,
