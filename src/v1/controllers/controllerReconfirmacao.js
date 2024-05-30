@@ -22,15 +22,7 @@ const createReconfirmacao = async (req, res) => {
       fk_ano === "" ||
       fk_ano === undefined ||
       fk_curso === "" ||
-      fk_curso === undefined ||
-      fk_estudante === "" ||
-      fk_estudante === undefined ||
-      fk_semestre === "" ||
-      fk_semestre === undefined ||
-      fk_user === "" ||
-      fk_user === undefined ||
-      fk_frequencia === null ||
-      fk_frequencia === undefined
+      fk_curso === undefined
     ) {
       res.status(201).json({ message: "error" });
       return;
