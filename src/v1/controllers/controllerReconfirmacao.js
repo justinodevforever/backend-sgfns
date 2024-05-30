@@ -47,12 +47,12 @@ const createReconfirmacao = async (req, res) => {
         fk_user,
       },
     });
-    if (typeof response.rupe === "bigint") {
-      response.rupe = response.rupe.toString();
+    if (typeof response?.rupe === "bigint") {
+      response.rupe = response?.rupe?.toString();
     }
     res.status(201).json({ response: response, message: "sucess" });
   } catch (error) {
-    res.json({ message: error });
+    res.json({ message: "error" });
   }
 };
 
