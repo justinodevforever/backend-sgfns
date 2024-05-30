@@ -344,8 +344,6 @@ model Servico{
   dataSolicitacao DateTime
   dataValidacao DateTime
   formaPagamento String 
- 
-
 estudante Estudante @relation(fields: [fk_estudante],references: [id])
   fk_estudante String 
 anoLectivo AnoLectivo @relation(fields: [fk_ano],references: [id])
@@ -373,4 +371,5 @@ model Solicitacao {
   estudante Estudante @relation(fields: [fk_estudante], references: [id])
   fk_estudante String
   tipoServico String
+  createAt DateTime @default(now())
 }

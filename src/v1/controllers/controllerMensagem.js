@@ -37,19 +37,21 @@ const getMensagem = async (req, res) => {
 
 const createMensagem = async (req, res) => {
   const { sms, contactId, sendId } = req.body;
+  console.log("response", contactId);
 
   try {
     const response = await prisma.messagem.create({
       data: {
         sms,
-        contactId,
         sendId,
         lida: false,
+        contactId,
       },
     });
+
     res.json({ response: response, message: "sucess" });
   } catch (error) {
-    res.json({ mensage: "error" });
+    console.log(error.message);
   }
 };
 
@@ -86,7 +88,7 @@ const getMensagemporNome = async (req, res) => {
 };
 const getMensagemNaoLida = async (req, res) => {
   const { id } = req.params;
-  console.log(id);
+
   try {
     const response = await prisma.messagem.findMany({
       where: {
