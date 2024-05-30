@@ -36,24 +36,24 @@ const createReconfirmacao = async (req, res) => {
       return;
     }
 
-    const response = await prisma.reconfirmacao.create({
-      data: {
-        valor: 2203,
-        rupe: 7728827,
-        fk_ano,
-        fk_curso,
-        fk_estudante,
-        fk_frequencia,
-        fk_semestre,
-        fk_user,
-      },
-    });
-    if (typeof response?.rupe === "bigint") {
-      response.rupe = response?.rupe?.toString();
-    }
-    res.status(201).json({ response: response, message: "sucess" });
+    // const response = await prisma.reconfirmacao.create({
+    //   data: {
+    //     valor: 2203,
+    //     rupe: 7728827,
+    //     fk_ano,
+    //     fk_curso,
+    //     fk_estudante,
+    //     fk_frequencia,
+    //     fk_semestre,
+    //     fk_user,
+    //   },
+    // });
+    // if (typeof response?.rupe === "bigint") {
+    //   response.rupe = response?.rupe?.toString();
+    // }
+    // res.status(201).json({ response: response, message: "sucess" });
   } catch (error) {
-    res.json({ message: error.message });
+    res.json({ message: "error" });
   }
 };
 
