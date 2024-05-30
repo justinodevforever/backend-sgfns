@@ -13,7 +13,7 @@ const createReconfirmacao = async (req, res) => {
       fk_ano,
       fk_frequencia,
     } = req.body;
-    console.log(valor, rupe);
+
     if (
       valor === 0 ||
       rupe === 0 ||
@@ -52,7 +52,7 @@ const createReconfirmacao = async (req, res) => {
     }
     res.status(201).json({ response: response, message: "sucess" });
   } catch (error) {
-    res.json({ message: error.message });
+    res.json({ message: error });
   }
 };
 
