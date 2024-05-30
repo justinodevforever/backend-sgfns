@@ -32,7 +32,7 @@ const createReconfirmacao = async (req, res) => {
       fk_frequencia === null ||
       fk_frequencia === undefined
     ) {
-      res.status(201).json({ message: error.message });
+      res.status(201).json({ message: "error" });
       return;
     }
     const response = await prisma.reconfirmacao.create({
