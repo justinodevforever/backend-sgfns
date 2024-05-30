@@ -53,7 +53,7 @@ const createReconfirmacao = async (req, res) => {
     // }
     // res.status(201).json({ response: response, message: "sucess" });
   } catch (error) {
-    res.json({ message: "error" });
+    res.json({ message: error.message });
   }
 };
 
