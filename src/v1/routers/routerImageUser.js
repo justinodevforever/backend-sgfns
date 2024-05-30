@@ -10,12 +10,14 @@ const {
   imagesUser,
   upDateImageUSer,
 } = require("../controllers/controllerImageUser");
+const uploadImage = require("../../service/firebase");
 
 const router = Router();
 
 router.post(
   "/image/user",
   multer(multerConfig).single("file"),
+  uploadImage,
   createImageUser
 );
 router.delete("/image/user/:id", authorization, removeImageUser);

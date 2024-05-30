@@ -12,7 +12,7 @@ const createImagePublicacao = async (req, res) => {
         data: {
           fk_publicacao,
           legenda: "hghg",
-          nome: filename.filename,
+          nome: filename.firebaseUrl,
         },
       });
       res.status(200).json(response);

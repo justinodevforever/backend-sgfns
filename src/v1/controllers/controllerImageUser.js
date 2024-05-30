@@ -5,13 +5,14 @@ const createImageUser = async (req, res) => {
   const { fk_user, legenda } = req.body;
   try {
     const filename = req.file;
+    console.log(filename);
     if (!filename || filename === undefined || filename === " ") {
       res.json({ message: "error" });
       return;
     }
     await prisma.profileUser.create({
       data: {
-        nome: filename.filename,
+        nome: filename.firebaseUrl,
         legenda,
         fk_user,
       },
@@ -32,7 +33,7 @@ const getImagesUser = async (req, res) => {
       where: {
         fk_user,
       },
-      orderBy: [{ id: "desc" }],
+      orderBy: [{ id: "asc" }],
     });
     res.json(response);
   } catch (error) {
@@ -44,7 +45,7 @@ const imagesUser = async (req, res) => {
   try {
     const response = await prisma.profileUser.findMany({
       include: {
-        usuario,
+        usuario: true,
       },
       where: { id },
       orderBy: [{ id: "desc" }],
