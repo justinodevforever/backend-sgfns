@@ -86,27 +86,12 @@ const getMensagemporNome = async (req, res) => {
 };
 const getMensagemNaoLida = async (req, res) => {
   const { id } = req.params;
+  console.log(id);
   try {
     const response = await prisma.messagem.findMany({
       where: {
-        conactUSaer: {
-          OR: [
-            {
-              sendId: id,
-            },
-            { receiveId: id },
-          ],
-        },
-        AND: [
-          {
-            lida: false,
-            NOT: [
-              {
-                sendId: id,
-              },
-            ],
-          },
-        ],
+        lida: false,
+        id,
       },
       include: {
         conactUSaer: true,
@@ -126,12 +111,18 @@ const getMensagemporNomeOrder = async (req, res) => {
       },
       include: {
         user: true,
-        conactUSaer,
+        conactUSaer: {
+          include: {
+            receiver: true,
+            sender: true,
+          },
+        },
       },
+      orderBy: [{ createdAt: "desc" }],
     });
     res.json(response);
   } catch (error) {
-    res.json(error);
+    res.json(error.message);
   }
 };
 

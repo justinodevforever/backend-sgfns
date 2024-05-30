@@ -154,6 +154,7 @@ model Reconfirmacao {
 id String @id @default(uuid())
 valor Int
 rupe BigInt
+createdAt DateTime @default(now())
 semestre Semestre @relation(fields: [fk_semestre],references: [id])
   fk_semestre String
 curso Curso @relation(fields: [fk_curso],references: [id])

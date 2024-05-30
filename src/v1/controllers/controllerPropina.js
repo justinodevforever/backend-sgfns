@@ -32,7 +32,7 @@ const createPropina = async (req, res) => {
       rupe === 0 ||
       fk_ano === null
     ) {
-      res.json({ message: "erroro" });
+      res.json({ message: "error" });
       return;
     }
     const resp = await prisma.propina.findFirst({
@@ -50,7 +50,7 @@ const createPropina = async (req, res) => {
     const response = await prisma.propina.create({
       data: {
         rupe,
-        valor: 1900,
+        valor,
         fk_ano,
         fk_estudante,
         fk_mes,
@@ -62,11 +62,11 @@ const createPropina = async (req, res) => {
       response.rupe = response.rupe.toString();
     res.status(201).json({ message: "sucess", response: response });
   } catch (error) {
-    res.json({ message: error.message });
+    res.json({ message: "error" });
   }
 };
 const verDivida = async (req, res) => {
-  const { bi } = req.body;
+  const { fk_estudante } = req.body;
 
   try {
     const meses = [
@@ -94,9 +94,7 @@ const verDivida = async (req, res) => {
 
     const response = await prisma.propina.findMany({
       where: {
-        estudante: {
-          bi,
-        },
+        fk_estudante,
         anoLectivo: {
           ano: {
             contains: ano,
@@ -132,7 +130,6 @@ const verDivida = async (req, res) => {
       }
     }
 
-    console.log(mesesAll);
     if (mesesAll1.length <= 0) {
       res.json({ message: "Sem dívida" });
       return;
@@ -184,7 +181,6 @@ const getPropinasMensal = async (req, res) => {
 const getPropinasAnual = async (req, res) => {
   const { bi, ano, semestre } = req.body;
   try {
-    console.log(bi, ano);
     const response = await prisma.propina.findMany({
       where: {
         estudante: {
@@ -195,18 +191,24 @@ const getPropinasAnual = async (req, res) => {
         },
       },
       include: {
-        estudante: true,
+        estudante: {
+          include: {
+            curso: true,
+          },
+        },
         mes: true,
         anoLectivo: true,
         usuario: true,
       },
     });
+    const resp = [];
     if (response) {
-      if (typeof response.rupe === "bigint") {
-        response.rupe = response.rupe.toString();
-      }
-      res.json(response);
+      response.map((m, i) => {
+        m.rupe = m?.rupe?.toString();
+        resp.push(m);
+      });
     }
+    res.json(resp);
   } catch (error) {
     res.json({ message: error.message });
   }
@@ -221,9 +223,15 @@ const getPropinas = async (req, res) => {
         usuario: true,
       },
     });
-    res.json(response);
+
+    const resp = [];
+    response.map((m, i) => {
+      m.rupe = m.rupe.toString();
+      resp.push(m);
+    });
+    res.json(resp);
   } catch (error) {
-    res.json(error);
+    res.json(error.message);
   }
 };
 const getPropina = async (req, res) => {

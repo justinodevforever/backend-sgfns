@@ -70,6 +70,9 @@ const ContactUsuario = async (req, res) => {
       include: {
         sender: {
           include: {
+            messagem: {
+              orderBy: [{ createdAt: "desc" }],
+            },
             permissions: {
               include: {
                 permission: true,
@@ -79,6 +82,9 @@ const ContactUsuario = async (req, res) => {
         },
         receiver: {
           include: {
+            messagem: {
+              orderBy: [{ createdAt: "desc" }],
+            },
             permissions: {
               include: {
                 permission: true,

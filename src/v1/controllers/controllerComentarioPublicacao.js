@@ -103,7 +103,7 @@ const upDatecomentarioPublicacao = async (req, res) => {
 };
 const getComentSpecific = async (req, res) => {
   const { fk_publicacao } = req.body;
-  const { page, teke } = req.query;
+  const { page, take } = req.query;
   try {
     const count = await prisma.comentario.count({
       where: {
@@ -111,6 +111,7 @@ const getComentSpecific = async (req, res) => {
       },
     });
     const limit = 5;
+    console.log(take);
     const totalPage = Math.ceil(count / limit);
     const response = await prisma.comentario.findMany({
       include: {
@@ -120,17 +121,19 @@ const getComentSpecific = async (req, res) => {
       where: {
         fk_publicacao,
       },
+      orderBy: [{ id: "asc" }],
       skip: Number(page),
-      take: limit,
+      take: 4,
     });
     const pagination = {
       prev_page: Number(page) - 1 >= 1 ? Number(page) - 1 : false,
       next_page:
         Number(page) + Number(1) > totalPage ? false : Number(page) + Number(1),
+      totalPage,
     };
     res.json({ response: response, pagination: pagination });
   } catch (error) {
-    res.json(error);
+    res.json(error.message);
   }
 };
 
