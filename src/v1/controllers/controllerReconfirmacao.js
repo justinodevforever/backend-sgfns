@@ -17,6 +17,8 @@ const createReconfirmacao = async (req, res) => {
     if (
       valor === 0 ||
       rupe === 0 ||
+      valor === undefined ||
+      rupe === undefined ||
       fk_ano === "" ||
       fk_ano === undefined ||
       fk_curso === "" ||
