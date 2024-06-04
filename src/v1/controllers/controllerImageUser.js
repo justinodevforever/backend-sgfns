@@ -33,7 +33,7 @@ const getImagesUser = async (req, res) => {
       where: {
         fk_user,
       },
-      orderBy: [{ id: "asc" }],
+      orderBy: [{ id: "desc" }],
     });
     res.json(response);
   } catch (error) {
@@ -48,7 +48,7 @@ const imagesUser = async (req, res) => {
         usuario: true,
       },
       where: { id },
-      orderBy: [{ id: "desc" }],
+      orderBy: [{ id: "asc" }],
     });
     res.json(response);
   } catch (error) {
