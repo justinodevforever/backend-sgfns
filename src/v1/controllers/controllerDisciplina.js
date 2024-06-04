@@ -34,6 +34,7 @@ const getDisciplinas = async (req, res) => {
 const DisciplinasPorAnoCurso = async (req, res) => {
   try {
     const { ano, curso, semestre } = req.body;
+
     if (!ano || !curso || !semestre) {
       return res.json({ message: "error" });
     }

@@ -11,7 +11,7 @@ const createPublicacao = async (req, res) => {
           fk_user,
         },
       });
-      res.status(201).json(response);
+      res.status(200).json(response);
     }
   } catch (error) {
     res.json({ message: "error" });
@@ -29,7 +29,7 @@ const getPublicacoes = async (req, res) => {
     });
     res.json(response);
   } catch (error) {
-    res.status(201).json(error);
+    res.json(error);
   }
 };
 const getPublicacaoPerfil = async (req, res) => {
@@ -41,7 +41,7 @@ const getPublicacaoPerfil = async (req, res) => {
 
   try {
   } catch (error) {
-    res.status(201).json(error);
+    res.json(error);
   }
 };
 
@@ -56,7 +56,7 @@ const upDatePublicacao = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(201).json(error);
+    res.json(error);
   }
 };
 
@@ -74,7 +74,7 @@ const getPublicacao = async (req, res) => {
     });
     res.json(response);
   } catch (error) {
-    res.status(201).json(error);
+    res.json(error);
   }
 };
 
@@ -87,7 +87,7 @@ const deletePublicacao = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(201).json(error);
+    res.json(error.message);
   }
 };
 

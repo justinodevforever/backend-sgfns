@@ -25,7 +25,7 @@ const createRecurso = async (req, res) => {
     ) {
       const response = await prisma.recurso.create({
         data: {
-          rupe: 4784,
+          rupe,
           valor,
           fk_ano,
           fk_curso,
@@ -155,11 +155,48 @@ const buscarCadeira = async (req, res) => {
   const { bi, frequencia, ano, semestre, disciplina, curso } = req.body;
 
   if (!bi || !frequencia || !ano || !semestre || !disciplina || !curso) {
+    console.log(frequencia, bi);
+    console.log(ano, disciplina);
+    console.log(curso, semestre);
     return res.json({ message: "error" });
   }
   try {
+    const response = await prisma.recurso.findFirst({
+      include: {
+        disciplina: true,
+        estudante: true,
+        AnoFrequncia: true,
+        semestre: true,
+        anoLectivo: true,
+        Curso: true,
+      },
+      where: {
+        estudante: {
+          bi,
+        },
+        AnoFrequncia: {
+          ano: frequencia,
+        },
+        anoLectivo: {
+          ano,
+        },
+        semestre: {
+          nome: semestre,
+        },
+        Curso: {
+          curso,
+        },
+        disciplina: {
+          nome: disciplina,
+        },
+      },
+    });
+    if (typeof response?.rupe === "bigint" && response?.rupe) {
+      response.rupe = response.rupe.toString();
+    }
+    res.json(response);
   } catch (error) {
-    return res.json({ message: "error" });
+    return res.json({ message: error.message });
   }
 };
 

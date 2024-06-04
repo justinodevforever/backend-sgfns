@@ -38,8 +38,8 @@ const createReconfirmacao = async (req, res) => {
 
     const response = await prisma.reconfirmacao.create({
       data: {
-        valor: 2203,
-        rupe: 7728827,
+        valor,
+        rupe,
         fk_ano: fk_ano,
         fk_curso: fk_curso,
         fk_estudante: fk_estudante,
@@ -53,7 +53,7 @@ const createReconfirmacao = async (req, res) => {
     }
     res.status(201).json({ response: response, message: "sucess" });
   } catch (error) {
-    res.json({ message: error.message });
+    req.json({ message: "error" });
   }
 };
 
@@ -158,6 +158,43 @@ const getReconfirmacao = async (req, res) => {
     res.json({ message: "error" });
   }
 };
+const getReconfirmacaoAtualizacao = async (req, res) => {
+  try {
+    const { ano, frequencia, semestre, bi } = req.body;
+    const response = await prisma.reconfirmacao.findFirst({
+      include: {
+        usuario: true,
+        estudante: true,
+        semestre: true,
+        frequencia: true,
+        anoLectivo: true,
+        curso: true,
+      },
+      where: {
+        AND: {
+          anoLectivo: {
+            ano,
+          },
+          frequencia: {
+            ano: frequencia,
+          },
+          semestre: {
+            nome: semestre,
+          },
+          estudante: {
+            bi,
+          },
+        },
+      },
+    });
+    if (typeof response.rupe === "bigint") {
+      response.rupe = response.rupe.toString();
+    }
+    res.json(response);
+  } catch (error) {
+    res.json({ message: "error" });
+  }
+};
 
 const deleteReconfirmacao = async (req, res) => {
   try {
@@ -173,33 +210,31 @@ const deleteReconfirmacao = async (req, res) => {
 const upDateReconfirmacao = async (req, res) => {
   try {
     const { id } = req.params;
-    const {
-      valor,
-      rupe,
-      fk_curso,
-      fk_estudante,
-      fk_user,
-      fk_ano,
-      fk_anoFrequencia,
-      ano,
-    } = req.body;
+    const { fk_frequencia, fk_semestre, fk_ano } = req.body;
+    if (!fk_frequencia || !fk_semestre || !fk_ano)
+      return res.json({ message: "error" });
     const response = await prisma.reconfirmacao.update({
+      include: {
+        frequencia: true,
+        semestre: true,
+        anoLectivo: true,
+        estudante: true,
+      },
       data: {
-        valor,
-        rupe,
+        fk_frequencia,
         fk_ano,
-        fk_curso,
-        fk_estudante,
         fk_semestre,
-        fk_user,
       },
       where: {
         id,
       },
     });
-    res.json({ message: "sucess" });
+    if (typeof response.rupe === "bigint") {
+      response.rupe = response?.rupe?.toString();
+    }
+    res.json({ message: "sucess", response: response });
   } catch (error) {
-    res.json({ message: "error" });
+    res.json({ message: error.message });
   }
 };
 
@@ -211,4 +246,5 @@ module.exports = {
   upDateReconfirmacao,
   getReconfirmacaoRelatorio,
   getReconfirmacaoEspecifico,
+  getReconfirmacaoAtualizacao,
 };

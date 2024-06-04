@@ -7,6 +7,7 @@ const {
   getReconfirmacoes,
   getReconfirmacaoRelatorio,
   getReconfirmacaoEspecifico,
+  getReconfirmacaoAtualizacao,
 } = require("../controllers/controllerReconfirmacao");
 const { authorization } = require("../../authorization/auth");
 
@@ -26,6 +27,11 @@ router.post(
   "/reconfirmacao/especifico",
   authorization,
   getReconfirmacaoEspecifico
+);
+router.post(
+  "/reconfirmacao/atualizacao",
+  authorization,
+  getReconfirmacaoAtualizacao
 );
 
 module.exports = router;

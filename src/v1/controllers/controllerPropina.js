@@ -253,6 +253,34 @@ const getPropina = async (req, res) => {
     res.json(error);
   }
 };
+const countDiurno = async (req, res) => {
+  try {
+    const response = await prisma.propina.count({
+      where: {
+        estudante: {
+          periodo: "Diúrno",
+        },
+      },
+    });
+    res.json(response);
+  } catch (error) {
+    res.json(error);
+  }
+};
+const countPosLaboral = async (req, res) => {
+  try {
+    const response = await prisma.propina.count({
+      where: {
+        estudante: {
+          periodo: "Pós-Laboral",
+        },
+      },
+    });
+    res.json(response);
+  } catch (error) {
+    res.json(error);
+  }
+};
 const getPropinaEspecifico = async (req, res) => {
   try {
     const { id } = req.body;
@@ -343,7 +371,7 @@ const getEstudantePropina = async (req, res) => {
       return;
     }
 
-    const response = await Propina.findAll({
+    const response = await prisma.propina.findMany({
       include: [
         { model: usuario },
         {
@@ -384,4 +412,6 @@ module.exports = {
   getPropinasMensal,
   getPropinaEspecifico,
   verDivida,
+  countPosLaboral,
+  countDiurno,
 };
