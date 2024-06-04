@@ -4,7 +4,8 @@ const prisma = new PrismaClient();
 const createSolicitacao = async (req, res) => {
   const { fk_estudante, tipoServico, status } = req.body;
   try {
-    if (!fk_estudante || !tipoServico || !status) return res.json({ message: "error" });
+    if (!fk_estudante || !tipoServico || !status)
+      return res.json({ message: "error" });
     await prisma.solicitacao.create({
       data: {
         fk_estudante,
@@ -28,7 +29,7 @@ const getSolicitacao = async (req, res) => {
     });
     res.json(response);
   } catch (error) {
-    res.json(errr.message);
+    res.json({ message: "error" });
   }
 };
 
@@ -41,7 +42,7 @@ const getSolicitacoes = async (req, res) => {
     });
     res.json(response);
   } catch (error) {
-    res.json(error.message);
+    res.json({ message: "error" });
   }
 };
 const getSolicitacaoEspecific = async (req, res) => {
@@ -57,7 +58,7 @@ const getSolicitacaoEspecific = async (req, res) => {
     });
     res.json(response);
   } catch (error) {
-    res.json(error.message);
+    res.json({ message: "error" });
   }
 };
 const removeSolicitacao = async (req, res) => {
