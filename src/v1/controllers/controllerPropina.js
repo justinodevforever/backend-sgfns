@@ -59,7 +59,9 @@ const createPropina = async (req, res) => {
       },
     });
     if (typeof response.rupe === "bigint")
-      response.rupe = response.rupe.toString();
+     { 
+      response.rupe = response?.rupe?.toString()
+    }
     res.status(201).json({ message: "sucess", response: response });
   } catch (error) {
     res.json({ message: "error" });

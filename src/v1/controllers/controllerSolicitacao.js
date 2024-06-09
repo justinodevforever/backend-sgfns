@@ -4,13 +4,12 @@ const prisma = new PrismaClient();
 const createSolicitacao = async (req, res) => {
   const { fk_estudante, tipoServico, status } = req.body;
   try {
-    if (!fk_estudante || !tipoServico || !status)
-      return res.json({ message: "error" });
     await prisma.solicitacao.create({
       data: {
         fk_estudante,
         status,
         tipoServico,
+        
       },
     });
     res.json({ message: "sucess" });

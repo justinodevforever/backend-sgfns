@@ -40,12 +40,12 @@ const createReconfirmacao = async (req, res) => {
       data: {
         valor,
         rupe,
-        fk_ano: fk_ano,
-        fk_curso: fk_curso,
-        fk_estudante: fk_estudante,
-        fk_frequencia: fk_frequencia,
-        fk_semestre: fk_semestre,
-        fk_user: fk_user,
+        fk_ano,
+        fk_curso,
+        fk_estudante,
+        fk_frequencia,
+        fk_semestre,
+        fk_user,
       },
     });
     if (typeof response?.rupe === "bigint") {
@@ -53,7 +53,7 @@ const createReconfirmacao = async (req, res) => {
     }
     res.status(201).json({ response: response, message: "sucess" });
   } catch (error) {
-    req.json({ message: "error" });
+    res.json({ message: "error" });
   }
 };
 

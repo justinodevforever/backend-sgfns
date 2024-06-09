@@ -157,7 +157,7 @@ curso Curso @relation(fields: [fk_curso],references: [id])
 model Reconfirmacao {
 id String @id @default(uuid())
 valor Int
-rupe BigInt?
+rupe BigInt? @unique
 imgRupe String?
 createdAt DateTime @default(now())
 semestre Semestre @relation(fields: [fk_semestre],references: [id])
@@ -197,7 +197,7 @@ model CadeiraAtraso{
   id String @id @default(uuid())
   valor String
   createdAt DateTime @default(now())
-  rupe BigInt?
+  rupe BigInt? @unique
   imgRupe String?
   estudante Estudante @relation(fields: [fk_estudante],references: [id])
     fk_estudante String 
@@ -217,7 +217,7 @@ model Recurso{
   id String @id @default(uuid())
   valor String
   createdAt DateTime @default(now())
-  rupe BigInt?
+  rupe BigInt? @unique
   imgRupe String?
   estudante Estudante @relation(fields: [fk_estudante],references: [id])
     fk_estudante String 
@@ -329,7 +329,7 @@ model Propina{
   id String @id @default(uuid())
   valor Int?
   createdAt DateTime @default(now())
-  rupe BigInt?
+  rupe BigInt? @unique
   imgRupe String?
   estudante Estudante @relation(fields: [fk_estudante],references: [id])
     fk_estudante String 
@@ -378,5 +378,4 @@ model Solicitacao {
   estudante Estudante @relation(fields: [fk_estudante], references: [id])
   fk_estudante String
   tipoServico String
-  createAt DateTime @default(now())
 }
