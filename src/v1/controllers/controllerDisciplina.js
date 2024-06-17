@@ -109,6 +109,30 @@ const getDisciplina = async (req, res) => {
     res.json({ message: "error" });
   }
 };
+const getDisciplinaPorCursoFrequencia = async (req, res) => {
+  try {
+    const { ano, curso } = req.body;
+
+    const response = await prisma.disciplina.findMany({
+      include: {
+        curso: true,
+        frequencia: true,
+        semestre: true,
+      },
+      where: {
+        curso: {
+          curso,
+        },
+        frequencia: {
+          ano,
+        },
+      },
+    });
+    res.json(response);
+  } catch (error) {
+    res.json({ message: "error" });
+  }
+};
 
 const deleteDisciplina = async (req, res) => {
   try {
@@ -157,4 +181,5 @@ module.exports = {
   DisciplinasEspecifico,
   DisciplinasPorAnoCurso,
   searchDisciplina,
+  getDisciplinaPorCursoFrequencia,
 };

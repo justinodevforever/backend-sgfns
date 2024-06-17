@@ -12,6 +12,7 @@ const createReconfirmacao = async (req, res) => {
       fk_user,
       fk_ano,
       fk_frequencia,
+      dataSolicitacao,
     } = req.body;
 
     if (
@@ -30,7 +31,8 @@ const createReconfirmacao = async (req, res) => {
       fk_user === "" ||
       fk_user === undefined ||
       fk_frequencia === null ||
-      fk_frequencia === undefined
+      fk_frequencia === undefined ||
+      !dataSolicitacao
     ) {
       res.status(201).json({ message: "error" });
       return;
@@ -46,6 +48,7 @@ const createReconfirmacao = async (req, res) => {
         fk_frequencia,
         fk_semestre,
         fk_user,
+        dataSolicitacao,
       },
     });
     if (typeof response?.rupe === "bigint") {

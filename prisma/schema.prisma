@@ -26,26 +26,18 @@ model Usuario{
   password String
   bi String @unique
   contacto String 
-  roles UserRoles[]
   permissions UserPermission[]
-  estudante Estudante[]
   profile ProfileUser[]
-  publicacao Publicacao[]
-  comentario Comentario[]
-  linkeComentario LinkComentarioPublicacao[]
-  linkComunicado LinkComunicado[]
-  linkPublicacao LinkPublicacao[]
   propina Propina[]
   servico Servico[]
-  messagem Messagem[]
+  exameEspecial ExameEspecial[]
+  recurso Recurso[]
+  cadeiraAtraso CadeiraAtraso[]
+  declaracao Declaracao[]
   reconfirmacao Reconfirmacao[]
-  sender ContactUser[] @relation("Sender")
-  receiver ContactUser[] @relation("Receiver")
 }
 model UserRoles{
   id String @id @default(uuid())
-  user Usuario @relation( fields: [fk_user], references: [id])
-  fk_user String
   role Role @relation(fields: [fk_role], references: [id])
   fk_role String
 }
@@ -64,7 +56,7 @@ model UserPermission {
 } 
 model TipoServico{
   id String @id @default(uuid())
-  tipo String @unique
+  tipo String? @unique
   valor Decimal
    servico Servico[]
 }
@@ -77,6 +69,7 @@ model AnoFrequencia{
      cadeiraAtrasos CadeiraAtraso[]
     recursos Recurso[]
     reconfirmacoa Reconfirmacao[]
+    estudante Estudante[]
     
 }
 model AnoLectivo{
@@ -89,23 +82,31 @@ model AnoLectivo{
      servico Servico[]
      reconfirmacao Reconfirmacao[]
 }
+model ListaRecurso{
+  id String @id @default(uuid())
+  recurso Recurso @relation(fields: [fk_recurso], references: [id])
+  fk_recurso String
+  
+}
 model Estudante{
   id String @id @default(uuid())
   nome String 
-  contacto String @unique
+  contacto String? @unique
   bi String @unique
-  periodo String
-  user Usuario @relation(fields: [fk_user], references: [id])
-  fk_user String 
-curso Curso @relation(fields: [fk_curso],references: [id])
+  regime String
+  sexo String
+  turma String?
+  frequencia AnoFrequencia @relation(fields: [fk_frequencia], references: [id])
+  fk_frequencia String
+  curso Curso @relation(fields: [fk_curso],references: [id])
     fk_curso String 
     exameEspecial ExameEspecial[]
-    cadeiraAtrasos CadeiraAtraso[]
+    listaRecurso CadeiraAtraso[]
     recursos Recurso[]
     propina Propina[]
     servico Servico[]
     reconfirmacao Reconfirmacao[]
-    solicitacao Solicitacao[]
+    pagamentoFolha PagamentoFolha[]
     declaracao Declaracao[]
 }
 
@@ -118,16 +119,19 @@ model Curso{
     exameEspecial ExameEspecial[]
     cadeiraAtrasos CadeiraAtraso[]
     recursos Recurso[]
-     servico Servico[]
-     reconfirmacao Reconfirmacao[]
+    servico Servico[]
+    reconfirmacao Reconfirmacao[]
 }
 model Declaracao{
   id String @id @default(uuid())
+  dataSolicitacao String?
   estudante Estudante @relation(fields: [fk_estudante],references: [id])
    fk_estudante String
    frequencia String
   desc String
   createAd DateTime @default(now())
+   usuario Usuario @relation(fields: [fk_user],references: [id])
+    fk_user String 
 }
 model Semestre{
   id String @id @default(uuid())
@@ -144,21 +148,22 @@ model Semestre{
 model Disciplina{
   id String @id @default(uuid())
   nome String
-frequencia AnoFrequencia @relation(fields: [fk_ano],references: [id])
-  fk_ano String
-semestre Semestre @relation(fields: [fk_semestre],references: [id])
-  fk_semestre String
-curso Curso @relation(fields: [fk_curso],references: [id])
-  fk_curso String
+  abreviatura String?
+  frequencia AnoFrequencia @relation(fields: [fk_ano],references: [id])
+    fk_ano String
+  semestre Semestre @relation(fields: [fk_semestre],references: [id])
+    fk_semestre String
+  curso Curso @relation(fields: [fk_curso],references: [id])
+    fk_curso String
   exameEspecial ExameEspecial[]
-   cadeiraAtrasos CadeiraAtraso[]
-    recursos Recurso[]
+  cadeiraAtrasos CadeiraAtraso[]
+  recursos Recurso[]
 }
 model Reconfirmacao {
 id String @id @default(uuid())
 valor Int
 rupe BigInt? @unique
-imgRupe String?
+dataSolicitacao String?
 createdAt DateTime @default(now())
 semestre Semestre @relation(fields: [fk_semestre],references: [id])
   fk_semestre String
@@ -177,8 +182,8 @@ model ExameEspecial{
   id String @id @default(uuid())
   valor String
   createdAt DateTime @default(now())
- rupe BigInt?
-imgRupe String?
+ rupe BigInt
+ dataSolicitacao String?
 estudante Estudante @relation(fields: [fk_estudante],references: [id])
   fk_estudante String 
 AnoFrequncia AnoFrequencia @relation(fields: [fk_frquencia],references: [id])
@@ -191,14 +196,16 @@ disciplina Disciplina @relation(fields: [fk_disciplina],references: [id])
   fk_disciplina String 
 semestre Semestre @relation(fields: [fk_semestre],references: [id])
   fk_semestre String
+ usuario Usuario @relation(fields: [fk_user],references: [id])
+    fk_user String 
 
 }
 model CadeiraAtraso{
   id String @id @default(uuid())
   valor String
+   dataSolicitacao String?
   createdAt DateTime @default(now())
-  rupe BigInt? @unique
-  imgRupe String?
+  rupe BigInt @unique
   estudante Estudante @relation(fields: [fk_estudante],references: [id])
     fk_estudante String 
   AnoFrequncia AnoFrequencia @relation(fields: [fk_frquencia],references: [id])
@@ -211,17 +218,18 @@ model CadeiraAtraso{
     fk_disciplina String 
   semestre Semestre @relation(fields: [fk_semestre],references: [id])
     fk_semestre String
+   usuario Usuario @relation(fields: [fk_user],references: [id])
+    fk_user String 
 
 }
 model Recurso{
   id String @id @default(uuid())
   valor String
   createdAt DateTime @default(now())
-  rupe BigInt? @unique
-  imgRupe String?
+  rupe BigInt @unique
   estudante Estudante @relation(fields: [fk_estudante],references: [id])
     fk_estudante String 
-  AnoFrequncia AnoFrequencia @relation(fields: [fk_frquencia],references: [id])
+  AnoFrequencia AnoFrequencia @relation(fields: [fk_frquencia],references: [id])
     fk_frquencia String
   anoLectivo AnoLectivo @relation(fields: [fk_ano],references: [id])
     fk_ano String
@@ -229,8 +237,12 @@ model Recurso{
     fk_curso String
   disciplina Disciplina @relation(fields: [fk_disciplina],references: [id])
     fk_disciplina String 
+  usuario Usuario @relation(fields: [fk_user],references: [id])
+    fk_user String 
   semestre Semestre @relation(fields: [fk_semestre],references: [id])
     fk_semestre String
+  listaRecurso ListaRecurso[]
+   dataSolicitacao String?
 
 }
 model ProfileUser{
@@ -241,96 +253,20 @@ model ProfileUser{
   fk_user String
 
 }
-model ProfilePublicacao{
-  id String @id @default(uuid())
-  nome String @unique
-  legenda String
-  publicacao Publicacao @relation(fields: [fk_publicacao], references: [id])
-  fk_publicacao String 
 
-}
-model Publicacao{
-  id String @id @default(uuid())
-  publicacao String
-  createdAt DateTime @default(now())
-  usuario Usuario @relation(fields: [fk_user], references: [id])
-  fk_user String 
-  comentario Comentario[]
-  profilePublicacao ProfilePublicacao[]
-linkPublicacao LinkPublicacao[]
-}
-model Comentario{
-  id String @id @default(uuid())
-  comentario String 
-  createdAt DateTime @default(now())
-  usuario Usuario @relation(fields: [fk_user], references: [id])
-  fk_user String 
-  publicacao Publicacao @relation(fields: [fk_publicacao], references: [id])
-  fk_publicacao String 
-  linkeComentario LinkComentarioPublicacao[]
 
-}
-model LinkComentarioPublicacao{
-  id String @id @default(uuid())
-  like Boolean?
-  createdAt DateTime @default(now())
-  usuario Usuario @relation(fields: [fk_user], references: [id])
-  fk_user String 
-  comentario Comentario @relation(fields: [fk_comentario], references: [id])
-  fk_comentario String 
-
-}
-model LinkPublicacao{
-  id String @id @default(uuid())
-  like Boolean?
-  createdAt DateTime @default(now())
-  usuario Usuario @relation(fields: [fk_user], references: [id])
-  fk_user String 
-  publicacao Publicacao @relation(fields: [fk_publicacao], references: [id])
-  fk_publicacao String 
-
-}
-model LinkComunicado{
-  id String @id @default(uuid())
-  like Boolean?
-  createdAt DateTime @default(now())
-  usuario Usuario @relation(fields: [fk_user], references: [id])
-  fk_user String 
-
-}
-
-model ContactUser {
-  id String @id @default(uuid())
-  seguir Boolean
-  sender Usuario @relation("Sender", fields: [sendId], references: [id])
-  sendId String
-  receiver Usuario @relation("Receiver", fields: [receiveId], references: [id])
-  receiveId String
-  contactUser Messagem[]
-}
 model Mes{
   id String @id @default(uuid())
   mes String?
   algarismo Int
   propina Propina[]
 }
-model Messagem{
-  id String @id @default(uuid())
-  sms String
-  createdAt DateTime @default(now())
-  lida Boolean?
-  user Usuario @relation(fields: [sendId],references: [id])
-  sendId String
-conactUSaer ContactUser @relation(fields: [contactId],references: [id])
-  contactId String
-  
-}
+
 model Propina{
   id String @id @default(uuid())
   valor Int?
   createdAt DateTime @default(now())
-  rupe BigInt? @unique
-  imgRupe String?
+  rupe BigInt @unique
   estudante Estudante @relation(fields: [fk_estudante],references: [id])
     fk_estudante String 
   anoLectivo AnoLectivo @relation(fields: [fk_ano],references: [id])
@@ -341,13 +277,14 @@ model Propina{
     fk_semestre String
   usuario Usuario @relation(fields: [fk_user],references: [id])
     fk_user String
+     dataSolicitacao String?
 
 }
 model Servico{
   id String @id @default(uuid())
   tipo String
-  dataSolicitacao DateTime @default(now())
-  dataValidacao DateTime
+  dataSolicitacao String?
+  createAd DateTime @default(now())
   formaPagamento String 
   estudante Estudante @relation(fields: [fk_estudante],references: [id])
     fk_estudante String 
@@ -361,8 +298,6 @@ model Servico{
     fk_tipo String
 
 }
-
-
 model CursoFrequencia{
   id String @id @default(uuid())
   curso Curso @relation(fields: [fk_curso], references: [id])
@@ -370,12 +305,9 @@ model CursoFrequencia{
   frequencia AnoFrequencia @relation(fields: [fk_ano],references: [id])
     fk_ano String
 }
-model Solicitacao {
+model PagamentoFolha{
   id String @id @default(uuid())
-  status String?
-  createAd DateTime @default(now())
-  id_servico String
-  estudante Estudante @relation(fields: [fk_estudante], references: [id])
-  fk_estudante String
-  tipoServico String
+  estudante Estudante @relation(fields: [fk_estudante],references: [id])
+    fk_estudante String 
+
 }

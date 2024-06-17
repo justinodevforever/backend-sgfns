@@ -11,17 +11,20 @@ const createCadeiraAtraso = async (req, res) => {
     fk_disciplina,
     fk_frequencia,
     fk_ano,
+    fk_user,
   } = req.body;
   try {
     if (
-      valor !== 0 ||
-      fk_curso !== 0 ||
-      fk_disciplina !== 0 ||
-      fk_estudante !== 0 ||
-      fk_frequencia !== 0 ||
-      fk_semestre !== 0 ||
-      fk_ano !== 0 ||
-      rupe !== 0
+      !valor ||
+      !fk_user ||
+      !fk_curso ||
+      !fk_disciplina ||
+      !fk_estudante ||
+      !fk_frequencia ||
+      !fk_semestre ||
+      !fk_ano ||
+      !rupe ||
+      !dataSolicitacao
     ) {
       const response = await prisma.cadeiraAtraso.create({
         data: {
@@ -33,6 +36,8 @@ const createCadeiraAtraso = async (req, res) => {
           fk_estudante,
           fk_frquencia: fk_frequencia,
           fk_semestre,
+          dataSolicitacao,
+          fk_user,
         },
       });
       if (typeof response.rupe === "bigint") {
@@ -58,6 +63,7 @@ const getCadeiraAtrazoEspecifico = async (req, res) => {
         disciplina: true,
         estudante: true,
         semestre: true,
+        usuario: true,
       },
       where: {
         id,
@@ -83,6 +89,7 @@ const getCadeiraAtraso = async (req, res) => {
         disciplina: true,
         estudante: true,
         semestre: true,
+        usuario: true,
       },
       where: {
         id,
@@ -106,6 +113,7 @@ const getCadeiraAtrasos = async (req, res) => {
         disciplina: true,
         estudante: true,
         semestre: true,
+        usuario: true,
       },
     });
     if (typeof response.rupe === "bigint") {
@@ -131,6 +139,7 @@ const buscarCadeira = async (req, res) => {
         semestre: true,
         anoLectivo: true,
         Curso: true,
+        usuario: true,
       },
       where: {
         estudante: {
@@ -182,13 +191,13 @@ const upDateCadeiraAtraso = async (req, res) => {
     const { id } = req.params;
 
     if (
-      valor !== 0 ||
-      fk_curso !== 0 ||
-      fk_disciplina !== 0 ||
-      fk_estudante !== 0 ||
-      fk_frequencia !== 0 ||
-      fk_ano !== 0 ||
-      fk_semestre !== 0 ||
+      valor ||
+      fk_curso ||
+      fk_disciplina ||
+      fk_estudante ||
+      fk_frequencia ||
+      fk_ano ||
+      fk_semestre ||
       !rupe ||
       !id
     ) {

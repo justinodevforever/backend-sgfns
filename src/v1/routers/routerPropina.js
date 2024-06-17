@@ -13,6 +13,9 @@ const {
   verDivida,
   countDiurno,
   countPosLaboral,
+  listaEstudantes,
+  dadosGeraisCurso,
+  listaRegime,
 } = require("../controllers/controllerPropina");
 
 const router = Router();
@@ -29,5 +32,8 @@ router.get("/propina/especifico", authorization, getPropinaEspecifico);
 router.post("/divida", authorization, verDivida);
 router.get("/diurno", authorization, countDiurno);
 router.get("/poslaboral", authorization, countPosLaboral);
+router.post("/lista", authorization, listaEstudantes);
+router.post("/relatorioCurso", authorization, dadosGeraisCurso);
+router.post("/relatorioregime", authorization, listaRegime);
 
 module.exports = router;

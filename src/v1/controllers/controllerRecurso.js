@@ -10,40 +10,44 @@ const createRecurso = async (req, res) => {
     fk_disciplina,
     fk_frequencia,
     fk_ano,
+    dataSolicitacao,
+    fk_user,
   } = req.body;
   console.log(fk_frequencia);
   try {
     if (
-      valor !== 0 ||
-      fk_curso !== 0 ||
-      fk_disciplina !== 0 ||
-      fk_estudante !== 0 ||
-      fk_frequencia !== 0 ||
-      fk_semestre !== 0 ||
-      fk_ano !== 0 ||
-      rupe !== 0
-    ) {
-      const response = await prisma.recurso.create({
-        data: {
-          rupe,
-          valor,
-          fk_ano,
-          fk_curso,
-          fk_disciplina,
-          fk_estudante,
-          fk_frquencia: fk_frequencia,
-          fk_semestre,
-        },
-      });
-      if (typeof response.rupe === "bigint") {
-        response.rupe = response.rupe.toString();
-      }
-      res.status(201).json({ response: response, message: "sucess" });
-    } else {
-      res.status(201).json({ message: "error" });
+      !valor ||
+      !fk_curso ||
+      !fk_user ||
+      !fk_disciplina ||
+      !fk_estudante ||
+      !fk_frequencia ||
+      !fk_semestre ||
+      !fk_ano ||
+      !rupe ||
+      !dataSolicitacao
+    )
+      return res.status(201).json({ message: "errore" });
+    const response = await prisma.recurso.create({
+      data: {
+        rupe,
+        valor,
+        fk_ano,
+        fk_curso,
+        fk_disciplina,
+        fk_estudante,
+        fk_frquencia: fk_frequencia,
+        fk_semestre,
+        fk_user,
+        dataSolicitacao,
+      },
+    });
+    if (typeof response.rupe === "bigint") {
+      response.rupe = response.rupe.toString();
     }
+    res.status(201).json({ response: response, message: "sucess" });
   } catch (error) {
-    res.json({ message: "error" });
+    res.json({ message: error.message });
   }
 };
 
@@ -58,6 +62,7 @@ const getRecursoEspecifico = async (req, res) => {
         disciplina: true,
         estudante: true,
         semestre: true,
+        usuario: true,
       },
       where: {
         id,
@@ -82,6 +87,7 @@ const getRecurso = async (req, res) => {
         disciplina: true,
         estudante: true,
         semestre: true,
+        usuario: true,
       },
       where: {
         id,
@@ -105,6 +111,7 @@ const getRecursos = async (req, res) => {
         disciplina: true,
         estudante: true,
         semestre: true,
+        usuario: true,
       },
     });
     if (typeof response.rupe === "bigint") {
@@ -131,17 +138,19 @@ const upDateRecurso = async (req, res) => {
     fk_frequencia,
     fk_ano,
     rupe,
+    fk_user,
   } = req.body;
   try {
     const { id } = req.params;
 
     if (
-      rupe !== 0 ||
-      fk_disciplina !== 0 ||
-      fk_frequencia !== 0 ||
-      valor !== 0 ||
-      fk_ano !== 0 ||
-      fk_semestre !== 0
+      !rupe ||
+      !fk_disciplina ||
+      !fk_frequencia ||
+      !valor ||
+      !fk_ano ||
+      !fk_semestre ||
+      !fk_user
     ) {
       res.status(200).json({ message: "sucess" });
     } else {
@@ -169,6 +178,7 @@ const buscarCadeira = async (req, res) => {
         semestre: true,
         anoLectivo: true,
         Curso: true,
+        usuario: true,
       },
       where: {
         estudante: {

@@ -58,9 +58,7 @@ const SocketNotify = (socket, io) => {
         where: {
           fk_estudante,
           anoLectivo: {
-            ano: {
-              contains: ano,
-            },
+            ano: `${Number(ano) - Number(1)}/${ano}`,
           },
         },
 

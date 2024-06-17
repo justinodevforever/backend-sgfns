@@ -12,6 +12,7 @@ const createPropina = async (req, res) => {
       fk_ano,
       fk_semestre,
       rupe,
+      dataSolicitacao,
     } = req.body;
 
     if (
@@ -30,7 +31,8 @@ const createPropina = async (req, res) => {
       fk_user === "" ||
       fk_user === undefined ||
       rupe === 0 ||
-      fk_ano === null
+      fk_ano === null ||
+      !dataSolicitacao
     ) {
       res.json({ message: "error" });
       return;
@@ -56,19 +58,358 @@ const createPropina = async (req, res) => {
         fk_mes,
         fk_semestre,
         fk_user,
+        dataSolicitacao,
       },
     });
-    if (typeof response.rupe === "bigint")
-     { 
-      response.rupe = response?.rupe?.toString()
+    if (typeof response.rupe === "bigint") {
+      response.rupe = response?.rupe?.toString();
     }
     res.status(201).json({ message: "sucess", response: response });
   } catch (error) {
     res.json({ message: "error" });
   }
 };
+const listaEstudantes = async (req, res) => {
+  const { ano } = req.body;
+  try {
+    const dados = await prisma.estudante.findMany({
+      include: {
+        curso: true,
+        propina: {
+          include: {
+            mes: true,
+          },
+          orderBy: {
+            mes: {
+              algarismo: "asc",
+            },
+          },
+        },
+      },
+      orderBy: {
+        nome: "asc",
+      },
+      where: {
+        propina: {
+          some: {
+            anoLectivo: {
+              ano,
+            },
+          },
+        },
+      },
+    });
+    const response = await prisma.estudante.findMany({
+      include: {
+        curso: true,
+        propina: {
+          include: {
+            mes: true,
+          },
+          orderBy: {
+            mes: {
+              algarismo: "asc",
+            },
+          },
+        },
+      },
+      orderBy: {
+        nome: "asc",
+      },
+      where: {
+        propina: {
+          some: {
+            anoLectivo: {
+              ano,
+            },
+          },
+        },
+      },
+    });
+    const mes = [
+      "Janeiro",
+      "Fevereiro",
+      "Março",
+      "Abril",
+      "Maio",
+      "Junho",
+      "Julho",
+      "Outubro",
+      "Novembro",
+      "Dezembro",
+      "total",
+    ];
+    // const meses = Array.from({ length: 12 }, (_, i) => i + 1);
+    const totalMes = mes.reduce((acc, me) => {
+      const key = `${me}`;
+      acc[key] = 0.0;
+      if (acc["total"]) acc["total"] = 0;
+      if (acc["totalGeral"]) acc["totalGeral"] = 0;
+      return acc;
+    }, {});
+    dados.map((estudante) => {
+      estudante.propina.forEach((pagar) => {
+        totalMes[pagar.mes.mes] += pagar.valor;
+      });
+    });
+    const totalGeral =
+      totalMes?.Janeiro +
+      totalMes?.Fevereiro +
+      totalMes?.Março +
+      totalMes?.Abril +
+      totalMes?.Maio +
+      totalMes?.Junho +
+      totalMes?.Julho +
+      totalMes?.Outubro +
+      totalMes?.Novembro +
+      totalMes?.Dezembro;
+
+    const resul = response.map((estudante) => {
+      const todosMeses = mes.reduce((acc, me) => {
+        const key = `${me}`;
+        acc[key] = 0.0;
+        if (acc["total"]) acc["total"] = 0;
+        return acc;
+      }, {});
+
+      estudante.propina.forEach((pagar) => {
+        if (pagar.mes.mes && estudante.id === pagar.fk_estudante) {
+          todosMeses[pagar.mes.mes] = pagar.valor;
+          todosMeses["total"] += pagar.valor;
+        } else {
+          todosMeses[pagar.mes.mes] = 0.0;
+        }
+      });
+
+      return { estudante, todosMeses };
+    });
+
+    response.map((prop) => {
+      prop.propina.map((p) => {
+        if (typeof p.rupe === "bigint") {
+          p.rupe = p.rupe.toString();
+        }
+      });
+    });
+
+    res.json({ response: resul, totalMes: totalMes, totalGeral: totalGeral });
+  } catch (error) {
+    console.log({ message: error.message });
+  }
+};
+const listaRegime = async (req, res) => {
+  const { regime, ano } = req.body;
+  try {
+    const dados = await prisma.estudante.findMany({
+      include: {
+        curso: true,
+        propina: {
+          include: {
+            mes: true,
+          },
+          orderBy: {
+            mes: {
+              algarismo: "asc",
+            },
+          },
+        },
+      },
+      orderBy: {
+        nome: "asc",
+      },
+      where: {
+        AND: {
+          regime,
+          propina: {
+            some: {
+              anoLectivo: {
+                ano,
+              },
+            },
+          },
+        },
+      },
+    });
+    const response = await prisma.estudante.findMany({
+      include: {
+        curso: true,
+        propina: {
+          include: {
+            mes: true,
+          },
+          orderBy: {
+            mes: {
+              algarismo: "asc",
+            },
+          },
+        },
+      },
+      orderBy: {
+        nome: "asc",
+      },
+      where: {
+        regime,
+        propina: {
+          some: {
+            anoLectivo: {
+              ano,
+            },
+          },
+        },
+      },
+    });
+    const mes = [
+      "Janeiro",
+      "Fevereiro",
+      "Março",
+      "Abril",
+      "Maio",
+      "Junho",
+      "Julho",
+      "Outubro",
+      "Novembro",
+      "Dezembro",
+      "total",
+    ];
+    // const meses = Array.from({ length: 12 }, (_, i) => i + 1);
+    const totalMes = mes.reduce((acc, me) => {
+      const key = `${me}`;
+      acc[key] = 0.0;
+      if (acc["total"]) acc["total"] = 0;
+      if (acc["totalGeral"]) acc["totalGeral"] = 0;
+      return acc;
+    }, {});
+    dados.map((estudante) => {
+      estudante.propina.forEach((pagar) => {
+        totalMes[pagar.mes.mes] += pagar.valor;
+      });
+    });
+    const totalGeral =
+      totalMes?.Janeiro +
+      totalMes?.Fevereiro +
+      totalMes?.Março +
+      totalMes?.Abril +
+      totalMes?.Maio +
+      totalMes?.Junho +
+      totalMes?.Julho +
+      totalMes?.Outubro +
+      totalMes?.Novembro +
+      totalMes?.Dezembro;
+
+    const resul = response.map((estudante) => {
+      const todosMeses = mes.reduce((acc, me) => {
+        const key = `${me}`;
+        acc[key] = 0.0;
+        if (acc["total"]) acc["total"] = 0;
+        return acc;
+      }, {});
+
+      estudante.propina.forEach((pagar) => {
+        if (pagar.mes.mes && estudante.id === pagar.fk_estudante) {
+          todosMeses[pagar.mes.mes] = pagar.valor;
+          todosMeses["total"] += pagar.valor;
+        } else {
+          todosMeses[pagar.mes.mes] = 0.0;
+        }
+      });
+
+      return { estudante, todosMeses };
+    });
+
+    response.map((prop) => {
+      prop.propina.map((p) => {
+        if (typeof p.rupe === "bigint") {
+          p.rupe = p.rupe.toString();
+        }
+      });
+    });
+
+    res.json({ response: resul, totalMes: totalMes, totalGeral: totalGeral });
+  } catch (error) {
+    console.log({ message: error.message });
+  }
+};
+const dadosGeraisCurso = async (req, res) => {
+  const { ano } = req.body;
+  try {
+    const dados = await prisma.estudante.findMany({
+      include: {
+        curso: true,
+        propina: {
+          include: {
+            mes: true,
+          },
+          orderBy: {
+            mes: {
+              algarismo: "asc",
+            },
+          },
+        },
+      },
+      orderBy: {
+        nome: "asc",
+      },
+      where: {
+        propina: {
+          some: {
+            anoLectivo: {
+              ano,
+            },
+          },
+        },
+      },
+    });
+    const response = await prisma.curso.findMany({
+      include: {
+        estudantes: {
+          include: {
+            propina: {
+              include: {
+                mes: true,
+              },
+              // orderBy: {
+              //   mes: {
+              //     mes,
+              //   },
+              // },
+            },
+          },
+        },
+      },
+      orderBy: {
+        curso: "asc",
+      },
+    });
+    const mes = [
+      "Janeiro",
+      "Fevereiro",
+      "Março",
+      "Abril",
+      "Maio",
+      "Junho",
+      "Julho",
+      "Outubro",
+      "Novembro",
+      "Dezembro",
+      "total",
+    ];
+    // const meses = Array.from({ length: 12 }, (_, i) => i + 1);
+
+    response.map((c) => {
+      c.estudantes.map((e) => {
+        e.propina.map((p) => {
+          if (typeof p.rupe === "bigint") p.rupe = p.rupe.toString();
+        });
+      });
+    });
+
+    res.json({ response: response });
+  } catch (error) {
+    console.log({ message: error.message });
+  }
+};
 const verDivida = async (req, res) => {
-  const { fk_estudante } = req.body;
+  const { bi } = req.body;
 
   try {
     const meses = [
@@ -96,14 +437,13 @@ const verDivida = async (req, res) => {
 
     const response = await prisma.propina.findMany({
       where: {
-        fk_estudante,
+        estudante: {
+          bi,
+        },
         anoLectivo: {
-          ano: {
-            contains: ano,
-          },
+          ano: `${Number(ano) - Number(1)}/${ano}`,
         },
       },
-
       include: {
         usuario: true,
         mes: true,
@@ -111,6 +451,10 @@ const verDivida = async (req, res) => {
         anoLectivo: true,
       },
     });
+    // if (response.length <= 0) {
+    //   res.json({ message: "Não Exite Estudante com Este Nº de B.I" });
+    //   return;
+    // }
 
     let mesesAll = [];
     let mesesAll1 = [];
@@ -260,7 +604,7 @@ const countDiurno = async (req, res) => {
     const response = await prisma.propina.count({
       where: {
         estudante: {
-          periodo: "Diúrno",
+          regime: "Regular",
         },
       },
     });
@@ -274,7 +618,7 @@ const countPosLaboral = async (req, res) => {
     const response = await prisma.propina.count({
       where: {
         estudante: {
-          periodo: "Pós-Laboral",
+          regime: "Pós-Laboral",
         },
       },
     });
@@ -416,4 +760,7 @@ module.exports = {
   verDivida,
   countPosLaboral,
   countDiurno,
+  listaEstudantes,
+  dadosGeraisCurso,
+  listaRegime,
 };

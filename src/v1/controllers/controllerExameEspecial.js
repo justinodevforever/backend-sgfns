@@ -11,18 +11,22 @@ const createExameEspecial = async (req, res) => {
     fk_disciplina,
     fk_frequencia,
     fk_ano,
+    fk_user,
+    dataSolicitacao,
   } = req.body;
 
   try {
     if (
-      valor !== 0 ||
-      fk_curso !== 0 ||
-      fk_disciplina !== 0 ||
-      fk_estudante !== 0 ||
-      fk_frequencia !== 0 ||
-      fk_semestre !== 0 ||
-      fk_ano !== 0 ||
-      rupe !== 0
+      !valor ||
+      !fk_curso ||
+      !fk_disciplina ||
+      !fk_estudante ||
+      !fk_frequencia ||
+      !fk_semestre ||
+      !fk_ano ||
+      !rupe ||
+      !fk_user ||
+      !dataSolicitacao
     ) {
       const response = await prisma.exameEspecial.create({
         data: {
@@ -34,6 +38,8 @@ const createExameEspecial = async (req, res) => {
           fk_estudante,
           fk_frquencia: fk_frequencia,
           fk_semestre,
+          fk_user,
+          dataSolicitacao,
         },
       });
       if (typeof response.rupe === "bigint") {
@@ -59,6 +65,7 @@ const getExameEspecialEspecifico = async (req, res) => {
         disciplina: true,
         estudante: true,
         semestre: true,
+        usuario: true,
       },
       where: {
         id,
@@ -84,6 +91,7 @@ const getExameEspecial = async (req, res) => {
         disciplina: true,
         estudante: true,
         semestre: true,
+        usuario: true,
       },
       where: {
         id,
@@ -107,6 +115,7 @@ const getExameEspecials = async (req, res) => {
         disciplina: true,
         estudante: true,
         semestre: true,
+        usuario: true,
       },
     });
     if (typeof response.rupe === "bigint") {
@@ -138,13 +147,7 @@ const upDateExameEspecial = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (
-      fk_disciplina !== 0 ||
-      fk_frequencia !== 0 ||
-      fk_ano !== 0 ||
-      fk_semestre !== 0 ||
-      rupe !== 0
-    ) {
+    if (fk_disciplina || fk_frequencia || fk_ano || fk_semestre || rupe) {
       await prisma.exameEspecial.update({
         data: {
           valor,
@@ -182,6 +185,7 @@ const buscarCadeira = async (req, res) => {
         semestre: true,
         anoLectivo: true,
         Curso: true,
+        usuario: true,
       },
       where: {
         estudante: {
