@@ -17,6 +17,7 @@ datasource db {
 model Role{
   id String @id @default(uuid())
   role String @unique
+  r String
   users UserRoles[]
 }
 model Usuario{

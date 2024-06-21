@@ -35,9 +35,19 @@ const buscaEstudantePorBi = async (req, res) => {
   }
 };
 const createEstudante = async (req, res) => {
-  const { nome, bi, contato, fk_curso, regime, turma, sexo } = req.body;
+  const { nome, bi, contato, fk_curso, regime, turma, sexo, fk_frequencia } =
+    req.body;
   try {
-    if (!turma || !sexo || !nome || !bi || !contato || !fk_curso || !regime) {
+    if (
+      !turma ||
+      !sexo ||
+      !nome ||
+      !bi ||
+      !contato ||
+      !fk_curso ||
+      !regime ||
+      !fk_frequencia
+    ) {
       res.json({ message: "error" });
       return;
     }
@@ -58,7 +68,8 @@ const createEstudante = async (req, res) => {
         fk_curso,
         regime,
         sexo,
-        truma: turma,
+        turma,
+        fk_frequencia,
       },
     });
     res.status(200).json({ response: response, message: "sucess" });
