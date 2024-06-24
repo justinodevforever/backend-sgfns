@@ -56,7 +56,7 @@ const getRecursoEspecifico = async (req, res) => {
     const { id } = req.body;
     const response = await prisma.recurso.findFirst({
       include: {
-        AnoFrequncia: true,
+        AnoFrequencia: true,
         anoLectivo: true,
         Curso: true,
         disciplina: true,
@@ -81,7 +81,7 @@ const getRecurso = async (req, res) => {
     const { id } = req.params;
     const response = await prisma.recurso.findFirst({
       include: {
-        AnoFrequncia: true,
+        AnoFrequencia: true,
         anoLectivo: true,
         Curso: true,
         disciplina: true,
@@ -105,7 +105,7 @@ const getRecursos = async (req, res) => {
   try {
     const response = await prisma.recurso.findMany({
       include: {
-        AnoFrequncia: true,
+        AnoFrequencia: true,
         anoLectivo: true,
         Curso: true,
         disciplina: true,
@@ -164,9 +164,6 @@ const buscarCadeira = async (req, res) => {
   const { bi, frequencia, ano, semestre, disciplina, curso } = req.body;
 
   if (!bi || !frequencia || !ano || !semestre || !disciplina || !curso) {
-    console.log(frequencia, bi);
-    console.log(ano, disciplina);
-    console.log(curso, semestre);
     return res.json({ message: "error" });
   }
   try {
@@ -174,7 +171,7 @@ const buscarCadeira = async (req, res) => {
       include: {
         disciplina: true,
         estudante: true,
-        AnoFrequncia: true,
+        AnoFrequencia: true,
         semestre: true,
         anoLectivo: true,
         Curso: true,
@@ -184,7 +181,7 @@ const buscarCadeira = async (req, res) => {
         estudante: {
           bi,
         },
-        AnoFrequncia: {
+        AnoFrequencia: {
           ano: frequencia,
         },
         anoLectivo: {

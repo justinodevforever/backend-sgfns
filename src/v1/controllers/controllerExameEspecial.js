@@ -28,28 +28,29 @@ const createExameEspecial = async (req, res) => {
       !fk_user ||
       !dataSolicitacao
     ) {
-      const response = await prisma.exameEspecial.create({
-        data: {
-          rupe,
-          valor,
-          fk_ano,
-          fk_curso,
-          fk_disciplina,
-          fk_estudante,
-          fk_frquencia: fk_frequencia,
-          fk_semestre,
-          fk_user,
-          dataSolicitacao,
-        },
-      });
-      if (typeof response.rupe === "bigint") {
-        response.rupe = response.rupe.toString();
-      }
-      res.status(201).json({ response: response, message: "sucess" });
-    } else {
-      res.status(201).json({ message: "error" });
+      res.json({ message: "error" });
     }
+    const response = await prisma.exameEspecial.create({
+      data: {
+        rupe,
+        valor,
+        fk_ano,
+        fk_curso,
+        fk_disciplina,
+        fk_estudante,
+        fk_frquencia: fk_frequencia,
+        fk_semestre,
+        fk_user,
+        dataSolicitacao,
+      },
+    });
+    if (typeof response.rupe === "bigint") {
+      response.rupe = response.rupe.toString();
+    }
+    console.log(response);
+    res.status(201).json({ response: response, message: "sucess" });
   } catch (error) {
+    console.log(error.message);
     res.json({ message: "error" });
   }
 };
@@ -85,7 +86,7 @@ const getExameEspecial = async (req, res) => {
     const { id } = req.params;
     const response = await prisma.exameEspecial.findFirst({
       include: {
-        AnoFrequncia: true,
+        AnoFrequencia: true,
         anoLectivo: true,
         Curso: true,
         disciplina: true,
@@ -109,7 +110,7 @@ const getExameEspecials = async (req, res) => {
   try {
     const response = await prisma.exameEspecial.findMany({
       include: {
-        AnoFrequncia: true,
+        AnoFrequencia: true,
         anoLectivo: true,
         Curso: true,
         disciplina: true,
@@ -181,7 +182,7 @@ const buscarCadeira = async (req, res) => {
       include: {
         disciplina: true,
         estudante: true,
-        AnoFrequncia: true,
+        AnoFrequencia: true,
         semestre: true,
         anoLectivo: true,
         Curso: true,
@@ -191,7 +192,7 @@ const buscarCadeira = async (req, res) => {
         estudante: {
           bi,
         },
-        AnoFrequncia: {
+        AnoFrequencia: {
           ano: frequencia,
         },
         anoLectivo: {

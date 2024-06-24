@@ -170,7 +170,10 @@ const listaEstudantes = async (req, res) => {
       const todosMeses = mes.reduce((acc, me) => {
         const key = `${me}`;
         acc[key] = 0.0;
-        if (acc["total"]) acc["total"] = 0;
+        if (acc[estudante.nome]) acc[estudante.nome] = 0;
+        estudante.propina.forEach((pagar) => {
+          acc[estudante.nome] += pagar.valor;
+        });
         return acc;
       }, {});
 
@@ -334,6 +337,32 @@ const listaRegime = async (req, res) => {
 const dadosGeraisCurso = async (req, res) => {
   const { dataInicial, dataFinal, ano, regime } = req.body;
   try {
+    const resul = await prisma.estudante.groupBy({
+      by: ["fk_frequencia"],
+      _count: {
+        id: true,
+      },
+      where: {
+        regime,
+      },
+    });
+    const frequenciaId = resul.map((r) => r.fk_frequencia);
+    const frequencias = await prisma.anoFrequencia.findMany({
+      where: { id: { in: frequenciaId } },
+    });
+    const frequenciaMap = frequencias.reduce((map, frequencia) => {
+      map[frequencia.id] = frequencia.ano;
+      return map;
+    }, {});
+
+    const formatResult = resul.map((r) => ({
+      ano: frequenciaMap[r?.fk_frequencia],
+      studantCount: r?._count.id,
+    }));
+    const obj = formatResult.reduce((acc, cur) => {
+      acc["ano" + cur?.ano] = cur.studantCount;
+      return acc;
+    }, {});
     const response = await prisma.curso.findMany({
       include: {
         estudantes: {
@@ -360,6 +389,7 @@ const dadosGeraisCurso = async (req, res) => {
         },
       },
     });
+    const anos = {};
 
     const cursos = response.map((curso) => {
       if (curso.estudantes.length <= 0) {
@@ -373,6 +403,7 @@ const dadosGeraisCurso = async (req, res) => {
         totalGeralMF: 0,
         qtdGeral: 0,
       };
+
       const frequencia = curso?.estudantes?.reduce((acc, estudante) => {
         const { frequencia, sexo, propina } = estudante;
         // let totalGeralEstudante = 0;
@@ -387,6 +418,12 @@ const dadosGeraisCurso = async (req, res) => {
             qtdGeral: 0,
           };
         }
+        // if (!acc[frequencia.ano]) {
+        //   acc[frequencia.ano] = {
+        //     totalPorAno: 0,
+        //     valorPorAno: 0,
+        //   };
+        // }
         if (!acc["Ano" + frequencia.ano]) {
           acc["Ano" + frequencia.ano] = {
             ano: "",
@@ -396,8 +433,11 @@ const dadosGeraisCurso = async (req, res) => {
             qtdAno: 0,
             totalMF: 0,
             pagamentosMes: {},
+            totalPorAno: 0,
+            valorPorAno: 0,
           };
         }
+
         acc["Ano" + frequencia.ano].ano = estudante.frequencia.ano;
         if (sexo === "M" && acc["Ano" + frequencia.ano]) {
           acc["Ano" + frequencia.ano].totalSexoM++;
@@ -415,6 +455,16 @@ const dadosGeraisCurso = async (req, res) => {
         propina.forEach((p) => {
           const { fk_mes, valor, mes } = p;
 
+          if (!anos["ano" + frequencia.ano]) {
+            anos["ano" + frequencia.ano] = {
+              totalPagamentoAno: 0,
+              totalEstudanteAno: 0,
+            };
+          }
+
+          anos["ano" + frequencia.ano].totalEstudanteAno += 1;
+          anos["ano" + frequencia.ano].totalPagamentoAno += valor;
+
           if (!acc[curso.curso].totalPorMes[mes.mes]) {
             acc[curso.curso].totalPorMes[mes.mes] = {
               valor: 0,
@@ -428,6 +478,7 @@ const dadosGeraisCurso = async (req, res) => {
               totalEstudante: 0,
               totalGeralMes: 0,
               totalGeralEstudante: 0,
+
               // mes: "",
             };
           }
@@ -436,6 +487,7 @@ const dadosGeraisCurso = async (req, res) => {
           acc["Ano" + frequencia.ano].pagamentosMes[mes.mes].totalEstudante++;
           acc["Ano" + frequencia.ano].totalMesAno += valor;
           acc["Ano" + frequencia.ano].qtdAno++;
+
           //   acc["Ano" + frequencia.ano].pagamentosMes[mes.mes].totalPago;
           acc[curso.curso].totaGeralCurso += valor;
           acc[curso.curso].qtdGeral++;
@@ -446,7 +498,7 @@ const dadosGeraisCurso = async (req, res) => {
 
         return acc;
       }, {});
-      return { curso: curso.curso, frequencia, dados };
+      return { curso: curso.curso, frequencia, dados, anos };
     });
 
     // response.map((c) => {
@@ -462,7 +514,7 @@ const dadosGeraisCurso = async (req, res) => {
       if (c !== undefined) dados.push(c);
     });
 
-    res.json(dados);
+    res.json({ dados: dados, anos: anos, estudanteMatriculado: obj });
   } catch (error) {
     console.log({ message: error.message });
   }
@@ -552,6 +604,9 @@ const verDivida = async (req, res) => {
 
 const getPropinasMensal = async (req, res) => {
   const { bi, mes, ano } = req.body;
+
+  if (!bi && !mes && !ano)
+    return res.json({ message: "Existe um campo vazio!" });
   try {
     const response = await prisma.propina.findFirst({
       include: {
@@ -577,13 +632,11 @@ const getPropinasMensal = async (req, res) => {
         },
       },
     });
-    if (response) {
-      if (typeof response.rupe === "bigint") {
-        response.rupe = response.rupe.toString();
-      }
 
-      res.json(response);
+    if (typeof response?.rupe === "bigint") {
+      response.rupe = response?.rupe.toString();
     }
+    res.json(response);
   } catch (error) {
     res.json({ message: error.message });
   }
@@ -727,10 +780,11 @@ const getPropinaEspecifico = async (req, res) => {
 const deletePropina = async (req, res) => {
   try {
     const { id } = req.params;
-    const response = await prisma.propina.findFirst(id);
-    res.json(response);
+    if (!id) return res.json({ message: "error" });
+    await prisma.propina.delete({ where: { id } });
+    res.json({ message: "sucess" });
   } catch (error) {
-    res.json(error);
+    res.json({ message: "error" });
   }
 };
 const upDatePropina = async (req, res) => {

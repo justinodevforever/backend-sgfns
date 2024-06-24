@@ -80,7 +80,9 @@ const deleteUsuarioPermissoes = async (req, res) => {
   try {
     await prisma.userPermission.delete({ where: { id } });
     res.json({ msg: "Dados Removido com sucesso" });
-  } catch (error) {}
+  } catch (error) {
+    res.json({ message: error.message });
+  }
 };
 const updateUsuarioPermissoes = async (req, res) => {
   const { id } = req.params;

@@ -27,6 +27,7 @@ const getUser = async (req, res) => {
       fk_user: id,
     },
   });
+  const { password: _, users } = user;
   res.json(user);
   try {
   } catch (error) {
@@ -40,15 +41,15 @@ const getUserPorBi = async (req, res) => {
     const user = await prisma.usuario.findFirst({
       include: {
         permissions: true,
-        comentario: true,
       },
       where: {
         bi,
       },
     });
+
     res.json(user);
   } catch (error) {
-    res.status(500).json({ mensage: "error" });
+    res.json({ mensage: "error" });
   }
 };
 
@@ -112,7 +113,6 @@ const getAllUser = async (req, res) => {
             permission: true,
           },
         },
-        comentario: true,
       },
     });
     res.json(response);
@@ -140,6 +140,7 @@ const upDateUser = async (req, res) => {
         nome,
         contacto,
         bi,
+        email,
       },
       where: {
         id,

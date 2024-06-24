@@ -25,7 +25,7 @@ const getListaRecursos = async (req, res) => {
             estudante: true,
             disciplina: true,
             anoLectivo: true,
-            AnoFrequncia: true,
+            AnoFrequencia: true,
             estudante: true,
           },
         },
@@ -38,7 +38,7 @@ const getListaRecursos = async (req, res) => {
     });
     res.json(response);
   } catch (error) {
-    res.json(error, message);
+    res.json({ message: error.message });
   }
 };
 const getListaRecursosEspecifica = async (req, res) => {
@@ -51,7 +51,7 @@ const getListaRecursosEspecifica = async (req, res) => {
             estudante: true,
             disciplina: true,
             anoLectivo: true,
-            AnoFrequncia: true,
+            AnoFrequencia: true,
             estudante: true,
             Curso: true,
           },
@@ -61,7 +61,7 @@ const getListaRecursosEspecifica = async (req, res) => {
         recurso: {
           estudante: {
             regime,
-            truma: turma,
+            turma,
           },
           Curso: {
             curso,
@@ -69,7 +69,7 @@ const getListaRecursosEspecifica = async (req, res) => {
           disciplina: {
             nome: disciplina,
           },
-          AnoFrequncia: {
+          AnoFrequencia: {
             ano: frequencia,
           },
         },
@@ -82,7 +82,7 @@ const getListaRecursosEspecifica = async (req, res) => {
     });
     res.json(response);
   } catch (error) {
-    res.json(error, message);
+    res.json({ message: error.message });
   }
 };
 const getListaRecurso = async (req, res) => {
