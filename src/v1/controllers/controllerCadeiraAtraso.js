@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const { format } = require("date-fns");
 const prisma = new PrismaClient();
 
 const createCadeiraAtraso = async (req, res) => {
@@ -23,8 +24,7 @@ const createCadeiraAtraso = async (req, res) => {
       !fk_frequencia ||
       !fk_semestre ||
       !fk_ano ||
-      !rupe ||
-      !dataSolicitacao
+      !rupe
     ) {
       const response = await prisma.cadeiraAtraso.create({
         data: {
@@ -36,7 +36,6 @@ const createCadeiraAtraso = async (req, res) => {
           fk_estudante,
           fk_frquencia: fk_frequencia,
           fk_semestre,
-          dataSolicitacao,
           fk_user,
         },
       });

@@ -16,6 +16,7 @@ const {
   listaEstudantes,
   dadosGeraisCurso,
   listaRegime,
+  movimentoPropina,
 } = require("../controllers/controllerPropina");
 
 const router = Router();
@@ -35,5 +36,6 @@ router.get("/poslaboral", authorization, countPosLaboral);
 router.post("/lista", authorization, listaEstudantes);
 router.post("/relatorioCurso", authorization, dadosGeraisCurso);
 router.post("/relatorioregime", authorization, listaRegime);
+router.post("/movimento/propina", authorization, movimentoPropina);
 
 module.exports = router;

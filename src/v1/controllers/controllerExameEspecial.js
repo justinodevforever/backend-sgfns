@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const { format } = require("date-fns");
 const prisma = new PrismaClient();
 
 const createExameEspecial = async (req, res) => {
@@ -25,8 +26,7 @@ const createExameEspecial = async (req, res) => {
       !fk_semestre ||
       !fk_ano ||
       !rupe ||
-      !fk_user ||
-      !dataSolicitacao
+      !fk_user
     ) {
       res.json({ message: "error" });
     }
@@ -41,7 +41,6 @@ const createExameEspecial = async (req, res) => {
         fk_frquencia: fk_frequencia,
         fk_semestre,
         fk_user,
-        dataSolicitacao,
       },
     });
     if (typeof response.rupe === "bigint") {
