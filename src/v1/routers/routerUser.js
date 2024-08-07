@@ -16,13 +16,17 @@ const {
   getUserPorBi,
   getUser,
   getUserSomente,
+  searchUserEmail,
+  altearSenha,
 } = require("../controllers/controllerUser");
 
 const router = Router();
 
 router.post("/logar", logar);
 router.post("/user", createUser);
+router.post("/alterar/senha", altearSenha);
 router.post("/search/user", authorization, searchUser);
+router.post("/search/user/email", searchUserEmail);
 router.get("/user/:id", authorization, getUser);
 router.get("/user", authorization, getAllUser);
 router.put("/user/:id", authorization, upDateUser);

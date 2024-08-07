@@ -8,6 +8,7 @@ const {
   upDateCadeiraAtraso,
   getCadeiraAtrazoEspecifico,
   buscarCadeira,
+  movimentoCadeiraAtraso,
 } = require("../controllers/controllerCadeiraAtraso");
 
 const router = Router();
@@ -23,5 +24,10 @@ router.post(
   getCadeiraAtrazoEspecifico
 );
 router.post("/cadeira/atraso/busca", authorization, buscarCadeira);
+router.post(
+  "/cadeira/atraso/movimento_financeiro",
+  authorization,
+  movimentoCadeiraAtraso
+);
 
 module.exports = router;

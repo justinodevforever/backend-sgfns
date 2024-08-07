@@ -26,26 +26,25 @@ const createCadeiraAtraso = async (req, res) => {
       !fk_ano ||
       !rupe
     ) {
-      const response = await prisma.cadeiraAtraso.create({
-        data: {
-          rupe,
-          valor,
-          fk_ano,
-          fk_curso,
-          fk_disciplina,
-          fk_estudante,
-          fk_frquencia: fk_frequencia,
-          fk_semestre,
-          fk_user,
-        },
-      });
-      if (typeof response.rupe === "bigint") {
-        response.rupe = response.rupe.toString();
-      }
-      res.status(201).json({ response: response, message: "sucess" });
-    } else {
       res.status(201).json({ message: "error" });
     }
+    const response = await prisma.cadeiraAtraso.create({
+      data: {
+        rupe,
+        valor,
+        fk_ano,
+        fk_curso,
+        fk_disciplina,
+        fk_estudante,
+        fk_frequencia,
+        fk_semestre,
+        fk_user,
+      },
+    });
+    if (typeof response.rupe === "bigint") {
+      response.rupe = response.rupe.toString();
+    }
+    res.status(201).json({ response: response, message: "sucess" });
   } catch (error) {
     res.json({ message: "error" });
   }
@@ -56,7 +55,7 @@ const getCadeiraAtrazoEspecifico = async (req, res) => {
     const { id } = req.body;
     const response = await prisma.cadeiraAtraso.findFirst({
       include: {
-        AnoFrequncia: true,
+        AnoFrequencia: true,
         anoLectivo: true,
         Curso: true,
         disciplina: true,
@@ -82,7 +81,7 @@ const getCadeiraAtraso = async (req, res) => {
     const { id } = req.params;
     const response = await prisma.cadeiraAtraso.findFirst({
       include: {
-        AnoFrequncia: true,
+        AnoFrequencia: true,
         anoLectivo: true,
         Curso: true,
         disciplina: true,
@@ -106,7 +105,7 @@ const getCadeiraAtrasos = async (req, res) => {
   try {
     const response = await prisma.cadeiraAtraso.findMany({
       include: {
-        AnoFrequncia: true,
+        AnoFrequencia: true,
         anoLectivo: true,
         Curso: true,
         disciplina: true,
@@ -134,7 +133,7 @@ const buscarCadeira = async (req, res) => {
       include: {
         disciplina: true,
         estudante: true,
-        AnoFrequncia: true,
+        AnoFrequencia: true,
         semestre: true,
         anoLectivo: true,
         Curso: true,
@@ -144,7 +143,7 @@ const buscarCadeira = async (req, res) => {
         estudante: {
           bi,
         },
-        AnoFrequncia: {
+        AnoFrequencia: {
           ano: frequencia,
         },
         anoLectivo: {
@@ -200,6 +199,21 @@ const upDateCadeiraAtraso = async (req, res) => {
       !rupe ||
       !id
     ) {
+      await prisma.cadeiraAtraso.update({
+        data: {
+          valor,
+          fk_estudante,
+          fk_semestre,
+          fk_curso,
+          fk_disciplina,
+          fk_frequencia,
+          fk_ano,
+          rupe,
+        },
+        where: {
+          id,
+        },
+      });
       res.json({ message: "sucess" });
     } else {
       res.status(201).json({ message: "error" });
@@ -207,6 +221,141 @@ const upDateCadeiraAtraso = async (req, res) => {
   } catch (error) {
     res.status(201).json({ message: "error" });
   }
+};
+const movimentoCadeiraAtraso = async (req, res) => {
+  const { dataFinal, dataInicial, ano } = req.body;
+  const dataI = new Date(dataInicial);
+  const dataF = new Date(dataFinal);
+
+  const jaExiste = await prisma.cadeiraAtraso.findMany({
+    include: {
+      estudante: true,
+    },
+    where: {
+      NOT: {
+        dataSolicitacao: {
+          gte: dataI,
+          lte: dataF,
+        },
+      },
+      anoLectivo: {
+        ano,
+      },
+    },
+  });
+  const intervalo = await prisma.cadeiraAtraso.findMany({
+    include: {
+      estudante: true,
+    },
+    where: {
+      dataSolicitacao: {
+        gte: dataI,
+        lte: dataF,
+      },
+      anoLectivo: {
+        ano,
+      },
+    },
+  });
+
+  let listaIntervalo = {
+    laboral: {
+      totalEstudante: 0,
+      totalPropina: 0,
+    },
+    regular: {
+      totalEstudante: 0,
+      totalPropina: 0,
+    },
+    totalGeral: {
+      totalEstudante: 0,
+      totalPropina: 0,
+    },
+  };
+  let listaExiste = {
+    laboral: {
+      totalEstudante: 0,
+      totalPropina: 0,
+    },
+    regular: {
+      totalEstudante: 0,
+      totalPropina: 0,
+    },
+    totalGeral: {
+      totalEstudante: 0,
+      totalPropina: 0,
+    },
+  };
+
+  intervalo.reduce((acc, p) => {
+    if (!acc["regular"]) {
+      acc["regular"] = {
+        totalEstudante: 0,
+        totalPropina: 0,
+      };
+    }
+
+    if (!acc["totalGeral"]) {
+      acc["totalGeral"] = {
+        totalEstudante: 0,
+        totalPropina: 0,
+        totalAllStudant: 0,
+        totalAllValue: 0,
+      };
+    }
+
+    acc["regular"].totalEstudante++;
+    acc["regular"].totalPropina += p.valor;
+
+    acc["totalGeral"].totalEstudante++;
+    acc["totalGeral"].totalPropina += p.valor;
+
+    listaIntervalo.regular = acc["regular"] || {
+      totalEstudante: 0,
+      totalPropina: 0,
+    };
+    listaIntervalo.totalGeral = acc["totalGeral"] || {
+      totalEstudante: 0,
+      totalPropina: 0,
+      totalAllStudant: 0,
+      totalAllValue: 0,
+    };
+    return acc;
+  }, {});
+  jaExiste.reduce((acc, p) => {
+    if (!acc["regular"]) {
+      acc["regular"] = {
+        totalEstudante: 0,
+        totalPropina: 0,
+      };
+    }
+
+    if (!acc["totalGeral"]) {
+      acc["totalGeral"] = {
+        totalEstudante: 0,
+        totalPropina: 0,
+      };
+    }
+
+    acc["regular"].totalEstudante++;
+    acc["regular"].totalPropina += p.valor;
+
+    acc["totalGeral"].totalEstudante++;
+    acc["totalGeral"].totalPropina += p.valor;
+
+    listaExiste.regular = acc["regular"] || {
+      totalEstudante: 0,
+      totalPropina: 0,
+    };
+    listaExiste.totalGeral = acc["totalGeral"] || {
+      totalEstudante: 0,
+      totalPropina: 0,
+      totalAllStudant: 0,
+      totalAllValue: 0,
+    };
+    return acc;
+  }, {});
+  res.json({ totalExiste: listaExiste, totalIntervalo: listaIntervalo });
 };
 
 module.exports = {
@@ -217,4 +366,5 @@ module.exports = {
   upDateCadeiraAtraso,
   getCadeiraAtrazoEspecifico,
   buscarCadeira,
+  movimentoCadeiraAtraso,
 };

@@ -7,6 +7,7 @@ const getEstudante = async (req, res) => {
     const response = await prisma.estudante.findFirst({
       include: {
         curso: true,
+        frequencia: true,
       },
       where: {
         id,
@@ -24,6 +25,7 @@ const buscaEstudantePorBi = async (req, res) => {
     const response = await prisma.estudante.findFirst({
       include: {
         curso: true,
+        frequencia: true,
       },
       where: {
         bi,
@@ -83,6 +85,7 @@ const getEstudantes = async (req, res) => {
     const response = await prisma.estudante.findMany({
       include: {
         curso: true,
+        frequencia: true,
       },
     });
     res.json(response);
@@ -97,6 +100,7 @@ const getEstudanteBi = async (req, res) => {
     const response = await prisma.estudante.findFirst({
       include: {
         curso: true,
+        frequencia: true,
       },
       where: {
         bi,
@@ -113,6 +117,7 @@ const getEstudanteEspecifico = async (req, res) => {
     const response = await prisma.estudante.findFirst({
       include: {
         curso: true,
+        frequencia: true,
       },
       where: {
         id,
@@ -162,8 +167,7 @@ const deleteEstudante = async (req, res) => {
         id,
       },
     });
-    res.json(response);
-    res.status(200).json({ user: "Removido Com sucesso" });
+    res.status(200).json({ message: "sucess" });
   } catch (error) {
     res.json({ mensage: error.mensage });
   }
@@ -204,6 +208,7 @@ const searchEstudante = async (req, res) => {
       const response = await prisma.estudante.findFirst({
         include: {
           curso: {},
+          frequencia: true,
         },
         where: {
           nome,

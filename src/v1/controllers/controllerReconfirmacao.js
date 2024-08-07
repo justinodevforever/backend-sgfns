@@ -12,7 +12,6 @@ const createReconfirmacao = async (req, res) => {
       fk_user,
       fk_ano,
       fk_frequencia,
-      dataSolicitacao,
     } = req.body;
 
     if (
@@ -49,6 +48,12 @@ const createReconfirmacao = async (req, res) => {
         fk_user,
       },
     });
+    await prisma.estudante.update({
+      data: {
+        fk_frequencia,
+      },
+      where: { id: fk_estudante },
+    });
     if (typeof response?.rupe === "bigint") {
       response.rupe = response?.rupe?.toString();
     }
@@ -70,9 +75,11 @@ const getReconfirmacoes = async (req, res) => {
         curso: true,
       },
     });
-    if (typeof response.rupe === "bigint") {
-      response.rupe = response.rupe.toString();
-    }
+    response.map((p) => {
+      if (typeof p.rupe === "bigint") {
+        p.rupe = p.rupe.toString();
+      }
+    });
     res.json(response);
   } catch (error) {
     res.json({ messsage: "error" });
@@ -238,6 +245,148 @@ const upDateReconfirmacao = async (req, res) => {
     res.json({ message: error.message });
   }
 };
+const movimentoPropina = async (req, res) => {
+  const { dataFinal, dataInicial, ano } = req.body;
+  const dataI = new Date(dataInicial);
+  const dataF = new Date(dataFinal);
+
+  const jaExiste = await prisma.reconfirmacao.findMany({
+    include: {
+      estudante: true,
+    },
+    where: {
+      NOT: {
+        dataSolicitacao: {
+          gte: dataI,
+          lte: dataF,
+        },
+      },
+      anoLectivo: {
+        ano,
+      },
+    },
+  });
+  const intervalo = await prisma.reconfirmacao.findMany({
+    include: {
+      estudante: true,
+    },
+    where: {
+      dataSolicitacao: {
+        gte: dataI,
+        lte: dataF,
+      },
+      anoLectivo: {
+        ano,
+      },
+    },
+  });
+  let listaIntervalo = {
+    laboral: {
+      totalEstudante: 0,
+      totalPropina: 0,
+    },
+    regular: {
+      totalEstudante: 0,
+      totalPropina: 0,
+    },
+    totalGeral: {
+      totalEstudante: 0,
+      totalPropina: 0,
+    },
+  };
+  let listaExiste = {
+    laboral: {
+      totalEstudante: 0,
+      totalPropina: 0,
+    },
+    regular: {
+      totalEstudante: 0,
+      totalPropina: 0,
+    },
+    totalGeral: {
+      totalEstudante: 0,
+      totalPropina: 0,
+    },
+  };
+
+  intervalo.reduce((acc, p) => {
+    if (!acc["regular"]) {
+      acc["regular"] = {
+        totalEstudante: 0,
+        totalPropina: 0,
+      };
+    }
+
+    if (!acc["totalGeral"]) {
+      acc["totalGeral"] = {
+        totalEstudante: 0,
+        totalPropina: 0,
+        totalAllStudant: 0,
+        totalAllValue: 0,
+      };
+    }
+
+    acc["regular"].totalEstudante++;
+    acc["regular"].totalPropina += p.valor;
+
+    acc["totalGeral"].totalEstudante++;
+    acc["totalGeral"].totalPropina += p.valor;
+
+    listaIntervalo.regular = acc["regular"] || {
+      totalEstudante: 0,
+      totalPropina: 0,
+    };
+    listaIntervalo.totalGeral = acc["totalGeral"] || {
+      totalEstudante: 0,
+      totalPropina: 0,
+      totalAllStudant: 0,
+      totalAllValue: 0,
+    };
+    return acc;
+  }, {});
+  jaExiste.reduce((acc, p) => {
+    if (!acc["regular"]) {
+      acc["regular"] = {
+        totalEstudante: 0,
+        totalPropina: 0,
+      };
+    }
+    if (!acc["laboral"]) {
+      acc["laboral"] = {
+        totalEstudante: 0,
+        totalPropina: 0,
+      };
+    }
+    if (!acc["totalGeral"]) {
+      acc["totalGeral"] = {
+        totalEstudante: 0,
+        totalPropina: 0,
+      };
+    }
+
+    acc["regular"].totalEstudante++;
+    acc["regular"].totalPropina += p.valor;
+
+    acc["totalGeral"].totalEstudante++;
+    acc["totalGeral"].totalPropina += p.valor;
+    listaExiste.laboral = acc["laboral"] || {
+      totalEstudante: 0,
+      totalPropina: 0,
+    };
+    listaExiste.regular = acc["regular"] || {
+      totalEstudante: 0,
+      totalPropina: 0,
+    };
+    listaExiste.totalGeral = acc["totalGeral"] || {
+      totalEstudante: 0,
+      totalPropina: 0,
+      totalAllStudant: 0,
+      totalAllValue: 0,
+    };
+    return acc;
+  }, {});
+  res.json({ totalExiste: listaExiste, totalIntervalo: listaIntervalo });
+};
 
 module.exports = {
   createReconfirmacao,
@@ -248,4 +397,5 @@ module.exports = {
   getReconfirmacaoRelatorio,
   getReconfirmacaoEspecifico,
   getReconfirmacaoAtualizacao,
+  movimentoPropina,
 };

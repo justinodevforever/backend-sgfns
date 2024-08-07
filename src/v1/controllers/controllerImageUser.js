@@ -5,7 +5,7 @@ const createImageUser = async (req, res) => {
   const { fk_user, legenda } = req.body;
   try {
     const filename = req.file;
-    console.log(filename);
+
     if (!filename || filename === undefined || filename === " ") {
       res.json({ message: "error" });
       return;

@@ -8,6 +8,7 @@ const {
   getReconfirmacaoRelatorio,
   getReconfirmacaoEspecifico,
   getReconfirmacaoAtualizacao,
+  movimentoPropina,
 } = require("../controllers/controllerReconfirmacao");
 const { authorization } = require("../../authorization/auth");
 
@@ -32,6 +33,11 @@ router.post(
   "/reconfirmacao/atualizacao",
   authorization,
   getReconfirmacaoAtualizacao
+);
+router.post(
+  "/reconfirmacao/movimento_financeiro",
+  authorization,
+  movimentoPropina
 );
 
 module.exports = router;

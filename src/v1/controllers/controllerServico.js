@@ -1,123 +1,85 @@
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+
 const createServico = async (req, res) => {
   try {
-    const {
-      valor,
-      fk_tipo,
-      fk_estudante,
-      fk_curso,
-      fk_user,
-      fk_anoFrequencia,
-    } = req.body;
+    const { valor, tipo } = req.body;
+
+    if (!valor || !tipo) return res.json({ message: "existe um campo vazio" });
+
+    await prisma.servico.create({
+      data: {
+        valor,
+        tipo,
+      },
+    });
+    res.json({ message: "sucess" });
   } catch (error) {
-    res.json(error);
+    res.json({ message: "error" });
   }
 };
 
 const getServicos = async (req, res) => {
   try {
+    const response = await prisma.servico.findMany();
+    res.json(response);
   } catch (error) {
-    res.json(error);
+    res.json({ message: error.message });
   }
 };
 const getServico = async (req, res) => {
   try {
     const { id } = req.params;
+    const response = await prisma.servico.findFirst({
+      where: {
+        id,
+      },
+    });
+    res.json(response);
   } catch (error) {
-    res.json(error);
+    res.json({ message: error.message });
   }
 };
 
 const deleteServico = async (req, res) => {
   try {
     const { id } = req.params;
+    await prisma.servico.delete({ where: { id } });
+    res.json({ message: "sucess" });
   } catch (error) {
-    res.json(error);
+    res.json({ message: "error" });
   }
 };
 const upDateServico = async (req, res) => {
   try {
     const { id } = req.params;
-    const {
-      valor,
-      fk_tipo,
-      fk_curso,
-      fk_estudante,
-      fk_user,
-      fk_anoFrequencia,
-    } = req.body;
+    const { valor, tipo } = req.body;
+    if (!valor || !tipo) return res.json("existe campo vazio");
+    await prisma.servico.update({
+      data: {
+        valor,
+        tipo,
+      },
+      where: {
+        id,
+      },
+    });
+    res.json({ message: "sucess" });
   } catch (error) {
-    res.json(error);
+    res.json({ message: "error" });
   }
 };
 
-const getEstudanteServico = async (req, res) => {
+const getServisoEspecifico = async (req, res) => {
   try {
-    const agora = Date.now();
-    const date = new Date(agora);
+    const { tipo } = req.body;
 
-    let [TiposServicosHoje, hour] = date
-      .toLocaleTiTiposServicostring("pt-BR", { month: "numeric" })
-      .split(",");
-
-    const { ano, id } = req.params;
-
-    if (Number(TiposServicosHoje) === Number(1)) {
-      TiposServicosHoje = 12;
-      // const response = await Servico.findAll({
-      //   include: [
-      //     { model: usuario },
-      //     {
-      //       model: TiposServicos,
-      //       where: {
-      //         algarismo: {
-      //           [Op.eq]: `${Number(TiposServicosHoje)}`,
-      //         },
-      //       },
-      //     },
-      //     { model: AnoLetivo },
-      //   ],
-      //   where: {
-      //     [Op.and]: {
-      //       fk_anoFrequencia: ano,
-      //     },
-      //   },
-      // });
-      // if (!response[0]) {
-      //   res.json({
-      //     Mensagem: "Deves Fazer o Pagamento das tuas Servicos",
-      //     m: response[0],
-      //   });
-      // } else if (response[0]) {
-      //   res.json({ Mensagem: "Situação da Servico Legal" });
-      // }
-      // return;
-    }
-
-    // const response = await Servico.findAll({
-    //   include: [
-    //     { model: usuario },
-    //     {
-    //       model: TiposServicos,
-    //       where: {
-    //         algarismo: {
-    //           [Op.eq]: `${Number(TiposServicosHoje) - 1}`,
-    //         },
-    //       },
-    //     },
-    //     { model: AnoLetivo },
-    //   ],
-    //   where: {
-    //     fk_anoFrequencia: ano,
-    //   },
-    // });
-
-    // if (!response[0]) {
-    //   res.json({
-    //     Mensagem: "Deves Fazer o Pagamento das tuas Servicos",
-    //   });
-    // } else if (response[0]) {
-    //   res.json({ Mensagem: "Situação da Servico Legal" });
-    // }
+    const response = await prisma.servico.findFirst({
+      where: {
+        tipo,
+      },
+    });
+    res.status(200).json(response);
   } catch (error) {
     res.json({ mensage: error });
   }
@@ -129,5 +91,5 @@ module.exports = {
   getServico,
   deleteServico,
   upDateServico,
-  getEstudanteServico,
+  getServisoEspecifico,
 };

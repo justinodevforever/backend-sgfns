@@ -13,7 +13,7 @@ const createRecurso = async (req, res) => {
     fk_ano,
     fk_user,
   } = req.body;
-  console.log(fk_frequencia);
+
   try {
     if (
       !valor ||
@@ -45,7 +45,7 @@ const createRecurso = async (req, res) => {
     }
     res.status(201).json({ response: response, message: "sucess" });
   } catch (error) {
-    res.json({ message: error.message });
+    res.json({ message: "error" });
   }
 };
 
@@ -141,19 +141,22 @@ const upDateRecurso = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (
-      !rupe ||
-      !fk_disciplina ||
-      !fk_frequencia ||
-      !valor ||
-      !fk_ano ||
-      !fk_semestre ||
-      !fk_user
-    ) {
-      res.status(200).json({ message: "sucess" });
-    } else {
-      res.json({ message: "error" });
+    if (!rupe || !fk_disciplina || !fk_frequencia || !fk_ano || !fk_semestre) {
+      return res.json({ message: "error" });
     }
+
+    await prisma.recurso.update({
+      data: {
+        fk_ano,
+        fk_disciplina,
+        fk_frquencia: fk_frequencia,
+        fk_semestre,
+      },
+      where: {
+        id,
+      },
+    });
+    res.status(200).json({ message: "sucess" });
   } catch (error) {
     res.json({ message: "error" });
   }
@@ -204,6 +207,141 @@ const buscarCadeira = async (req, res) => {
     return res.json({ message: error.message });
   }
 };
+const movimentoRecurso = async (req, res) => {
+  const { dataFinal, dataInicial, ano } = req.body;
+  const dataI = new Date(dataInicial);
+  const dataF = new Date(dataFinal);
+
+  const jaExiste = await prisma.recurso.findMany({
+    include: {
+      estudante: true,
+    },
+    where: {
+      NOT: {
+        dataSolicitacao: {
+          gte: dataI,
+          lte: dataF,
+        },
+      },
+      anoLectivo: {
+        ano,
+      },
+    },
+  });
+  const intervalo = await prisma.recurso.findMany({
+    include: {
+      estudante: true,
+    },
+    where: {
+      dataSolicitacao: {
+        gte: dataI,
+        lte: dataF,
+      },
+      anoLectivo: {
+        ano,
+      },
+    },
+  });
+
+  let listaIntervalo = {
+    laboral: {
+      totalEstudante: 0,
+      totalPropina: 0,
+    },
+    regular: {
+      totalEstudante: 0,
+      totalPropina: 0,
+    },
+    totalGeral: {
+      totalEstudante: 0,
+      totalPropina: 0,
+    },
+  };
+  let listaExiste = {
+    laboral: {
+      totalEstudante: 0,
+      totalPropina: 0,
+    },
+    regular: {
+      totalEstudante: 0,
+      totalPropina: 0,
+    },
+    totalGeral: {
+      totalEstudante: 0,
+      totalPropina: 0,
+    },
+  };
+
+  intervalo.reduce((acc, p) => {
+    if (!acc["regular"]) {
+      acc["regular"] = {
+        totalEstudante: 0,
+        totalPropina: 0,
+      };
+    }
+
+    if (!acc["totalGeral"]) {
+      acc["totalGeral"] = {
+        totalEstudante: 0,
+        totalPropina: 0,
+        totalAllStudant: 0,
+        totalAllValue: 0,
+      };
+    }
+
+    acc["regular"].totalEstudante++;
+    acc["regular"].totalPropina += p.valor;
+
+    acc["totalGeral"].totalEstudante++;
+    acc["totalGeral"].totalPropina += p.valor;
+
+    listaIntervalo.regular = acc["regular"] || {
+      totalEstudante: 0,
+      totalPropina: 0,
+    };
+    listaIntervalo.totalGeral = acc["totalGeral"] || {
+      totalEstudante: 0,
+      totalPropina: 0,
+      totalAllStudant: 0,
+      totalAllValue: 0,
+    };
+    return acc;
+  }, {});
+  jaExiste.reduce((acc, p) => {
+    if (!acc["regular"]) {
+      acc["regular"] = {
+        totalEstudante: 0,
+        totalPropina: 0,
+      };
+    }
+
+    if (!acc["totalGeral"]) {
+      acc["totalGeral"] = {
+        totalEstudante: 0,
+        totalPropina: 0,
+      };
+    }
+
+    acc["regular"].totalEstudante++;
+    acc["regular"].totalPropina += p.valor;
+
+    acc["totalGeral"].totalEstudante++;
+    acc["totalGeral"].totalPropina += p.valor;
+
+    listaExiste.regular = acc["regular"] || {
+      totalEstudante: 0,
+      totalPropina: 0,
+    };
+    listaExiste.totalGeral = acc["totalGeral"] || {
+      totalEstudante: 0,
+      totalPropina: 0,
+      totalAllStudant: 0,
+      totalAllValue: 0,
+    };
+    return acc;
+  }, {});
+  res.json({ totalExiste: listaExiste, totalIntervalo: listaIntervalo });
+};
 
 module.exports = {
   createRecurso,
@@ -213,4 +351,5 @@ module.exports = {
   upDateRecurso,
   getRecursoEspecifico,
   buscarCadeira,
+  movimentoRecurso,
 };

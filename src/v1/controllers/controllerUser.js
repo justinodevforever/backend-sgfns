@@ -208,14 +208,48 @@ const verifyToken = async (req, res) => {
 
 async function searchUser(req, res) {
   const { nome } = req.body;
-  const user = await prisma.usuario.findFirst({
-    where: {
-      nome,
-    },
-  });
-
-  res.json(user);
   try {
+    const user = await prisma.usuario.findFirst({
+      where: {
+        nome,
+      },
+    });
+
+    res.json(user);
+  } catch (error) {
+    res.json({ mensage: error.mensage });
+  }
+}
+async function altearSenha(req, res) {
+  const { password, id } = req.body;
+  // const { id } = req.params;
+  try {
+    if (!password || !id) return res.json({ message: "Campo vazio" });
+    const newPassord = await bcrypt.hash(password, 10);
+    await prisma.usuario.update({
+      data: {
+        password: newPassord,
+      },
+      where: {
+        id,
+      },
+    });
+
+    res.json({ message: "sucess" });
+  } catch (error) {
+    res.json({ mensage: error.mensage });
+  }
+}
+async function searchUserEmail(req, res) {
+  const { email } = req.body;
+  try {
+    const user = await prisma.usuario.findFirst({
+      where: {
+        email,
+      },
+    });
+
+    res.json(user);
   } catch (error) {
     res.json({ mensage: error.mensage });
   }
@@ -233,4 +267,7 @@ module.exports = {
   getAllUser,
   getUserPorBi,
   getUserSomente,
+  searchUserEmail,
+  altearSenha,
+  altearSenha,
 };

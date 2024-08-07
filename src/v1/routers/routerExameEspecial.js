@@ -8,6 +8,7 @@ const {
   upDateExameEspecial,
   getExameEspecialEspecifico,
   buscarCadeira,
+  movimentoExameEspecial,
 } = require("../controllers/controllerExameEspecial");
 
 const router = Router();
@@ -23,5 +24,10 @@ router.post(
   getExameEspecialEspecifico
 );
 router.post("/exame/especial/busca", authorization, buscarCadeira);
+router.post(
+  "/exame/especial/movimento_financeiro",
+  authorization,
+  movimentoExameEspecial
+);
 
 module.exports = router;

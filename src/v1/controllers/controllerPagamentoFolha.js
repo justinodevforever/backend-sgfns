@@ -1,48 +1,39 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-const createDeclaracoes = async (req, res) => {
-  const { fk_estudante, fk_user, fk_frequencia, tipoDeclaracao, valor } =
-    req.body;
+const createPagamentoFolha = async (req, res) => {
+  const { valor, fk_user } = req.body;
+
   try {
-    const response = await prisma.declaracao.create({
+    await prisma.pagamentoFolha.create({
       data: {
-        tipoDeclaracao,
-        fk_estudante,
-        fk_user,
-        fk_frequencia,
         valor,
+        fk_user,
       },
     });
-    res.json({ response: response, message: "sucess" });
+    res.json({ message: "sucess" });
   } catch (error) {
-    console.log(error.message);
     res.json({ message: "error" });
   }
 };
-
-const getDeclaracoes = async (req, res) => {
+const getPagamentoFolhas = async (req, res) => {
   try {
-    const response = await prisma.declaracao.findMany({
+    const response = await prisma.pagamentoFolha.findMany({
       include: {
         usuario: true,
-        estudante: true,
-        frequencia: true,
       },
     });
     res.json(response);
   } catch (error) {
-    res.json(error);
+    res.json({ message: error.message });
   }
 };
-const getDeclaracao = async (req, res) => {
+const getPagamentoFolha = async (req, res) => {
   const { id } = req.params;
   try {
-    const response = await prisma.declaracao.findFirst({
+    const response = await prisma.pagamentoFolha.findFirst({
       include: {
         usuario: true,
-        estudante: true,
-        frequencia: true,
       },
       where: {
         id,
@@ -50,30 +41,15 @@ const getDeclaracao = async (req, res) => {
     });
     res.json(response);
   } catch (error) {
-    res.json(error);
+    res.json({ message: error.message });
   }
 };
-
-const deleteDeclaracoes = async (req, res) => {
+const UpdatePagamentoFolha = async (req, res) => {
+  const { id } = req.params;
+  const { valor } = req.body;
   try {
-    const { id } = req.params;
-    await prisma.declaracao.delete({
-      where: {
-        id,
-      },
-    });
-  } catch (error) {
-    res.json(error);
-  }
-};
-const upDateDeclaracoes = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { frequencia, dataSolicitacao, valor } = req.body;
-    await prisma.declaracao.update({
+    await prisma.pagamentoFolha.update({
       data: {
-        frequencia,
-        dataSolicitacao,
         valor,
       },
       where: {
@@ -85,15 +61,25 @@ const upDateDeclaracoes = async (req, res) => {
     res.json({ message: "error" });
   }
 };
-const movimentoDeclaracao = async (req, res) => {
-  const { dataFinal, dataInicial, tipoDeclaracao } = req.body;
+const deletePagamentoFolha = async (req, res) => {
+  const { id } = req.params;
+  try {
+    await prisma.pagamentoFolha.delete({
+      where: {
+        id,
+      },
+    });
+    res.json({ message: "sucess" });
+  } catch (error) {
+    res.json({ message: "error" });
+  }
+};
+const movimentoPagamentoFolha = async (req, res) => {
+  const { dataFinal, dataInicial } = req.body;
   const dataI = new Date(dataInicial);
   const dataF = new Date(dataFinal);
 
-  const jaExiste = await prisma.declaracao.findMany({
-    include: {
-      estudante: true,
-    },
+  const jaExiste = await prisma.pagamentoFolha.findMany({
     where: {
       NOT: {
         dataSolicitacao: {
@@ -101,19 +87,14 @@ const movimentoDeclaracao = async (req, res) => {
           lte: dataF,
         },
       },
-      tipoDeclaracao,
     },
   });
-  const intervalo = await prisma.declaracao.findMany({
-    include: {
-      estudante: true,
-    },
+  const intervalo = await prisma.pagamentoFolha.findMany({
     where: {
       dataSolicitacao: {
         gte: dataI,
         lte: dataF,
       },
-      tipoDeclaracao,
     },
   });
   let listaIntervalo = {
@@ -187,12 +168,7 @@ const movimentoDeclaracao = async (req, res) => {
         totalPropina: 0,
       };
     }
-    if (!acc["laboral"]) {
-      acc["laboral"] = {
-        totalEstudante: 0,
-        totalPropina: 0,
-      };
-    }
+
     if (!acc["totalGeral"]) {
       acc["totalGeral"] = {
         totalEstudante: 0,
@@ -205,10 +181,7 @@ const movimentoDeclaracao = async (req, res) => {
 
     acc["totalGeral"].totalEstudante++;
     acc["totalGeral"].totalPropina += p.valor;
-    listaExiste.laboral = acc["laboral"] || {
-      totalEstudante: 0,
-      totalPropina: 0,
-    };
+
     listaExiste.regular = acc["regular"] || {
       totalEstudante: 0,
       totalPropina: 0,
@@ -225,10 +198,10 @@ const movimentoDeclaracao = async (req, res) => {
 };
 
 module.exports = {
-  createDeclaracoes,
-  getDeclaracoes,
-  deleteDeclaracoes,
-  upDateDeclaracoes,
-  getDeclaracao,
-  movimentoDeclaracao,
+  createPagamentoFolha,
+  getPagamentoFolha,
+  getPagamentoFolhas,
+  UpdatePagamentoFolha,
+  deletePagamentoFolha,
+  movimentoPagamentoFolha,
 };

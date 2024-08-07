@@ -6,7 +6,7 @@ const createSemestre = async (req, res) => {
   try {
     if ((!nome && !numero) || numero === 0)
       return res.json({ message: "Campo vazios" });
-    console.log(nome, numero);
+
     await prisma.semestre.create({
       data: {
         nome,

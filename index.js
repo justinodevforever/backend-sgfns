@@ -28,6 +28,9 @@ const routerCadeiraAtraso = require("./src/v1/routers/routerCadeiraAtraso");
 const routerExameEspecial = require("./src/v1/routers/routerExameEspecial");
 const routerPropina = require("./src/v1/routers/routerPropina");
 const routerListaRecurso = require("./src/v1/routers/routerListaRecurso");
+const routerFolha = require("./src/v1/routers/routerPagamentoFolha");
+const routerMatricula = require("./src/v1/routers/routerMatricula");
+const routerInscrincaoMatricula = require("./src/v1/routers/routerInscricaoMatricula");
 
 require("./src/v1/database/db");
 
@@ -71,6 +74,9 @@ app.use("/api/v1", routerCadeiraAtraso);
 app.use("/api/v1", routerRecurso);
 app.use("/api/v1", routerExameEspecial);
 app.use("/api/v1", routerListaRecurso);
+app.use("/api/v1", routerFolha);
+app.use("/api/v1", routerMatricula);
+app.use("/api/v1", routerInscrincaoMatricula);
 
 server.listen(process.env.PORT, () => {
   console.log(`Servidor Rodando na porta ${process.env.PORT}`);

@@ -9,6 +9,7 @@ const {
   searchEstudante,
   buscaEstudantePorBi,
   getEstudantePorUsuario,
+  getEstudante,
 } = require("../controllers/controllerEstudante");
 const { authorization } = require("../../authorization/auth");
 
@@ -16,7 +17,7 @@ const router = Router();
 
 router.post("/estudante", authorization, createEstudante);
 router.get("/estudante", authorization, getEstudantes);
-router.get("/estudante/:id", authorization, getEstudantes);
+router.get("/estudante/:id", authorization, getEstudante);
 router.put("/estudante/:id", authorization, upDateEstudante);
 router.delete("/estudante/:id", authorization, deleteEstudante);
 router.post("/estudante/specific", authorization, getEstudanteEspecifico);

@@ -8,6 +8,7 @@ const {
   getCursoEspecifico,
 } = require("../controllers/controllerCursos");
 const { authorization } = require("../../authorization/auth");
+const { movimentoRecurso } = require("../controllers/controllerRecurso");
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.get("/cursos", getCursos);
 router.get("/curso/:id", authorization, getCurso);
 router.delete("/curso/:id", authorization, deleteCurso);
 router.put("/curso/:id", authorization, upDateCurso);
+router.post("/recurso/movimento_financeiro", authorization, movimentoRecurso);
 
 module.exports = router;

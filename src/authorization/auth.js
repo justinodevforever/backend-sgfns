@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const verifyRefreshToken = async (req, res, next) => {
   const { refreshToken } = req.body;
   if (!refreshToken || refreshToken === undefined) {
-    return res.json("Você não está autorizado");
+    return res.json("Token Invalid");
   }
   try {
     jwt.verify(refreshToken, process.env.KEY_SECRET_REFRESHTOKEN);
@@ -16,7 +16,7 @@ const authorization = async (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || authorization === undefined) {
-    return res.status(401).json("Você não está autorizado");
+    return res.status(401).json("Token Invalid");
   }
   const [, token] = authorization.split(" ");
   try {
