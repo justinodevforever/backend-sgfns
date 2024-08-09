@@ -14,6 +14,6 @@ router.post("/permissao", authorization, createPermissao);
 router.get("/permissao", authorization, getPermissoes);
 router.get("/permissao/:id", authorization, getPermissao);
 router.delete("/permissao/:id", authorization, deletePermissao);
-router.put("/permissao/:id", authorization.updatePermissao);
+router.put("/permissao/:id", authorization, updatePermissao);
 
 module.exports = router;
