@@ -6,13 +6,14 @@ const {
   updatePermissao,
   getPermissoes,
 } = require("../controllers/controllerPermissao");
+const { authorization } = require("../../authorization/auth");
 
 const router = Router();
 
-router.post("/permissao", createPermissao);
-router.get("/permissao", getPermissoes);
-router.get("/permissao/:id", getPermissao);
-router.delete("/permissao/:id", deletePermissao);
-router.put("/permissao/:id", updatePermissao);
+router.post("/permissao", authorization, createPermissao);
+router.get("/permissao", authorization, getPermissoes);
+router.get("/permissao/:id", authorization, getPermissao);
+router.delete("/permissao/:id", authorization, deletePermissao);
+router.put("/permissao/:id", authorization.updatePermissao);
 
 module.exports = router;
