@@ -123,21 +123,12 @@ const getRecursos = async (req, res) => {
 const deleteRecursos = async (req, res) => {
   try {
     const { id } = req.params;
+    await prisma.recurso.delete({ where: { id } });
   } catch (error) {}
 };
 
 const upDateRecurso = async (req, res) => {
-  const {
-    valor,
-    fk_estudante,
-    fk_semestre,
-    fk_curso,
-    fk_disciplina,
-    fk_frequencia,
-    fk_ano,
-    rupe,
-    fk_user,
-  } = req.body;
+  const { fk_semestre, fk_disciplina, fk_frequencia, fk_ano, rupe } = req.body;
   try {
     const { id } = req.params;
 

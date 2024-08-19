@@ -8,6 +8,7 @@ const getMatricula = async (req, res) => {
       include: {
         curso: true,
         usuario: true,
+        anoLetivo: true,
       },
       where: {
         id,
@@ -28,6 +29,7 @@ const buscaMatriculaPorBi = async (req, res) => {
     const response = await prisma.matricula.findFirst({
       include: {
         curso: true,
+        anoLetivo: true,
       },
       where: {
         bi,
@@ -53,6 +55,7 @@ const createMatricula = async (req, res) => {
     valor,
     rupe,
     fk_user,
+    fk_ano,
   } = req.body;
   try {
     if (
@@ -64,6 +67,7 @@ const createMatricula = async (req, res) => {
       !regime ||
       !fk_frequencia ||
       !valor ||
+      !fk_ano ||
       !fk_user
     ) {
       res.json({ message: "error" });
@@ -89,6 +93,7 @@ const createMatricula = async (req, res) => {
         valor,
         fk_user,
         rupe,
+        fk_ano,
       },
     });
     await prisma.estudante.create({
@@ -119,6 +124,7 @@ const getMatriculas = async (req, res) => {
       include: {
         curso: true,
         usuario: true,
+        anoLetivo: true,
       },
     });
     response.map((p) => {
@@ -139,6 +145,7 @@ const getMatriculaBi = async (req, res) => {
       include: {
         curso: true,
         usuario: true,
+        anoLetivo: true,
       },
       where: {
         bi,
@@ -159,6 +166,7 @@ const getMatriculaEspecifico = async (req, res) => {
       include: {
         curso: true,
         usuario: true,
+        anoLetivo: true,
       },
       where: {
         id,
@@ -177,6 +185,7 @@ const getAllMatricula = async (req, res) => {
       include: {
         curso: true,
         usuario: true,
+        anoLetivo: true,
       },
       where: {
         fk_user,
@@ -199,6 +208,7 @@ const getMatriculaPorUsuario = async (req, res) => {
       include: {
         curso: true,
         usuario: true,
+        anoLetivo: true,
       },
       where: {
         fk_user,
@@ -263,6 +273,7 @@ const searchMatricula = async (req, res) => {
         include: {
           curso: {},
           usuario: true,
+          anoLetivo: true,
         },
         where: {
           nome,
@@ -280,7 +291,7 @@ const searchMatricula = async (req, res) => {
   }
 };
 const relatorioMatricula = async (req, res) => {
-  const { dataInicio, dataFinal } = req.body;
+  const { dataInicio, dataFinal, ano } = req.body;
 
   try {
     const dataI = new Date(dataInicio);
@@ -288,11 +299,15 @@ const relatorioMatricula = async (req, res) => {
     const response = await prisma.matricula.findMany({
       include: {
         curso: true,
+        anoLetivo: true,
       },
       where: {
         dataSolicitacao: {
           gte: dataI,
           lte: dataF,
+        },
+        anoLetivo: {
+          ano,
         },
       },
     });

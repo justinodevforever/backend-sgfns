@@ -8,6 +8,7 @@ const getinscricaoMatricula = async (req, res) => {
       include: {
         curso: true,
         usuario: true,
+        anoLetivo: true,
       },
       where: {
         id,
@@ -42,8 +43,18 @@ const buscainscricaoMatriculaPorBi = async (req, res) => {
   }
 };
 const createinscricaoMatricula = async (req, res) => {
-  const { nome, bi, contato, fk_curso, regime, sexo, valor, fk_user, rupe } =
-    req.body;
+  const {
+    nome,
+    bi,
+    contato,
+    fk_curso,
+    regime,
+    sexo,
+    valor,
+    fk_user,
+    fk_ano,
+    rupe,
+  } = req.body;
   try {
     if (
       !sexo ||
@@ -54,7 +65,7 @@ const createinscricaoMatricula = async (req, res) => {
       !regime ||
       !valor ||
       !fk_user ||
-      !rupe
+      !fk_ano
     ) {
       res.json({ message: "error" });
       return;
@@ -71,6 +82,7 @@ const createinscricaoMatricula = async (req, res) => {
         valor,
         fk_user,
         rupe,
+        fk_ano,
       },
     });
     if (typeof response.rupe === "bigint") {
@@ -90,6 +102,7 @@ const getinscricaoMatriculas = async (req, res) => {
       include: {
         curso: true,
         usuario: true,
+        anoLetivo: true,
       },
     });
     response.map((p) => {
@@ -110,6 +123,7 @@ const getinscricaoMatriculaBi = async (req, res) => {
       include: {
         curso: true,
         usuario: true,
+        anoLetivo: true,
       },
       where: {
         bi,
@@ -132,6 +146,7 @@ const getinscricaoMatriculaEspecifico = async (req, res) => {
       include: {
         curso: true,
         usuario: true,
+        anoLetivo: true,
       },
       where: {
         id,
@@ -152,6 +167,7 @@ const getAllinscricaoMatricula = async (req, res) => {
       include: {
         curso: true,
         usuario: true,
+        anoLetivo: true,
       },
       where: {
         fk_user,
@@ -174,6 +190,7 @@ const getinscricaoMatriculaPorUsuario = async (req, res) => {
       include: {
         curso: true,
         usuario: true,
+        anoLetivo: true,
       },
       where: {
         fk_user,
@@ -240,6 +257,7 @@ const searchinscricaoMatricula = async (req, res) => {
         include: {
           curso: {},
           usuario: true,
+          anoLetivo: true,
         },
         where: {
           nome,
@@ -257,7 +275,7 @@ const searchinscricaoMatricula = async (req, res) => {
   }
 };
 const relatorioInscricao = async (req, res) => {
-  const { dataInicio, dataFinal } = req.body;
+  const { dataInicio, dataFinal, ano } = req.body;
 
   try {
     const dataI = new Date(dataInicio);
@@ -265,11 +283,15 @@ const relatorioInscricao = async (req, res) => {
     const response = await prisma.inscricaoMatricula.findMany({
       include: {
         curso: true,
+        anoLetivo: true,
       },
       where: {
         dataSolicitacao: {
           gte: dataI,
           lte: dataF,
+        },
+        anoLetivo: {
+          ano,
         },
       },
     });

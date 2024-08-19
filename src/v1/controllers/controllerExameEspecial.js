@@ -46,7 +46,7 @@ const createExameEspecial = async (req, res) => {
     if (typeof response.rupe === "bigint") {
       response.rupe = response.rupe.toString();
     }
-    console.log(response);
+
     res.status(201).json({ response: response, message: "sucess" });
   } catch (error) {
     console.log(error.message);

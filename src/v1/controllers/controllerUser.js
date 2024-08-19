@@ -106,7 +106,7 @@ const getUserEspecific = async (req, res) => {
 
 const getAllUser = async (req, res) => {
   try {
-    const response = await prisma.usuario.findMany({
+    const user = await prisma.usuario.findMany({
       include: {
         permissions: {
           include: {
@@ -115,6 +115,7 @@ const getAllUser = async (req, res) => {
         },
       },
     });
+    const { password: _, ...response } = user;
     res.json(response);
   } catch (error) {
     res.json({ mensage: error.mensage });

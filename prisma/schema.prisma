@@ -7,6 +7,11 @@
 generator client {
   provider = "prisma-client-js"
 }
+// datasource db {
+//   provider = "postgresql"
+//   url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+//   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+// }
 
 datasource db {
   provider = "postgresql"
@@ -79,11 +84,25 @@ model AnoLectivo{
   recursos Recurso[]
   propina Propina[]
   reconfirmacao Reconfirmacao[]
+  inscricao InscricaoMatricula[]
+  matricula Matricula[]
 }
 model ListaRecurso{
   id String @id @default(uuid())
   recurso Recurso @relation(fields: [fk_recurso], references: [id],onDelete: Cascade)
   fk_recurso String
+  
+}
+model ListaExameEspecial{
+  id String @id @default(uuid())
+  exame ExameEspecial @relation(fields: [fk_exame], references: [id],onDelete: Cascade)
+  fk_exame String
+  
+}
+model ListaCadeira{
+  id String @id @default(uuid())
+  cadeira CadeiraAtraso @relation(fields: [fk_cadeira], references: [id],onDelete: Cascade)
+  fk_cadeira String
   
 }
 model Estudante{
@@ -197,7 +216,8 @@ model ExameEspecial{
   semestre Semestre @relation(fields: [fk_semestre],references: [id],onDelete: Cascade)
     fk_semestre String
   usuario Usuario @relation(fields: [fk_user],references: [id],onDelete: Cascade)
-    fk_user String 
+    fk_user String
+  listaExame ListaExameEspecial[]
 
 }
 model CadeiraAtraso{
@@ -218,8 +238,9 @@ model CadeiraAtraso{
     fk_disciplina String 
   semestre Semestre @relation(fields: [fk_semestre],references: [id],onDelete: Cascade)
     fk_semestre String
-   usuario Usuario @relation(fields: [fk_user],references: [id],onDelete: Cascade)
+  usuario Usuario @relation(fields: [fk_user],references: [id],onDelete: Cascade)
     fk_user String 
+  listaCadeira ListaCadeira[]
 
 }
 model Recurso{
@@ -253,20 +274,18 @@ model ProfileUser{
   fk_user String
 
 }
-
-
 model Mes{
   id String @id @default(uuid())
   mes String?
   algarismo Int
   propina Propina[]
 }
-
 model Propina{
   id String @id @default(uuid())
   valor Int?
   createdAt DateTime @default(now())
   rupe BigInt @unique
+  frequencia String?
   anoFrequencia String
   estudante Estudante @relation(fields: [fk_estudante],references: [id],onDelete: Cascade)
     fk_estudante String 
@@ -289,8 +308,10 @@ model Matricula{
   regime String
   sexo String
   valor Float
-  rupe BigInt?
+  rupe BigInt? @unique
   dataSolicitacao DateTime @default(now())
+  anoLetivo AnoLectivo @relation(fields: [fk_ano],references: [id],onDelete: Cascade)
+    fk_ano String
   curso Curso @relation(fields: [fk_curso],references: [id],onDelete: Cascade)
     fk_curso String 
   usuario Usuario @relation(fields: [fk_user],references: [id],onDelete: Cascade)
@@ -305,12 +326,14 @@ model InscricaoMatricula{
   regime String
   sexo String
   valor Float
-  rupe BigInt?
+  rupe BigInt? @unique
   dataSolicitacao DateTime @default(now())
   curso Curso @relation(fields: [fk_curso],references: [id],onDelete: Cascade)
     fk_curso String
   usuario Usuario @relation(fields: [fk_user],references: [id],onDelete: Cascade)
-    fk_user String 
+    fk_user String
+  anoLetivo AnoLectivo @relation(fields: [fk_ano], references: [id], onDelete: Cascade)
+    fk_ano String
  
 }
 model Servico{

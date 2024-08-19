@@ -28,7 +28,7 @@ router.post("/alterar/senha", altearSenha);
 router.post("/search/user", authorization, searchUser);
 router.post("/search/user/email", searchUserEmail);
 router.get("/user/:id", authorization, getUser);
-router.get("/user", authorization, getAllUser);
+router.get("/user", getAllUser);
 router.put("/user/:id", authorization, upDateUser);
 router.delete("/user/:id", authorization, deleteUser);
 router.post("/refresh", verifyRefreshToken, verifyToken);

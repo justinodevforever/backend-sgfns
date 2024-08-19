@@ -10,7 +10,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.js",
     "start": "node ./dist/index.js",
-    "vercel-build": "npx prisma migrate deploy"
+    "vercel-build": "npx prisma migrate deploy",
+    "db:seed": "prisma db seed",
+    "db:push": "prisma db push"
   },
   "keywords": [],
   "author": "Justino Chinilila Chitombi",
@@ -31,7 +33,8 @@
     "pg": "^8.10.0",
     "pg-hstore": "^2.3.4",
     "postgres": "^3.4.3",
-    "socket.io": "^4.6.1"
+    "socket.io": "^4.6.1",
+    "vercel": "^35.2.3"
   },
   "devDependencies": {
     "prisma": "^5.11.0"

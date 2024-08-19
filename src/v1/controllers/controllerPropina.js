@@ -110,6 +110,7 @@ const listaEstudantes = async (req, res) => {
         },
         propina: {
           some: {
+            anoFrequencia,
             anoLectivo: {
               ano,
             },
@@ -155,6 +156,7 @@ const listaEstudantes = async (req, res) => {
 
         propina: {
           some: {
+            anoFrequencia,
             anoLectivo: {
               ano,
             },
@@ -216,6 +218,7 @@ const listaEstudantes = async (req, res) => {
         if (pagar.mes.mes && estudante.id === pagar.fk_estudante) {
           todosMeses[pagar.mes.mes] = pagar.valor;
           todosMeses["total"] += pagar.valor;
+          todosMeses["ano"] = pagar.anoFrequencia;
         } else {
           todosMeses[pagar.mes.mes] = 0.0;
         }
@@ -414,6 +417,7 @@ const dadosGeraisCurso = async (req, res) => {
           },
           include: {
             frequencia: true,
+            reconfirmacao: true,
             propina: {
               where: {
                 anoLectivo: {
@@ -460,7 +464,14 @@ const dadosGeraisCurso = async (req, res) => {
       };
 
       const frequencia = curso?.estudantes?.reduce((acc, estudante) => {
+        let value = {};
         const { frequencia, sexo, propina } = estudante;
+
+        const v = propina.find((c) => c.fk_estudante === estudante.id);
+        if (v != undefined) {
+          value = v;
+        }
+
         // propina.map((p) => {
         if (!acc[curso.curso]) {
           acc[curso.curso] = {
@@ -473,8 +484,8 @@ const dadosGeraisCurso = async (req, res) => {
           };
         }
 
-        if (!acc["Ano" + frequencia.ano]) {
-          acc["Ano" + frequencia.ano] = {
+        if (!acc["Ano" + value?.anoFrequencia]) {
+          acc["Ano" + value?.anoFrequencia] = {
             ano: "",
             totalSexoM: 0,
             totalSexoF: 0,
@@ -487,37 +498,41 @@ const dadosGeraisCurso = async (req, res) => {
           };
         }
 
-        acc["Ano" + frequencia.ano].ano = frequencia.ano;
-        if (sexo === "M" && acc["Ano" + frequencia.ano] && propina.length > 0) {
-          acc["Ano" + frequencia.ano].totalSexoM++;
+        acc["Ano" + value?.anoFrequencia].ano = value?.anoFrequencia;
+        if (
+          sexo === "M" &&
+          acc["Ano" + value?.anoFrequencia] &&
+          propina.length > 0
+        ) {
+          acc["Ano" + value?.anoFrequencia].totalSexoM++;
           acc[curso.curso].totalGeralM++;
         } else if (
           sexo === "F" &&
-          acc["Ano" + frequencia.ano] &&
+          acc["Ano" + value?.anoFrequencia] &&
           propina.length > 0
         ) {
-          acc["Ano" + frequencia.ano].totalSexoF++;
+          acc["Ano" + value?.anoFrequencia].totalSexoF++;
           acc[curso.curso].totalGeralF++;
         }
 
-        acc["Ano" + frequencia.ano].totalMF =
-          acc["Ano" + frequencia.ano].totalSexoF +
-          acc["Ano" + frequencia.ano].totalSexoM;
+        acc["Ano" + value?.anoFrequencia].totalMF =
+          acc["Ano" + value?.anoFrequencia].totalSexoF +
+          acc["Ano" + value?.anoFrequencia].totalSexoM;
         acc[curso.curso].totalGeralMF =
           acc[curso.curso].totalGeralF + acc[curso.curso].totalGeralM;
 
         propina.forEach((p) => {
           const { fk_mes, valor, mes } = p;
 
-          if (!anos["ano" + frequencia.ano]) {
-            anos["ano" + frequencia.ano] = {
+          if (!anos["ano" + value?.anoFrequencia]) {
+            anos["ano" + value?.anoFrequencia] = {
               totalPagamentoAno: 0,
               totalEstudanteAno: 0,
             };
           }
 
-          anos["ano" + frequencia.ano].totalEstudanteAno += 1;
-          anos["ano" + frequencia.ano].totalPagamentoAno += valor;
+          anos["ano" + value?.anoFrequencia].totalEstudanteAno += 1;
+          anos["ano" + value?.anoFrequencia].totalPagamentoAno += valor;
 
           if (!acc[curso.curso].totalPorMes[mes.mes]) {
             acc[curso.curso].totalPorMes[mes.mes] = {
@@ -525,8 +540,8 @@ const dadosGeraisCurso = async (req, res) => {
               qtd: 0,
             };
           }
-          if (!acc["Ano" + frequencia.ano].pagamentosMes[mes.mes]) {
-            acc["Ano" + frequencia.ano].pagamentosMes[mes.mes] = {
+          if (!acc["Ano" + value?.anoFrequencia].pagamentosMes[mes.mes]) {
+            acc["Ano" + value?.anoFrequencia].pagamentosMes[mes.mes] = {
               totalPago: 0,
               totalEstudante: 0,
               totalGeralMes: 0,
@@ -534,10 +549,12 @@ const dadosGeraisCurso = async (req, res) => {
             };
           }
 
-          acc["Ano" + frequencia.ano].pagamentosMes[mes.mes].totalPago += valor;
-          acc["Ano" + frequencia.ano].pagamentosMes[mes.mes].totalEstudante++;
-          acc["Ano" + frequencia.ano].totalMesAno += valor;
-          acc["Ano" + frequencia.ano].qtdAno++;
+          acc["Ano" + value?.anoFrequencia].pagamentosMes[mes.mes].totalPago +=
+            valor;
+          acc["Ano" + value?.anoFrequencia].pagamentosMes[mes.mes]
+            .totalEstudante++;
+          acc["Ano" + value?.anoFrequencia].totalMesAno += valor;
+          acc["Ano" + value?.anoFrequencia].qtdAno++;
 
           acc[curso.curso].totaGeralCurso += valor;
           acc[curso.curso].qtdGeral++;
@@ -548,7 +565,7 @@ const dadosGeraisCurso = async (req, res) => {
         // });
         return acc;
       }, {});
-
+      // console.log(frequencia);
       return { curso: curso.curso, frequencia, dados, anos };
     });
 
@@ -589,10 +606,19 @@ const verDivida = async (req, res) => {
     let [mesHoje, c] = date
       .toLocaleTimeString("pt-BR", { month: "long" })
       .split(" ");
+    let [mesT, o] = date.toLocaleTimeString("pt-BR", { month: "numeric" });
+    // .split(" ");
 
     const [ano, dia] = date
       .toLocaleTimeString("pt-BR", { year: "numeric" })
       .split(",");
+    let anoL = "";
+
+    if (mesT >= 9) {
+      anoL = Number(ano) + "/" + Number(Number(ano) + Number(1));
+    } else {
+      anoL = Number(ano) - Number(1) + "/" + Number(ano);
+    }
 
     const response = await prisma.propina.findMany({
       where: {
@@ -600,7 +626,7 @@ const verDivida = async (req, res) => {
           bi,
         },
         anoLectivo: {
-          ano: `${Number(ano) - Number(1)}/${ano}`,
+          ano: anoL,
         },
       },
       include: {
