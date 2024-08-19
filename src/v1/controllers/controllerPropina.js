@@ -7,7 +7,6 @@ const createPropina = async (req, res) => {
       valor,
       fk_mes,
       fk_estudante,
-      fk_curso,
       fk_user,
       fk_ano,
       fk_semestre,
@@ -15,19 +14,6 @@ const createPropina = async (req, res) => {
       frequencia,
     } = req.body;
 
-    if (
-      !valor ||
-      !fk_estudante ||
-      !fk_mes ||
-      !fk_semestre ||
-      !fk_user ||
-      !rupe ||
-      !fk_ano ||
-      !frequencia
-    ) {
-      res.json({ message: "error" });
-      return;
-    }
     const resp = await prisma.propina.findFirst({
       where: {
         fk_ano,
