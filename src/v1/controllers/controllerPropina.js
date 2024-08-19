@@ -16,22 +16,13 @@ const createPropina = async (req, res) => {
     } = req.body;
 
     if (
-      valor === 0 ||
-      valor === undefined ||
-      fk_ano === "" ||
-      fk_ano === undefined ||
-      fk_curso === "" ||
-      fk_curso === undefined ||
-      fk_estudante === "" ||
-      fk_estudante === undefined ||
-      fk_mes === "" ||
-      fk_mes === undefined ||
-      fk_semestre === "" ||
-      fk_semestre === undefined ||
-      fk_user === "" ||
-      fk_user === undefined ||
-      rupe === 0 ||
-      fk_ano === null ||
+      !valor ||
+      !fk_estudante ||
+      !fk_mes ||
+      !fk_semestre ||
+      !fk_user ||
+      !rupe ||
+      !fk_ano ||
       !frequencia
     ) {
       res.json({ message: "error" });
