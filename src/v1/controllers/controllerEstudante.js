@@ -40,16 +40,7 @@ const createEstudante = async (req, res) => {
   const { nome, bi, contato, fk_curso, regime, turma, sexo, fk_frequencia } =
     req.body;
   try {
-    if (
-      !turma ||
-      !sexo ||
-      !nome ||
-      !bi ||
-      !contato ||
-      !fk_curso ||
-      !regime ||
-      !fk_frequencia
-    ) {
+    if (!sexo || !nome || !bi || !fk_curso || !regime || !fk_frequencia) {
       res.json({ message: "error" });
       return;
     }
@@ -74,8 +65,10 @@ const createEstudante = async (req, res) => {
         fk_frequencia,
       },
     });
+
     res.status(200).json({ response: response, message: "sucess" });
   } catch (error) {
+    console.log(error.message);
     res.json({ message: "error" });
   }
 };
