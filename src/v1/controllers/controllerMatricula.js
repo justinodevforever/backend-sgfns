@@ -62,7 +62,6 @@ const createMatricula = async (req, res) => {
       !sexo ||
       !nome ||
       !bi ||
-      !contato ||
       !fk_curso ||
       !regime ||
       !fk_frequencia ||
@@ -114,7 +113,7 @@ const createMatricula = async (req, res) => {
     res.status(200).json({ response: response, message: "sucess" });
   } catch (error) {
     console.log(error.message);
-    res.json({ message: "error" });
+    res.json({ message: error.message });
   }
 };
 
