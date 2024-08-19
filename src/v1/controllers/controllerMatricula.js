@@ -58,6 +58,20 @@ const createMatricula = async (req, res) => {
     fk_ano,
   } = req.body;
   try {
+    if (
+      !sexo ||
+      !nome ||
+      !bi ||
+      !fk_curso ||
+      !regime ||
+      !fk_frequencia ||
+      !valor ||
+      !fk_ano ||
+      !fk_user
+    ) {
+      res.json({ message: "error" });
+      return;
+    }
     const resp = await prisma.estudante.findFirst({
       where: {
         bi,
@@ -98,8 +112,7 @@ const createMatricula = async (req, res) => {
 
     res.status(200).json({ response: response, message: "sucess" });
   } catch (error) {
-    console.log(error.message);
-    res.json({ message: error.message });
+    res.json({ message: "error" });
   }
 };
 
