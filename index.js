@@ -81,12 +81,11 @@ app.use("/api/v1", routerMatricula);
 app.use("/api/v1", routerInscrincaoMatricula);
 app.use("/api/v1", routerListaCadeira);
 app.use("/api/v1", routerListaExame);
-app.use("/api/v1", (req, res) => {
+app.use("/", (req, res) => {
   res.json({ message: "ola" });
 });
 
 server.listen(process.env.PORT, () => {
   console.log(`Servidor Rodando na porta ${process.env.PORT}`);
 });
-
 module.exports = app;
