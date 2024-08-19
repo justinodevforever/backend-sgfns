@@ -69,7 +69,7 @@ const createEstudante = async (req, res) => {
     res.status(200).json({ response: response, message: "sucess" });
   } catch (error) {
     console.log(error.message);
-    res.json({ message: "error" });
+    res.json({ message: error.message });
   }
 };
 
