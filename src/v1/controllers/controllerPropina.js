@@ -43,7 +43,7 @@ const createPropina = async (req, res) => {
     }
     res.status(201).json({ message: "sucess", response: response });
   } catch (error) {
-    res.json({ message: "error" });
+    res.json({ message: error.message });
   }
 };
 const listaEstudantes = async (req, res) => {
