@@ -14,19 +14,19 @@ const createReconfirmacao = async (req, res) => {
       fk_frequencia,
     } = req.body;
 
-    if (
-      !valor ||
-      !rupe ||
-      !fk_ano ||
-      !fk_curso ||
-      !fk_estudante ||
-      !fk_semestre ||
-      !fk_user ||
-      !fk_frequencia
-    ) {
-      res.status(201).json({ message: "error" });
-      return;
-    }
+    // if (
+    //   !valor ||
+    //   !rupe ||
+    //   !fk_ano ||
+    //   !fk_curso ||
+    //   !fk_estudante ||
+    //   !fk_semestre ||
+    //   !fk_user ||
+    //   !fk_frequencia
+    // ) {
+    //   res.status(201).json({ message: "error" });
+    //   return;
+    // }
 
     const response = await prisma.reconfirmacao.create({
       data: {

@@ -55,7 +55,7 @@ const buscaMes = async (req, res) => {
 const deleteMes = async (req, res) => {
   try {
     const { id } = req.params;
-    await prisma.mes.delete(id);
+    await prisma.mes.delete({ where: { id } });
   } catch (error) {
     res.json(error);
   }
