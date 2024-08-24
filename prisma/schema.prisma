@@ -181,7 +181,7 @@ model Disciplina{
 model Reconfirmacao {
   id String @id @default(uuid())
   valor Int
-  rupe BigInt? @unique
+  rupe String? @unique
   dataSolicitacao DateTime @default(now())
   createdAt DateTime @default(now())
   semestre Semestre @relation(fields: [fk_semestre],references: [id],onDelete: Cascade)
@@ -201,11 +201,11 @@ model ExameEspecial{
   id String @id @default(uuid())
   valor Float
   createdAt DateTime @default(now())
-  rupe BigInt
+  rupe String?
   dataSolicitacao DateTime @default(now())
   estudante Estudante @relation(fields: [fk_estudante],references: [id],onDelete: Cascade)
     fk_estudante String 
-  AnoFrequncia AnoFrequencia @relation(fields: [fk_frquencia],references: [id],onDelete: Cascade)
+  AnoFrequencia AnoFrequencia @relation(fields: [fk_frquencia],references: [id],onDelete: Cascade)
     fk_frquencia String
   anoLectivo AnoLectivo @relation(fields: [fk_ano],references: [id],onDelete: Cascade)
     fk_ano String
@@ -225,7 +225,7 @@ model CadeiraAtraso{
   valor Float
    dataSolicitacao DateTime @default(now())
   createdAt DateTime @default(now())
-  rupe BigInt @unique
+  rupe String? @unique
   estudante Estudante @relation(fields: [fk_estudante],references: [id],onDelete: Cascade)
     fk_estudante String 
   AnoFrequencia AnoFrequencia @relation(fields: [fk_frequencia],references: [id],onDelete: Cascade)
@@ -247,7 +247,7 @@ model Recurso{
   id String @id @default(uuid())
   valor Float
   createdAt DateTime @default(now())
-  rupe BigInt @unique
+  rupe String? @unique
   estudante Estudante @relation(fields: [fk_estudante],references: [id],onDelete: Cascade)
     fk_estudante String 
   AnoFrequencia AnoFrequencia @relation(fields: [fk_frquencia],references: [id],onDelete: Cascade)
@@ -284,7 +284,7 @@ model Propina{
   id String @id @default(uuid())
   valor Int?
   createdAt DateTime @default(now())
-  rupe BigInt @unique
+  rupe String @unique
   frequencia String?
   anoFrequencia String
   estudante Estudante @relation(fields: [fk_estudante],references: [id],onDelete: Cascade)
@@ -308,7 +308,7 @@ model Matricula{
   regime String
   sexo String
   valor Float
-  rupe BigInt? @unique
+  rupe String? @unique
   dataSolicitacao DateTime @default(now())
   anoLetivo AnoLectivo @relation(fields: [fk_ano],references: [id],onDelete: Cascade)
     fk_ano String
@@ -326,7 +326,7 @@ model InscricaoMatricula{
   regime String
   sexo String
   valor Float
-  rupe BigInt? @unique
+  rupe String? @unique
   dataSolicitacao DateTime @default(now())
   curso Curso @relation(fields: [fk_curso],references: [id],onDelete: Cascade)
     fk_curso String

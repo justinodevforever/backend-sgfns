@@ -54,6 +54,7 @@ const upDateServico = async (req, res) => {
   try {
     const { id } = req.params;
     const { valor, tipo } = req.body;
+
     if (!valor || !tipo) return res.json("existe campo vazio");
     await prisma.servico.update({
       data: {

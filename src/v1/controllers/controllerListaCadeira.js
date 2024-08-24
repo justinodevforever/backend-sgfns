@@ -75,6 +75,7 @@ const getListaCadeirasEspecifica = async (req, res) => {
         },
       },
     });
+    console.log(response);
     response.map((rec) => {
       if (typeof rec.cadeira.rupe === "bigint") {
         rec.cadeira.rupe = rec.cadeira.rupe.toString();

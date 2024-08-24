@@ -26,6 +26,7 @@ const createPropina = async (req, res) => {
       res.json({ message: "exist" });
       return;
     }
+
     const response = await prisma.propina.create({
       data: {
         rupe,
@@ -597,6 +598,10 @@ const verDivida = async (req, res) => {
       anoL = Number(ano) - Number(1) + "/" + Number(ano);
     }
 
+    const user = await prisma.estudante.findFirst({ where: { bi } });
+    if (!user) {
+      return res.json({ message: "bi invalid" });
+    }
     const response = await prisma.propina.findMany({
       where: {
         estudante: {
@@ -617,10 +622,6 @@ const verDivida = async (req, res) => {
         anoLectivo: true,
       },
     });
-    // if (response.length <= 0) {
-    //   res.json({ message: "Não Exite Estudante com Este Nº de B.I" });
-    //   return;
-    // }
 
     let mesesAll = [];
     let mesesAll1 = [];

@@ -56,25 +56,24 @@ const getListaExameEspecialsEspecifica = async (req, res) => {
           },
         },
       },
-      // where: {
-      //   exame: {
-      //     estudante: {
-      //       regime,
-      //       turma,
-      //     },
-      //     Curso: {
-      //       curso,
-      //     },
-      //     disciplina: {
-      //       nome: disciplina,
-      //     },
-      //     AnoFrequencia: {
-      //       ano: frequencia,
-      //     },
-      //   },
-      // },
+      where: {
+        exame: {
+          AnoFrequncia: {
+            ano: frequencia,
+          },
+          estudante: {
+            regime,
+            turma,
+          },
+          disciplina: {
+            nome: disciplina,
+          },
+          Curso: {
+            curso,
+          },
+        },
+      },
     });
-    console.log(response);
     response.map((rec) => {
       if (typeof rec.exame.rupe === "bigint") {
         rec.exame.rupe = rec.exame.rupe.toString();

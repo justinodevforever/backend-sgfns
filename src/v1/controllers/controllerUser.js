@@ -180,7 +180,7 @@ const logar = async (req, res) => {
         }
       );
       const token = await jwt.sign({ id: User.id }, process.env.KEY_SECRET, {
-        expiresIn: "2h",
+        expiresIn: "24h",
       });
       const { password: _, ...loginpass } = User;
       res.json({

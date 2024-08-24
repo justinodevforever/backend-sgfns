@@ -1,0 +1,20 @@
+-- AlterTable
+ALTER TABLE "CadeiraAtraso" ALTER COLUMN "rupe" DROP NOT NULL,
+ALTER COLUMN "rupe" SET DATA TYPE TEXT;
+
+-- AlterTable
+ALTER TABLE "ExameEspecial" ALTER COLUMN "rupe" DROP NOT NULL,
+ALTER COLUMN "rupe" SET DATA TYPE TEXT;
+
+-- AlterTable
+ALTER TABLE "InscricaoMatricula" ALTER COLUMN "rupe" SET DATA TYPE TEXT;
+
+-- AlterTable
+ALTER TABLE "Matricula" ALTER COLUMN "rupe" SET DATA TYPE TEXT;
+
+-- AlterTable
+ALTER TABLE "Reconfirmacao" ALTER COLUMN "rupe" SET DATA TYPE TEXT;
+
+-- AlterTable
+ALTER TABLE "Recurso" ALTER COLUMN "rupe" DROP NOT NULL,
+ALTER COLUMN "rupe" SET DATA TYPE TEXT;
