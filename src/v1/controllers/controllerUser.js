@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-
+const nodemailer = require("nodemailer");
 const getUserSomente = async (req, res) => {
   const { id } = req.params;
   const user = await prisma.usuario.findFirst({
@@ -78,13 +78,38 @@ const createUser = async (req, res) => {
           bi,
         },
       });
+      const transporter = nodemailer.createTransport({
+        host: "in-v3.mailjet.com",
+        port: 587,
+        secure: false,
+        auth: {
+          user: process.env.MAILJET_SECRET_KEY,
+          pass: process.env.MAILJET_API_KEY,
+        },
+      });
+      const mailOptions = {
+        from: "jchitombi7@gmail.com",
+        to: response.email,
+        Subject: ``,
+        html: `<h1>Ola ${response.nome}!</h1> </br>
+        <h2>Essa é a Senha ${password}  para acessar o Sistema!
+            Obrigado!</h2>
+            `,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          return console.log("Error:", error);
+        }
+        res.send("email Enviado com sucesso");
+        console.log("Email sent:", info.response);
+      });
       res
         .status(201)
         .json({ response: response, mensage: "Dados Salvos Com Sucesso" });
     } else {
       res.json({ status: "Falha", mensage: "Usuário já existe" });
     }
-    // res.json("Userexistente");
   } catch (error) {
     res.json({ mensage: error });
   }

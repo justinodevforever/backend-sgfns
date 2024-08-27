@@ -1,4 +1,6 @@
 const { Router } = require("express");
+const nodemailer = require("nodemailer");
+
 const {
   createAnoFrequencia,
   getAnoFrequencia,

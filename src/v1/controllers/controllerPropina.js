@@ -48,7 +48,7 @@ const createPropina = async (req, res) => {
   }
 };
 const listaEstudantes = async (req, res) => {
-  const { ano, curso, anoFrequencia } = req.body;
+  const { ano, curso, anoFrequencia, regime } = req.body;
 
   try {
     const dados = await prisma.estudante.findMany({
@@ -83,6 +83,7 @@ const listaEstudantes = async (req, res) => {
         nome: "asc",
       },
       where: {
+        regime,
         curso: {
           curso,
         },
@@ -128,6 +129,7 @@ const listaEstudantes = async (req, res) => {
         nome: "asc",
       },
       where: {
+        regime,
         curso: {
           curso,
         },
@@ -142,7 +144,6 @@ const listaEstudantes = async (req, res) => {
         },
       },
     });
-
     const mes = [
       "Janeiro",
       "Fevereiro",
