@@ -83,8 +83,8 @@ const createUser = async (req, res) => {
         port: 587,
         secure: false,
         auth: {
-          user: process.env.MAILJET_SECRET_KEY,
-          pass: process.env.MAILJET_API_KEY,
+          user: process.env.MAILJET_API_KEY,
+          pass: process.env.MAILJET_SECRET_KEY,
         },
       });
       const mailOptions = {
