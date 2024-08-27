@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const nodemailer = require("nodemailer");
+require("dotenv").config();
 const getUserSomente = async (req, res) => {
   const { id } = req.params;
   const user = await prisma.usuario.findFirst({
@@ -106,12 +107,13 @@ const createUser = async (req, res) => {
       });
       res
         .status(201)
-        .json({ response: response, mensage: "Dados Salvos Com Sucesso" });
+        .json({ response: response, message: "Dados Salvos Com Sucesso" });
     } else {
       res.json({ status: "Falha", mensage: "Usuário já existe" });
     }
   } catch (error) {
-    res.json({ mensage: error });
+    console.log(error.message);
+    res.json({ mensage: error.message });
   }
 };
 
