@@ -2,7 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const createDisciplina = async (req, res) => {
-  const { nome, fk_ano, fk_semestre, fk_curso } = req.body;
+  const { nome, fk_ano, fk_semestre, fk_curso, abreviatura } = req.body;
 
   try {
     if (!nome || !fk_semestre || !fk_curso || !fk_ano) {
@@ -14,6 +14,7 @@ const createDisciplina = async (req, res) => {
         fk_ano,
         fk_semestre,
         fk_curso,
+        abreviatura,
       },
     });
 
@@ -153,7 +154,7 @@ const deleteDisciplina = async (req, res) => {
 const upDateDisciplina = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nome, fk_ano, fk_curso, fk_semestre } = req.body;
+    const { nome, fk_ano, fk_curso, fk_semestre, abreviatura } = req.body;
     if (!nome || !fk_curso || !fk_semestre || !fk_ano || !id) {
       return res.json({ message: "error" });
     }
@@ -163,6 +164,7 @@ const upDateDisciplina = async (req, res) => {
         fk_ano,
         fk_curso,
         fk_semestre,
+        abreviatura,
       },
       where: { id },
     });
