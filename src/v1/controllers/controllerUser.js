@@ -90,9 +90,9 @@ const createUser = async (req, res) => {
       const mailOptions = {
         from: "jchitombi7@gmail.com",
         to: response.email,
-        Subject: ``,
-        html: `<h1>Ola ${response.nome}!</h1> </br>
-        <h2>Essa é a Senha ${password}  para acessar o Sistema!
+        Subject: `Informações`,
+        html: `<h1>Ola ${response.nome}!</h1> <br/>
+        <h2>Essa é a Senha "${password}"  para acessar o Sistema!
             Obrigado!</h2>
             `,
       };
