@@ -150,8 +150,10 @@ const getAllUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   const { id } = req.params;
   try {
+    await prisma.usuario.delete({ where: { id } });
+    res.json({ message: "sucess" });
   } catch (error) {
-    res.json({ mensage: error.mensage });
+    res.json({ mensage: "error" });
   }
 };
 
