@@ -226,7 +226,7 @@ const verifyToken = async (req, res) => {
   const { refreshToken } = req.body;
   try {
     const token = await jwt.sign({ refreshToken }, process.env.KEY_SECRET, {
-      expiresIn: "2h",
+      expiresIn: "24h",
     });
     return res.json(token);
   } catch (error) {
