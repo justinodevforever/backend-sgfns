@@ -376,7 +376,7 @@ const countMatricula = async (req, res) => {
         },
       },
     });
-    res.status(200).json(response);
+    res.status(200).json("response");
   } catch (error) {
     res.json({ message: error.message });
   }
