@@ -378,7 +378,7 @@ const count = async (req, res) => {
     });
     res.status(200).json(response);
   } catch (error) {
-    res.json({ message: "error" });
+    res.json({ message: error.message });
   }
 };
 
