@@ -356,7 +356,7 @@ const relatorioMatricula = async (req, res) => {
     res.json({ message: error.message });
   }
 };
-const count = async (req, res) => {
+const countMatricula = async (req, res) => {
   const { ano, regime, dataInicial, dataFinal } = req.body;
   const dataI = new Date(dataInicial);
   const dataF = new Date(dataFinal);
@@ -395,5 +395,5 @@ module.exports = {
   getMatriculaPorUsuario,
   getMatriculaBi,
   relatorioMatricula,
-  count,
+  countMatricula,
 };
