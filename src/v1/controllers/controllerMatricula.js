@@ -35,6 +35,7 @@ const buscaMatriculaPorBi = async (req, res) => {
         bi,
       },
     });
+
     if (typeof response.rupe === "bigint") {
       response.rupe = response.rupe.toString();
     }
@@ -72,7 +73,7 @@ const createMatricula = async (req, res) => {
       res.json({ message: "error" });
       return;
     }
-    const resp = await prisma.estudante.findFirst({
+    const resp = await prisma.matricula.findFirst({
       where: {
         bi,
       },
@@ -93,6 +94,7 @@ const createMatricula = async (req, res) => {
         fk_user,
         rupe,
         fk_ano,
+        fk_frequencia,
       },
     });
     await prisma.estudante.create({
@@ -112,6 +114,7 @@ const createMatricula = async (req, res) => {
 
     res.status(200).json({ response: response, message: "sucess" });
   } catch (error) {
+    console.log(error.message);
     res.json({ message: "error" });
   }
 };
@@ -353,6 +356,31 @@ const relatorioMatricula = async (req, res) => {
     res.json({ message: error.message });
   }
 };
+const count = async (req, res) => {
+  const { ano, regime, dataInicial, dataFinal } = req.body;
+  const dataI = new Date(dataInicial);
+  const dataF = new Date(dataFinal);
+  try {
+    const response = await prisma.matricula.count({
+      where: {
+        frequencia: {
+          ano: "1º",
+        },
+        anoLetivo: {
+          ano,
+        },
+        regime,
+        dataSolicitacao: {
+          gte: dataI,
+          lte: dataF,
+        },
+      },
+    });
+    res.status(200).json(response);
+  } catch (error) {
+    res.json({ message: "error" });
+  }
+};
 
 module.exports = {
   createMatricula,
@@ -367,4 +395,5 @@ module.exports = {
   getMatriculaPorUsuario,
   getMatriculaBi,
   relatorioMatricula,
+  count,
 };

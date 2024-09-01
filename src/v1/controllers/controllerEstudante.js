@@ -68,7 +68,6 @@ const createEstudante = async (req, res) => {
 
     res.status(200).json({ response: response, message: "sucess" });
   } catch (error) {
-    console.log(error.message);
     res.json({ message: error.message });
   }
 };
@@ -155,7 +154,7 @@ const getEstudantePorUsuario = async (req, res) => {
 const deleteEstudante = async (req, res) => {
   const { id } = req.params;
   try {
-    const response = await prisma.estudante.delete({
+    await prisma.estudante.delete({
       where: {
         id,
       },

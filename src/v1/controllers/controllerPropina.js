@@ -3,16 +3,8 @@ const prisma = new PrismaClient();
 
 const createPropina = async (req, res) => {
   try {
-    const {
-      valor,
-      fk_mes,
-      fk_estudante,
-      fk_user,
-      fk_ano,
-      fk_semestre,
-      rupe,
-      frequencia,
-    } = req.body;
+    const { valor, fk_mes, fk_estudante, fk_user, fk_ano, rupe, frequencia } =
+      req.body;
 
     const resp = await prisma.propina.findFirst({
       where: {
@@ -34,7 +26,6 @@ const createPropina = async (req, res) => {
         fk_ano,
         fk_estudante,
         fk_mes,
-        fk_semestre,
         fk_user,
         anoFrequencia: frequencia,
       },
@@ -361,13 +352,18 @@ const dadosGeraisCurso = async (req, res) => {
   const dataI = new Date(dataInicial);
   const dataF = new Date(dataFinal);
   try {
-    const resul = await prisma.estudante.groupBy({
+    const resul = await prisma.reconfirmacao.groupBy({
       by: ["fk_frequencia"],
       _count: {
         id: true,
       },
       where: {
-        regime,
+        estudante: {
+          regime,
+        },
+        anoLectivo: {
+          ano,
+        },
       },
     });
     const frequenciaId = resul.map((r) => r.fk_frequencia);

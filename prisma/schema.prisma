@@ -74,6 +74,7 @@ model AnoFrequencia{
   reconfirmacoa Reconfirmacao[]
   estudante Estudante[]
   declaracao Declaracao[]
+  matricula Matricula[]
     
 }
 model AnoLectivo{
@@ -159,7 +160,6 @@ model Semestre{
     exameEspecial ExameEspecial[]
      cadeiraAtrasos CadeiraAtraso[]
     recursos Recurso[]
-    propina Propina[]
     reconfirmacao Reconfirmacao[]
    
 }
@@ -293,8 +293,6 @@ model Propina{
     fk_ano String
   mes Mes @relation(fields: [fk_mes],references: [id],onDelete: Cascade)
     fk_mes String
-  semestre Semestre @relation(fields: [fk_semestre],references: [id],onDelete: Cascade)
-    fk_semestre String
   usuario Usuario @relation(fields: [fk_user],references: [id],onDelete: Cascade)
     fk_user String
   dataSolicitacao DateTime @default(now())
@@ -316,6 +314,8 @@ model Matricula{
     fk_curso String 
   usuario Usuario @relation(fields: [fk_user],references: [id],onDelete: Cascade)
     fk_user String 
+  frequencia AnoFrequencia @relation(fields: [fk_frequencia],references: [id],onDelete: Cascade)
+    fk_frequencia String 
  
 }
 model InscricaoMatricula{

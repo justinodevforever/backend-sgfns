@@ -11,6 +11,7 @@ const {
   getMatriculaPorUsuario,
   getMatricula,
   relatorioMatricula,
+  count,
 } = require("../controllers/controllerMatricula");
 const { authorization } = require("../../authorization/auth");
 
@@ -27,5 +28,6 @@ router.post("/search/matricula", authorization, searchMatricula);
 router.post("/search/matricula/bi", authorization, buscaMatriculaPorBi);
 router.post("/matricula/user", authorization, getMatriculaPorUsuario);
 router.post("/relatorio/matricula", authorization, relatorioMatricula);
+router.post("/count/matricula", authorization, count);
 
 module.exports = router;
