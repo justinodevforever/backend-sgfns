@@ -28,6 +28,6 @@ router.post("/search/matricula", authorization, searchMatricula);
 router.post("/search/matricula/bi", authorization, buscaMatriculaPorBi);
 router.post("/matricula/user", authorization, getMatriculaPorUsuario);
 router.post("/relatorio/matricula", authorization, relatorioMatricula);
-router.post("/count/matricula", authorization, count);
+router.post("/countmatricula", authorization, count);
 
 module.exports = router;
