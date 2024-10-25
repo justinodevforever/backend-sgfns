@@ -8,7 +8,6 @@ const createReconfirmacao = async (req, res) => {
       rupe,
       fk_semestre,
       fk_estudante,
-      fk_curso,
       fk_user,
       fk_ano,
       fk_frequencia,
@@ -18,7 +17,6 @@ const createReconfirmacao = async (req, res) => {
       !valor ||
       !rupe ||
       !fk_ano ||
-      !fk_curso ||
       !fk_estudante ||
       !fk_semestre ||
       !fk_user ||
@@ -27,30 +25,38 @@ const createReconfirmacao = async (req, res) => {
       res.status(201).json({ message: "error" });
       return;
     }
-
+    await prisma.reconfirmacao.updateMany({
+      data: {
+        pivo: false,
+      },
+      where: { pivo: true },
+    });
+    await prisma.estudante.update({
+      data: {
+        fk_frequencia,
+      },
+      where: {
+        id: fk_estudante,
+      },
+    });
     const response = await prisma.reconfirmacao.create({
       data: {
         valor,
         rupe,
         fk_ano,
-        fk_curso,
         fk_estudante,
         fk_frequencia,
         fk_semestre,
         fk_user,
       },
     });
-    await prisma.estudante.update({
-      data: {
-        fk_frequencia,
-      },
-      where: { id: fk_estudante },
-    });
+
     if (typeof response?.rupe === "bigint") {
       response.rupe = response?.rupe?.toString();
     }
     res.status(201).json({ response: response, message: "sucess" });
   } catch (error) {
+    console.log(error.message);
     res.json({ message: "error" });
   }
 };
@@ -64,7 +70,6 @@ const getReconfirmacoes = async (req, res) => {
         semestre: true,
         anoLectivo: true,
         estudante: true,
-        curso: true,
       },
     });
     response.map((p) => {
@@ -88,7 +93,6 @@ const getReconfirmacaoRelatorio = async (req, res) => {
         semestre: true,
         frequencia: true,
         anoLectivo: true,
-        curso: true,
       },
       where: {
         estudante: {
@@ -112,7 +116,7 @@ const getReconfirmacaoRelatorio = async (req, res) => {
 };
 const getReconfirmacaoEspecifico = async (req, res) => {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
     const response = await prisma.reconfirmacao.findFirst({
       include: {
         usuario: true,
@@ -120,7 +124,6 @@ const getReconfirmacaoEspecifico = async (req, res) => {
         semestre: true,
         frequencia: true,
         anoLectivo: true,
-        curso: true,
       },
       where: {
         id,
@@ -144,7 +147,6 @@ const getReconfirmacao = async (req, res) => {
         semestre: true,
         frequencia: true,
         anoLectivo: true,
-        curso: true,
       },
       where: {
         id,
@@ -168,7 +170,6 @@ const getReconfirmacaoAtualizacao = async (req, res) => {
         semestre: true,
         frequencia: true,
         anoLectivo: true,
-        curso: true,
       },
       where: {
         AND: {

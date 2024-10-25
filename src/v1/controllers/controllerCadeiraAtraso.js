@@ -52,7 +52,7 @@ const createCadeiraAtraso = async (req, res) => {
 
 const getCadeiraAtrazoEspecifico = async (req, res) => {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
     const response = await prisma.cadeiraAtraso.findFirst({
       include: {
         AnoFrequencia: true,

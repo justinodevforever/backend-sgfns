@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 
 const createPropina = async (req, res) => {
   try {
-    const { valor, fk_mes, fk_estudante, fk_user, fk_ano, rupe, frequencia } =
+    const { valor, fk_mes, fk_estudante, frequencia, fk_user, fk_ano, rupe } =
       req.body;
 
     const resp = await prisma.propina.findFirst({
@@ -11,8 +11,17 @@ const createPropina = async (req, res) => {
         fk_ano,
         fk_mes,
         fk_estudante,
+        anoFrequencia: frequencia,
       },
     });
+    const searchRupe = await prisma.propina.findFirst({
+      where: {
+        rupe,
+      },
+    });
+    if (searchRupe) {
+      return res.json({ message: "RUPE Já Foi Usado" });
+    }
 
     if (resp?.id) {
       res.json({ message: "exist" });
@@ -24,10 +33,10 @@ const createPropina = async (req, res) => {
         rupe,
         valor,
         fk_ano,
-        fk_estudante,
+        anoFrequencia: frequencia,
         fk_mes,
         fk_user,
-        anoFrequencia: frequencia,
+        fk_estudante,
       },
     });
     if (typeof response.rupe === "bigint") {
@@ -35,12 +44,11 @@ const createPropina = async (req, res) => {
     }
     res.status(201).json({ message: "sucess", response: response });
   } catch (error) {
-    res.json({ message: error.message });
+    res.json({ message: "error" });
   }
 };
 const listaEstudantes = async (req, res) => {
-  const { ano, curso, anoFrequencia, regime } = req.body;
-
+  const { ano, curso, regime, frequencia } = req.body;
   try {
     const dados = await prisma.estudante.findMany({
       include: {
@@ -49,13 +57,6 @@ const listaEstudantes = async (req, res) => {
 
         propina: {
           where: {
-            anoFrequencia,
-
-            estudante: {
-              curso: {
-                curso,
-              },
-            },
             anoLectivo: {
               ano,
             },
@@ -74,13 +75,17 @@ const listaEstudantes = async (req, res) => {
         nome: "asc",
       },
       where: {
+        frequencia: {
+          ano: frequencia,
+        },
+
         regime,
         curso: {
           curso,
         },
+
         propina: {
           some: {
-            anoFrequencia,
             anoLectivo: {
               ano,
             },
@@ -92,16 +97,11 @@ const listaEstudantes = async (req, res) => {
     const response = await prisma.estudante.findMany({
       include: {
         frequencia: true,
+
         curso: true,
+
         propina: {
           where: {
-            anoFrequencia,
-
-            estudante: {
-              curso: {
-                curso,
-              },
-            },
             anoLectivo: {
               ano,
             },
@@ -124,10 +124,13 @@ const listaEstudantes = async (req, res) => {
         curso: {
           curso,
         },
+        frequencia: {
+          ano: frequencia,
+        },
 
         propina: {
           some: {
-            anoFrequencia,
+            anoFrequencia: frequencia,
             anoLectivo: {
               ano,
             },
@@ -135,6 +138,7 @@ const listaEstudantes = async (req, res) => {
         },
       },
     });
+
     const mes = [
       "Janeiro",
       "Fevereiro",
@@ -196,7 +200,6 @@ const listaEstudantes = async (req, res) => {
 
       return { estudante, todosMeses };
     });
-
     response.map((prop) => {
       prop.propina.map((p) => {
         if (typeof p.rupe === "bigint") {
@@ -560,7 +563,7 @@ const dadosGeraisCurso = async (req, res) => {
   }
 };
 const verDivida = async (req, res) => {
-  const { bi } = req.body;
+  const { bi, anoLectivo } = req.body;
 
   try {
     const meses = [
@@ -581,17 +584,20 @@ const verDivida = async (req, res) => {
     let [mesHoje, c] = date
       .toLocaleTimeString("pt-BR", { month: "long" })
       .split(" ");
-    let [mesT, o] = date.toLocaleTimeString("pt-BR", { month: "numeric" });
-    // .split(" ");
+    let [mesT, o] = date
+      .toLocaleTimeString("pt-BR", { month: "numeric" })
+      .split(" ");
 
     const [ano, dia] = date
       .toLocaleTimeString("pt-BR", { year: "numeric" })
       .split(",");
     let anoL = "";
 
-    if (mesT >= 9) {
+    if (parseInt(mesT) >= 10) {
+      anoL = "";
       anoL = Number(ano) + "/" + Number(Number(ano) + Number(1));
     } else {
+      anoL = "";
       anoL = Number(ano) - Number(1) + "/" + Number(ano);
     }
 
@@ -600,14 +606,6 @@ const verDivida = async (req, res) => {
       return res.json({ message: "bi invalid" });
     }
     const response = await prisma.propina.findMany({
-      where: {
-        estudante: {
-          bi,
-        },
-        anoLectivo: {
-          ano: anoL,
-        },
-      },
       include: {
         usuario: true,
         mes: true,
@@ -617,6 +615,14 @@ const verDivida = async (req, res) => {
           },
         },
         anoLectivo: true,
+      },
+      where: {
+        estudante: {
+          bi,
+        },
+        anoLectivo: {
+          ano: anoLectivo,
+        },
       },
     });
 
@@ -633,13 +639,16 @@ const verDivida = async (req, res) => {
     });
 
     for (let mes = 0; mes < meses.length; mes++) {
-      if (meses[mes].toLowerCase() === mesHoje.toLowerCase()) break;
+      if (
+        meses[mes].toLowerCase() === mesHoje.toLowerCase() &&
+        anoLectivo === anoL
+      )
+        break;
 
       if (!mesesAll.some((me) => me.includes(meses[mes]))) {
         mesesAll1.push(meses[mes]);
       }
     }
-
     if (mesesAll1.length <= 0) {
       res.json({ message: "Sem dívida" });
       return;

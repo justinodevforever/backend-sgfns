@@ -109,7 +109,7 @@ const createUser = async (req, res) => {
         .status(201)
         .json({ response: response, message: "Dados Salvos Com Sucesso" });
     } else {
-      res.json({ status: "Falha", mensage: "Usuário já existe" });
+      res.json({ mensage: "Usuário já existe" });
     }
   } catch (error) {
     console.log(error.message);

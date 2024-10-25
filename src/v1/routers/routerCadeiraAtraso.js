@@ -18,8 +18,8 @@ router.get("/cadeira/atraso", authorization, getCadeiraAtrasos);
 router.get("/cadeira/atraso/:id", authorization, getCadeiraAtraso);
 router.delete("/cadeira/atraso/:id", authorization, deleteCadeiraAtrasos);
 router.put("/cadeira/atraso/:id", authorization, upDateCadeiraAtraso);
-router.post(
-  "/cadeira/atraso/especifico",
+router.get(
+  "/cadeira/atraso/especifico/:id",
   authorization,
   getCadeiraAtrazoEspecifico
 );

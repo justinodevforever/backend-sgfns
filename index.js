@@ -83,6 +83,6 @@ app.use("/api/v1", routerListaCadeira);
 app.use("/api/v1", routerListaExame);
 
 server.listen(process.env.PORT, () => {
-  console.log(`Servidor Rodando na porta ${process.env.PORT}`);
+  console.log(`Servidor Rodando porta ${process.env.PORT}`);
 });
 module.exports = app;

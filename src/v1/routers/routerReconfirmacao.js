@@ -24,8 +24,8 @@ router.get("/reconfirmacao", authorization, getReconfirmacoes);
 router.get("/reconfirmacao/:id", authorization, getReconfirmacao);
 router.delete("/reconfirmacao/:id", authorization, deleteReconfirmacao);
 router.put("/reconfirmacao/:id", authorization, upDateReconfirmacao);
-router.post(
-  "/reconfirmacao/especifico",
+router.get(
+  "/reconfirmacao/especifico/:id",
   authorization,
   getReconfirmacaoEspecifico
 );

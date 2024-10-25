@@ -56,10 +56,11 @@ const createExameEspecial = async (req, res) => {
 
 const getExameEspecialEspecifico = async (req, res) => {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
+    console.log(id);
     const response = await prisma.exameEspecial.findFirst({
       include: {
-        AnoFrequncia: true,
+        AnoFrequencia: true,
         anoLectivo: true,
         Curso: true,
         disciplina: true,

@@ -72,9 +72,9 @@ model AnoFrequencia{
   cadeiraAtrasos CadeiraAtraso[]
   recursos Recurso[]
   reconfirmacoa Reconfirmacao[]
-  estudante Estudante[]
   declaracao Declaracao[]
   matricula Matricula[]
+  estudante Estudante[]
     
 }
 model AnoLectivo{
@@ -114,15 +114,15 @@ model Estudante{
   regime String
   sexo String
   turma String?
-  frequencia AnoFrequencia @relation(fields: [fk_frequencia], references: [id], onDelete: Cascade)
-    fk_frequencia String
   curso Curso @relation(fields: [fk_curso],references: [id],onDelete: Cascade)
-    fk_curso String 
+    fk_curso String
+  frequencia AnoFrequencia @relation(fields: [fk_frequencia],references: [id],onDelete: Cascade)
+    fk_frequencia String
+  reconfirmacao Reconfirmacao[]
   exameEspecial ExameEspecial[]
-  listaRecurso CadeiraAtraso[]
+  cadeiraAtraso CadeiraAtraso[]
   recursos Recurso[]
   propina Propina[]
-  reconfirmacao Reconfirmacao[]
   declaracao Declaracao[]
 }
 
@@ -135,7 +135,6 @@ model Curso{
   exameEspecial ExameEspecial[]
   cadeiraAtrasos CadeiraAtraso[]
   recursos Recurso[]
-  reconfirmacao Reconfirmacao[]
   matricula Matricula[]
   inscricaoMatricula InscricaoMatricula[]
 }
@@ -144,8 +143,8 @@ model Declaracao{
   dataSolicitacao DateTime @default(now())
   tipoDeclaracao String
     valor Float
-  estudante Estudante @relation(fields: [fk_estudante],references: [id], onDelete: Cascade)
-   fk_estudante String
+  estudante Estudante @relation(fields: [fk_estudante],references: [id],onDelete: Cascade)
+    fk_estudante String 
   frequencia AnoFrequencia @relation(fields: [fk_frequencia], references: [id],onDelete: Cascade)
    fk_frequencia String
   createAd DateTime @default(now())
@@ -182,20 +181,20 @@ model Reconfirmacao {
   id String @id @default(uuid())
   valor Int
   rupe String? @unique
+  pivo Boolean @default(true)
   dataSolicitacao DateTime @default(now())
   createdAt DateTime @default(now())
   semestre Semestre @relation(fields: [fk_semestre],references: [id],onDelete: Cascade)
     fk_semestre String
-  curso Curso @relation(fields: [fk_curso],references: [id],onDelete: Cascade)
-    fk_curso String
   anoLectivo AnoLectivo @relation(fields: [fk_ano],references: [id],onDelete: Cascade)
     fk_ano String
   estudante Estudante @relation(fields: [fk_estudante],references: [id],onDelete: Cascade)
-    fk_estudante String
+    fk_estudante String 
   usuario Usuario @relation(fields: [fk_user],references: [id],onDelete: Cascade)
     fk_user String
   frequencia AnoFrequencia @relation(fields: [fk_frequencia],references: [id],onDelete: Cascade)
     fk_frequencia String
+  
 }
 model ExameEspecial{
   id String @id @default(uuid())
@@ -203,8 +202,8 @@ model ExameEspecial{
   createdAt DateTime @default(now())
   rupe String?
   dataSolicitacao DateTime @default(now())
-  estudante Estudante @relation(fields: [fk_estudante],references: [id],onDelete: Cascade)
-    fk_estudante String 
+ estudante Estudante @relation(fields: [fk_estudante],references: [id],onDelete: Cascade)
+    fk_estudante String  
   AnoFrequencia AnoFrequencia @relation(fields: [fk_frquencia],references: [id],onDelete: Cascade)
     fk_frquencia String
   anoLectivo AnoLectivo @relation(fields: [fk_ano],references: [id],onDelete: Cascade)
@@ -249,7 +248,7 @@ model Recurso{
   createdAt DateTime @default(now())
   rupe String? @unique
   estudante Estudante @relation(fields: [fk_estudante],references: [id],onDelete: Cascade)
-    fk_estudante String 
+    fk_estudante String  
   AnoFrequencia AnoFrequencia @relation(fields: [fk_frquencia],references: [id],onDelete: Cascade)
     fk_frquencia String
   anoLectivo AnoLectivo @relation(fields: [fk_ano],references: [id],onDelete: Cascade)
@@ -285,7 +284,6 @@ model Propina{
   valor Int?
   createdAt DateTime @default(now())
   rupe String @unique
-  frequencia String?
   anoFrequencia String
   estudante Estudante @relation(fields: [fk_estudante],references: [id],onDelete: Cascade)
     fk_estudante String 
@@ -315,8 +313,7 @@ model Matricula{
   usuario Usuario @relation(fields: [fk_user],references: [id],onDelete: Cascade)
     fk_user String 
   frequencia AnoFrequencia @relation(fields: [fk_frequencia],references: [id],onDelete: Cascade)
-    fk_frequencia String 
- 
+    fk_frequencia String
 }
 model InscricaoMatricula{
   id String @id @default(uuid())
@@ -334,7 +331,6 @@ model InscricaoMatricula{
     fk_user String
   anoLetivo AnoLectivo @relation(fields: [fk_ano], references: [id], onDelete: Cascade)
     fk_ano String
- 
 }
 model Servico{
   id String @id @default(uuid())

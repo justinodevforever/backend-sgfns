@@ -51,7 +51,7 @@ const createRecurso = async (req, res) => {
 
 const getRecursoEspecifico = async (req, res) => {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
     const response = await prisma.recurso.findFirst({
       include: {
         AnoFrequencia: true,

@@ -19,7 +19,9 @@ const createMes = async (req, res) => {
 
 const getMeses = async (req, res) => {
   try {
-    const response = await prisma.mes.findMany();
+    const response = await prisma.mes.findMany({
+      orderBy: { algarismo: "asc" },
+    });
     res.json(response);
   } catch (error) {
     res.json(error);

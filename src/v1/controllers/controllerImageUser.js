@@ -8,6 +8,7 @@ const createImageUser = async (req, res) => {
 
     if (!filename || filename === undefined || filename === " ") {
       res.json({ message: "error" });
+      console.log(filename)
       return;
     }
     await prisma.profileUser.create({

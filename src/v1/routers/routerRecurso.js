@@ -13,7 +13,7 @@ const {
 const router = Router();
 
 router.post("/recurso", authorization, createRecurso);
-router.post("/recurso/especifico", authorization, getRecursoEspecifico);
+router.get("/recurso/especifico/:id", authorization, getRecursoEspecifico);
 router.post("/recurso/busca", authorization, buscarCadeira);
 router.get("/recurso", authorization, getRecursos);
 router.get("/recurso/:id", authorization, getRecurso);

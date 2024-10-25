@@ -97,7 +97,7 @@ const createMatricula = async (req, res) => {
         fk_frequencia,
       },
     });
-    await prisma.estudante.create({
+    const es = await prisma.estudante.create({
       data: {
         nome,
         bi,
@@ -108,6 +108,7 @@ const createMatricula = async (req, res) => {
         fk_frequencia,
       },
     });
+
     if (typeof response.rupe === "bigint") {
       response.rupe = response.rupe.toString();
     }

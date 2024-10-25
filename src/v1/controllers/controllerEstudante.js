@@ -168,9 +168,9 @@ const deleteEstudante = async (req, res) => {
 const upDateEstudante = async (req, res) => {
   const { id } = req.params;
 
-  const { nome, contato, fk_curso, regime } = req.body;
+  const { nome, contato, fk_curso, regime, sexo } = req.body;
 
-  if (!nome || !contato || !fk_curso || !regime) {
+  if (!nome || !contato || !fk_curso || !regime || !sexo) {
     res.json({ message: "error" });
     return;
   }
@@ -182,6 +182,7 @@ const upDateEstudante = async (req, res) => {
         contacto: contato,
         fk_curso,
         regime,
+        sexo,
       },
       where: {
         id,
@@ -204,6 +205,32 @@ const searchEstudante = async (req, res) => {
         },
         where: {
           nome,
+        },
+      });
+      res.json(response);
+    }
+  } catch (error) {
+    res.json({ mensage: "error" });
+  }
+};
+const searchSpecific = async (req, res) => {
+  const { curso, ano, regime, frequencia } = req.body;
+  try {
+    if (curso && ano && regime && frequencia) {
+      const response = await prisma.estudante.findFirst({
+        include: {
+          curso: {},
+          frequencia: true,
+        },
+        where: {
+          curso: {
+            curso,
+          },
+          regime,
+
+          frequencia: {
+            ano: frequencia,
+          },
         },
       });
       res.json(response);

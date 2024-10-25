@@ -18,8 +18,8 @@ router.get("/exame/especial", authorization, getExameEspecials);
 router.get("/exame/especial/:id", authorization, getExameEspecial);
 router.delete("/exame/especial/:id", authorization, deleteExameEspecials);
 router.put("/exame/especial/:id", authorization, upDateExameEspecial);
-router.post(
-  "/exame/especial/especifico",
+router.get(
+  "/exame/especial/especifico/:id",
   authorization,
   getExameEspecialEspecifico
 );
