@@ -50,7 +50,6 @@ const createMatricula = async (req, res) => {
     bi,
     contato,
     fk_curso,
-    regime,
     sexo,
     fk_frequencia,
     valor,
@@ -64,7 +63,6 @@ const createMatricula = async (req, res) => {
       !nome ||
       !bi ||
       !fk_curso ||
-      !regime ||
       !fk_frequencia ||
       !valor ||
       !fk_ano ||
@@ -88,7 +86,7 @@ const createMatricula = async (req, res) => {
         bi,
         contacto: contato,
         fk_curso,
-        regime,
+        regime: "Pós-Laboral",
         sexo,
         valor,
         fk_user,
@@ -103,9 +101,9 @@ const createMatricula = async (req, res) => {
         bi,
         contacto: contato,
         fk_curso,
-        regime,
         sexo,
         fk_frequencia,
+        regime: "Pós-Laboral",
       },
     });
 
@@ -242,9 +240,9 @@ const deleteMatricula = async (req, res) => {
 const upDateMatricula = async (req, res) => {
   const { id } = req.params;
 
-  const { nome, contato, fk_curso, regime } = req.body;
+  const { nome, contato, fk_curso } = req.body;
 
-  if (!nome || !contato || !fk_curso || !regime) {
+  if (!nome || !contato || !fk_curso) {
     res.json({ message: "error" });
     return;
   }
@@ -255,7 +253,6 @@ const upDateMatricula = async (req, res) => {
         nome,
         contacto: contato,
         fk_curso,
-        regime,
       },
       where: {
         id,
@@ -338,7 +335,7 @@ const relatorioMatricula = async (req, res) => {
       }
       if (i.sexo === "F" && acc[key]) acc[key].totalF++;
       if (i.sexo === "M" && acc[key]) acc[key].totalM++;
-      if (i.regime === "Regular" && acc[key]) acc[key].totalRegular++;
+
       if (i.regime === "Pós-Laboral" && acc[key]) acc[key].totalPosLaboral++;
       acc[key].totalValor += i.valor;
       acc[key].totalGenero = acc[key].totalF + acc[key].totalM;
@@ -358,7 +355,7 @@ const relatorioMatricula = async (req, res) => {
   }
 };
 const countMatricula = async (req, res) => {
-  const { ano, regime, dataInicial, dataFinal } = req.body;
+  const { ano, dataInicial, dataFinal } = req.body;
   const dataI = new Date(dataInicial);
   const dataF = new Date(dataFinal);
   try {
@@ -370,7 +367,6 @@ const countMatricula = async (req, res) => {
         anoLetivo: {
           ano,
         },
-        regime,
         dataSolicitacao: {
           gte: dataI,
           lte: dataF,

@@ -42,7 +42,7 @@ const getListaRecursos = async (req, res) => {
   }
 };
 const getListaRecursosEspecifica = async (req, res) => {
-  const { turma, regime, disciplina, frequencia, curso } = req.body;
+  const { turma, disciplina, frequencia, curso } = req.body;
   try {
     const response = await prisma.listaRecurso.findMany({
       include: {
@@ -60,7 +60,6 @@ const getListaRecursosEspecifica = async (req, res) => {
       where: {
         recurso: {
           estudante: {
-            regime,
             turma,
           },
           Curso: {

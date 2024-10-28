@@ -48,7 +48,7 @@ const createPropina = async (req, res) => {
   }
 };
 const listaEstudantes = async (req, res) => {
-  const { ano, curso, regime, frequencia } = req.body;
+  const { ano, curso, frequencia } = req.body;
   try {
     const dados = await prisma.estudante.findMany({
       include: {
@@ -79,7 +79,6 @@ const listaEstudantes = async (req, res) => {
           ano: frequencia,
         },
 
-        regime,
         curso: {
           curso,
         },
@@ -120,7 +119,6 @@ const listaEstudantes = async (req, res) => {
         nome: "asc",
       },
       where: {
-        regime,
         curso: {
           curso,
         },
@@ -223,7 +221,7 @@ const listaEstudantes = async (req, res) => {
   }
 };
 const listaRegime = async (req, res) => {
-  const { regime, ano } = req.body;
+  const { ano } = req.body;
   try {
     const dados = await prisma.estudante.findMany({
       include: {
@@ -246,9 +244,6 @@ const listaRegime = async (req, res) => {
       },
       orderBy: {
         nome: "asc",
-      },
-      where: {
-        regime,
       },
     });
     const response = await prisma.estudante.findMany({
@@ -273,9 +268,6 @@ const listaRegime = async (req, res) => {
       },
       orderBy: {
         nome: "asc",
-      },
-      where: {
-        regime,
       },
     });
 
@@ -351,7 +343,7 @@ const listaRegime = async (req, res) => {
   }
 };
 const dadosGeraisCurso = async (req, res) => {
-  const { ano, regime, dataInicial, dataFinal } = req.body;
+  const { ano, dataInicial, dataFinal } = req.body;
   const dataI = new Date(dataInicial);
   const dataF = new Date(dataFinal);
   try {
@@ -361,9 +353,6 @@ const dadosGeraisCurso = async (req, res) => {
         id: true,
       },
       where: {
-        estudante: {
-          regime,
-        },
         anoLectivo: {
           ano,
         },
@@ -390,9 +379,6 @@ const dadosGeraisCurso = async (req, res) => {
     const response = await prisma.curso.findMany({
       include: {
         estudantes: {
-          where: {
-            regime,
-          },
           include: {
             frequencia: true,
             reconfirmacao: true,
@@ -724,12 +710,6 @@ const movimentoPropina = async (req, res) => {
   };
 
   const totalIntervalo = intervalo.reduce((acc, p) => {
-    if (!acc["regular"] && p.estudante.regime === "Regular") {
-      acc["regular"] = {
-        totalEstudante: 0,
-        totalPropina: 0,
-      };
-    }
     if (!acc["laboral"] && p.estudante.regime === "Pós-Laboral") {
       acc["laboral"] = {
         totalEstudante: 0,
@@ -749,10 +729,7 @@ const movimentoPropina = async (req, res) => {
       acc["laboral"].totalEstudante++;
       acc["laboral"].totalPropina += p.valor;
     }
-    if (p.estudante.regime === "Regular") {
-      acc["regular"].totalEstudante++;
-      acc["regular"].totalPropina += p.valor;
-    }
+
     acc["totalGeral"].totalEstudante++;
     acc["totalGeral"].totalPropina += p.valor;
     listaIntervalo.laboral = acc["laboral"] || {
@@ -794,20 +771,14 @@ const movimentoPropina = async (req, res) => {
       acc["laboral"].totalEstudante++;
       acc["laboral"].totalPropina += p.valor;
     }
-    if (p.estudante.regime === "Regular") {
-      acc["regular"].totalEstudante++;
-      acc["regular"].totalPropina += p.valor;
-    }
+
     acc["totalGeral"].totalEstudante++;
     acc["totalGeral"].totalPropina += p.valor;
     listaExiste.laboral = acc["laboral"] || {
       totalEstudante: 0,
       totalPropina: 0,
     };
-    listaExiste.regular = acc["regular"] || {
-      totalEstudante: 0,
-      totalPropina: 0,
-    };
+
     listaExiste.totalGeral = acc["totalGeral"] || {
       totalEstudante: 0,
       totalPropina: 0,
@@ -942,20 +913,7 @@ const getPropina = async (req, res) => {
     res.json(error);
   }
 };
-const countDiurno = async (req, res) => {
-  try {
-    const response = await prisma.propina.count({
-      where: {
-        estudante: {
-          regime: "Regular",
-        },
-      },
-    });
-    res.json(response);
-  } catch (error) {
-    res.json(error);
-  }
-};
+
 const countPosLaboral = async (req, res) => {
   try {
     const response = await prisma.propina.count({
@@ -1107,7 +1065,6 @@ module.exports = {
   getPropinaEspecifico,
   verDivida,
   countPosLaboral,
-  countDiurno,
   listaEstudantes,
   dadosGeraisCurso,
   listaRegime,

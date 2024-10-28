@@ -43,18 +43,8 @@ const buscainscricaoMatriculaPorBi = async (req, res) => {
   }
 };
 const createinscricaoMatricula = async (req, res) => {
-  const {
-    nome,
-    bi,
-    contato,
-    fk_curso,
-    regime,
-    sexo,
-    valor,
-    fk_user,
-    fk_ano,
-    rupe,
-  } = req.body;
+  const { nome, bi, contato, fk_curso, sexo, valor, fk_user, fk_ano, rupe } =
+    req.body;
   try {
     if (
       !sexo ||
@@ -62,7 +52,6 @@ const createinscricaoMatricula = async (req, res) => {
       !bi ||
       !contato ||
       !fk_curso ||
-      !regime ||
       !valor ||
       !fk_user ||
       !fk_ano
@@ -77,7 +66,7 @@ const createinscricaoMatricula = async (req, res) => {
         bi,
         contacto: contato,
         fk_curso,
-        regime,
+        regime: "Pós-Laboral",
         sexo,
         valor,
         fk_user,
@@ -224,9 +213,9 @@ const deleteinscricaoMatricula = async (req, res) => {
 const upDateinscricaoMatricula = async (req, res) => {
   const { id } = req.params;
 
-  const { nome, contato, fk_curso, regime } = req.body;
+  const { nome, contato, fk_curso } = req.body;
 
-  if (!nome || !contato || !fk_curso || !regime) {
+  if (!nome || !contato || !fk_curso) {
     res.json({ message: "error" });
     return;
   }
@@ -237,7 +226,6 @@ const upDateinscricaoMatricula = async (req, res) => {
         nome,
         contacto: contato,
         fk_curso,
-        regime,
       },
       where: {
         id,
@@ -320,7 +308,6 @@ const relatorioInscricao = async (req, res) => {
       }
       if (i.sexo === "F" && acc[key]) acc[key].totalF++;
       if (i.sexo === "M" && acc[key]) acc[key].totalM++;
-      if (i.regime === "Regular" && acc[key]) acc[key].totalRegular++;
       if (i.regime === "Pós-Laboral" && acc[key]) acc[key].totalPosLaboral++;
       acc[key].totalValor += i.valor;
       acc[key].totalGenero = acc[key].totalF + acc[key].totalM;

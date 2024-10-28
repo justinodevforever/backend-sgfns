@@ -11,7 +11,6 @@ const {
   getPropinasMensal,
   getPropinaEspecifico,
   verDivida,
-  countDiurno,
   countPosLaboral,
   listaEstudantes,
   dadosGeraisCurso,
@@ -31,7 +30,6 @@ router.get("/propina/:id", authorization, getPropina);
 router.get("/estudante/propina/:id/:ano", authorization, getEstudantePropina);
 router.get("/propina/especifico", authorization, getPropinaEspecifico);
 router.post("/divida", authorization, verDivida);
-router.get("/diurno", authorization, countDiurno);
 router.get("/poslaboral", authorization, countPosLaboral);
 router.post("/lista", authorization, listaEstudantes);
 router.post("/relatorioCurso", authorization, dadosGeraisCurso);

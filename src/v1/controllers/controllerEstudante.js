@@ -37,10 +37,9 @@ const buscaEstudantePorBi = async (req, res) => {
   }
 };
 const createEstudante = async (req, res) => {
-  const { nome, bi, contato, fk_curso, regime, turma, sexo, fk_frequencia } =
-    req.body;
+  const { nome, bi, contato, fk_curso, turma, sexo, fk_frequencia } = req.body;
   try {
-    if (!sexo || !nome || !bi || !fk_curso || !regime || !fk_frequencia) {
+    if (!sexo || !nome || !bi || !fk_curso || !fk_frequencia) {
       res.json({ message: "error" });
       return;
     }
@@ -59,7 +58,7 @@ const createEstudante = async (req, res) => {
         bi,
         contacto: contato,
         fk_curso,
-        regime,
+        regime: "Pós-Laboral",
         sexo,
         turma,
         fk_frequencia,
@@ -168,9 +167,9 @@ const deleteEstudante = async (req, res) => {
 const upDateEstudante = async (req, res) => {
   const { id } = req.params;
 
-  const { nome, contato, fk_curso, regime, sexo } = req.body;
+  const { nome, contato, fk_curso, sexo } = req.body;
 
-  if (!nome || !contato || !fk_curso || !regime || !sexo) {
+  if (!nome || !contato || !fk_curso || !sexo) {
     res.json({ message: "error" });
     return;
   }
@@ -181,7 +180,6 @@ const upDateEstudante = async (req, res) => {
         nome,
         contacto: contato,
         fk_curso,
-        regime,
         sexo,
       },
       where: {
@@ -214,9 +212,9 @@ const searchEstudante = async (req, res) => {
   }
 };
 const searchSpecific = async (req, res) => {
-  const { curso, ano, regime, frequencia } = req.body;
+  const { curso, ano, frequencia } = req.body;
   try {
-    if (curso && ano && regime && frequencia) {
+    if (curso && ano && frequencia) {
       const response = await prisma.estudante.findFirst({
         include: {
           curso: {},
@@ -226,7 +224,6 @@ const searchSpecific = async (req, res) => {
           curso: {
             curso,
           },
-          regime,
 
           frequencia: {
             ano: frequencia,

@@ -42,7 +42,7 @@ const getListaCadeiras = async (req, res) => {
   }
 };
 const getListaCadeirasEspecifica = async (req, res) => {
-  const { turma, regime, disciplina, frequencia, curso } = req.body;
+  const { turma, disciplina, frequencia, curso } = req.body;
   try {
     const response = await prisma.listaCadeira.findMany({
       include: {
@@ -60,7 +60,6 @@ const getListaCadeirasEspecifica = async (req, res) => {
       where: {
         cadeira: {
           estudante: {
-            regime,
             turma,
           },
           Curso: {
@@ -75,7 +74,6 @@ const getListaCadeirasEspecifica = async (req, res) => {
         },
       },
     });
-    console.log(response);
     response.map((rec) => {
       if (typeof rec.cadeira.rupe === "bigint") {
         rec.cadeira.rupe = rec.cadeira.rupe.toString();
