@@ -13,6 +13,7 @@ const {
   relatorioMatricula,
   count,
   countMatricula,
+  listaMatriculas,
 } = require("../controllers/controllerMatricula");
 const { authorization } = require("../../authorization/auth");
 
@@ -30,5 +31,6 @@ router.post("/search/matricula/bi", authorization, buscaMatriculaPorBi);
 router.post("/matricula/user", authorization, getMatriculaPorUsuario);
 router.post("/relatorio/matricula", authorization, relatorioMatricula);
 router.post("/countmatricula", authorization, countMatricula);
+router.post("/listamatricula", authorization, listaMatriculas);
 
 module.exports = router;

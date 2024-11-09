@@ -112,6 +112,7 @@ model Estudante{
   contacto String? @unique
   bi String @unique
   regime String
+  dataNascimento String
   sexo String
   turma String?
   curso Curso @relation(fields: [fk_curso],references: [id],onDelete: Cascade)
@@ -302,6 +303,7 @@ model Matricula{
   contacto String? @unique
   bi String @unique
   regime String
+  dataNascimento String
   sexo String
   valor Float
   rupe String? @unique
@@ -320,6 +322,7 @@ model InscricaoMatricula{
   nome String 
   contacto String? @unique
   bi String @unique
+  dataNascimento String
   regime String
   sexo String
   valor Float

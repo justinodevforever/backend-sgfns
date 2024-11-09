@@ -42,7 +42,7 @@ const getListaCadeiras = async (req, res) => {
   }
 };
 const getListaCadeirasEspecifica = async (req, res) => {
-  const { turma, disciplina, frequencia, curso } = req.body;
+  const { ano, disciplina, frequencia, curso } = req.body;
   try {
     const response = await prisma.listaCadeira.findMany({
       include: {
@@ -59,8 +59,8 @@ const getListaCadeirasEspecifica = async (req, res) => {
       },
       where: {
         cadeira: {
-          estudante: {
-            turma,
+          anoLectivo: {
+            ano,
           },
           Curso: {
             curso,

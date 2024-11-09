@@ -17,9 +17,22 @@ const getMatricula = async (req, res) => {
     if (typeof response.rupe === "bigint") {
       response.rupe = response.rupe.toString();
     }
-    res.json(response);
+    const dataNascimento = new Date(response.dataNascimento);
+    const dataHoje = new Date();
+
+    let idade = dataHoje.getFullYear() - dataNascimento.getFullYear();
+    const mes = dataHoje.getMonth() - dataNascimento.getMonth();
+
+    if (
+      mes < 0 ||
+      (mes === 0 && dataHoje.getDate() < dataNascimento.getDate())
+    ) {
+      idade--;
+    }
+
+    res.json({ response: response, idade: idade });
   } catch (error) {
-    res.status(401).json({ message: "error" });
+    res.json({ message: "error" });
   }
 };
 const buscaMatriculaPorBi = async (req, res) => {
@@ -52,6 +65,7 @@ const createMatricula = async (req, res) => {
     fk_curso,
     sexo,
     fk_frequencia,
+    dataNascimento,
     valor,
     rupe,
     fk_user,
@@ -64,6 +78,7 @@ const createMatricula = async (req, res) => {
       !bi ||
       !fk_curso ||
       !fk_frequencia ||
+      !dataNascimento ||
       !valor ||
       !fk_ano ||
       !fk_user
@@ -90,6 +105,7 @@ const createMatricula = async (req, res) => {
         sexo,
         valor,
         fk_user,
+        dataNascimento,
         rupe,
         fk_ano,
         fk_frequencia,
@@ -100,6 +116,7 @@ const createMatricula = async (req, res) => {
         nome,
         bi,
         contacto: contato,
+        dataNascimento,
         fk_curso,
         sexo,
         fk_frequencia,
@@ -113,7 +130,6 @@ const createMatricula = async (req, res) => {
 
     res.status(200).json({ response: response, message: "sucess" });
   } catch (error) {
-    console.log(error.message);
     res.json({ message: "error" });
   }
 };
@@ -375,6 +391,38 @@ const countMatricula = async (req, res) => {
   }
 };
 
+const listaMatriculas = async (req, res) => {
+  const { ano, curso, frequencia } = req.body;
+  try {
+    const response = await prisma.matricula.findMany({
+      include: {
+        curso: true,
+        usuario: true,
+        anoLetivo: true,
+      },
+      where: {
+        anoLetivo: {
+          ano,
+        },
+        frequencia: {
+          ano: frequencia,
+        },
+        curso: {
+          curso,
+        },
+      },
+    });
+    response.map((p) => {
+      if (typeof p.rupe === "bigint") {
+        p.rupe = p.rupe.toString();
+      }
+    });
+    res.json(response);
+  } catch (error) {
+    res.json({ message: "error" });
+  }
+};
+
 module.exports = {
   createMatricula,
   getMatricula,
@@ -389,4 +437,5 @@ module.exports = {
   getMatriculaBi,
   relatorioMatricula,
   countMatricula,
+  listaMatriculas,
 };

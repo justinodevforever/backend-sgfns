@@ -13,9 +13,22 @@ const getEstudante = async (req, res) => {
         id,
       },
     });
-    res.json(response);
+    const dataNascimento = new Date(response.dataNascimento);
+    const dataHoje = new Date();
+
+    let idade = dataHoje.getFullYear() - dataNascimento.getFullYear();
+    const mes = dataHoje.getMonth() - dataNascimento.getMonth();
+
+    if (
+      mes < 0 ||
+      (mes === 0 && dataHoje.getDate() < dataNascimento.getDate())
+    ) {
+      idade--;
+    }
+
+    res.json({ response: response, idade: idade });
   } catch (error) {
-    res.status(401).json({ message: "error" });
+    res.json({ message: "error" });
   }
 };
 const buscaEstudantePorBi = async (req, res) => {
@@ -31,15 +44,44 @@ const buscaEstudantePorBi = async (req, res) => {
         bi,
       },
     });
-    res.json(response);
+    const dataNascimento = new Date(response.dataNascimento);
+    const dataHoje = new Date();
+
+    let idade = dataHoje.getFullYear() - dataNascimento.getFullYear();
+    const mes = dataHoje.getMonth() - dataNascimento.getMonth();
+
+    if (
+      mes < 0 ||
+      (mes === 0 && dataHoje.getDate() < dataNascimento.getDate())
+    ) {
+      idade--;
+    }
+
+    res.json({ response: response, idade: idade });
   } catch (error) {
     res.json({ message: error.message });
   }
 };
 const createEstudante = async (req, res) => {
-  const { nome, bi, contato, fk_curso, turma, sexo, fk_frequencia } = req.body;
+  const {
+    nome,
+    bi,
+    contato,
+    fk_curso,
+    turma,
+    dataNascimento,
+    sexo,
+    fk_frequencia,
+  } = req.body;
   try {
-    if (!sexo || !nome || !bi || !fk_curso || !fk_frequencia) {
+    if (
+      !sexo ||
+      !nome ||
+      !bi ||
+      !fk_curso ||
+      !dataNascimento ||
+      !fk_frequencia
+    ) {
       res.json({ message: "error" });
       return;
     }
@@ -58,6 +100,7 @@ const createEstudante = async (req, res) => {
         bi,
         contacto: contato,
         fk_curso,
+        dataNascimento,
         regime: "Pós-Laboral",
         sexo,
         turma,
@@ -97,7 +140,20 @@ const getEstudanteBi = async (req, res) => {
         bi,
       },
     });
-    res.json(response);
+    const dataNascimento = new Date(response.dataNascimento);
+    const dataHoje = new Date();
+
+    let idade = dataHoje.getFullYear() - dataNascimento.getFullYear();
+    const mes = dataHoje.getMonth() - dataNascimento.getMonth();
+
+    if (
+      mes < 0 ||
+      (mes === 0 && dataHoje.getDate() < dataNascimento.getDate())
+    ) {
+      idade--;
+    }
+
+    res.json({ response: response, idade: idade });
   } catch (error) {
     res.json(error);
   }
@@ -114,8 +170,23 @@ const getEstudanteEspecifico = async (req, res) => {
         id,
       },
     });
-    res.json(response);
-  } catch (error) {}
+    const dataNascimento = new Date(response.dataNascimento);
+    const dataHoje = new Date();
+
+    let idade = dataHoje.getFullYear() - dataNascimento.getFullYear();
+    const mes = dataHoje.getMonth() - dataNascimento.getMonth();
+
+    if (
+      mes < 0 ||
+      (mes === 0 && dataHoje.getDate() < dataNascimento.getDate())
+    ) {
+      idade--;
+    }
+
+    res.json({ response: response, idade: idade });
+  } catch (error) {
+    console.log(error.mensage);
+  }
 };
 const getAllEstudante = async (req, res) => {
   const { fk_user } = req.body;

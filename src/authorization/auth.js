@@ -16,14 +16,14 @@ const authorization = async (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || authorization === undefined) {
-    return res.status(401).json("Token Invalid");
+    return res.json("Token Invalid");
   }
   const [, token] = authorization.split(" ");
   try {
     jwt.verify(token, process.env.KEY_SECRET);
     next();
   } catch (error) {
-    return res.status(201).json("Token Invalid");
+    return res.json("Token Invalid");
   }
 };
 module.exports = { authorization, verifyRefreshToken };

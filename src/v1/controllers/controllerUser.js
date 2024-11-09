@@ -28,7 +28,6 @@ const getUser = async (req, res) => {
       fk_user: id,
     },
   });
-  const { password: _, users } = user;
   res.json(user);
   try {
   } catch (error) {
@@ -43,6 +42,7 @@ const getUserPorBi = async (req, res) => {
       include: {
         permissions: true,
       },
+
       where: {
         bi,
       },
@@ -142,8 +142,8 @@ const getAllUser = async (req, res) => {
         },
       },
     });
-    const { password: _, ...response } = user;
-    res.json(response);
+
+    res.json(user);
   } catch (error) {
     res.json({ mensage: error.mensage });
   }

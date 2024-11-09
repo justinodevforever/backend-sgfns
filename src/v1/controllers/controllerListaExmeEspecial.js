@@ -42,7 +42,7 @@ const getListaExameEspecials = async (req, res) => {
   }
 };
 const getListaExameEspecialsEspecifica = async (req, res) => {
-  const { turma, disciplina, frequencia, curso } = req.body;
+  const { ano, disciplina, frequencia, curso } = req.body;
   try {
     const response = await prisma.listaExameEspecial.findMany({
       include: {
@@ -61,8 +61,8 @@ const getListaExameEspecialsEspecifica = async (req, res) => {
           AnoFrequncia: {
             ano: frequencia,
           },
-          estudante: {
-            turma,
+          anoLectivo: {
+            ano,
           },
           disciplina: {
             nome: disciplina,

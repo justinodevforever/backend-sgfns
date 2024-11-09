@@ -13,6 +13,7 @@ const {
   buscainscricaoMatriculaPorBi,
   getinscricaoMatriculaPorUsuario,
   relatorioInscricao,
+  listaInscricao,
 } = require("../controllers/controllerInscricaoMatricula");
 
 const router = Router();
@@ -56,5 +57,6 @@ router.post(
   getinscricaoMatriculaPorUsuario
 );
 router.post("/relatorio/inscrincao", authorization, relatorioInscricao);
+router.post("/listainscricao", authorization, listaInscricao);
 
 module.exports = router;

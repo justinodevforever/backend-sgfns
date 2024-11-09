@@ -22,7 +22,6 @@ const routerDisciplina = require("./src/v1/routers/routerDisciplina");
 const routerMes = require("./src/v1/routers/routerMes");
 const routerReconfirmacao = require("./src/v1/routers/routerReconfirmacao");
 const routerSemestre = require("./src/v1/routers/routerSemestre");
-const routerTiposServicos = require("./src/v1/routers/routerTiposServicos");
 const routerServicos = require("./src/v1/routers/routerServicos");
 const routerCursoFrequencia = require("./src/v1/routers/routerCursoFrequencia");
 const routerRecurso = require("./src/v1/routers/routerRecurso");
@@ -80,7 +79,6 @@ if (cluster.isPrimary) {
   app.use("/api/v1", routerUsuarioPermissao);
   app.use("/api/v1", routerCursoFrequencia);
   app.use("/api/v1", routerMes);
-  app.use("/api/v1", routerTiposServicos);
   app.use("/api/v1", routerSemestre);
   app.use("/api/v1", routerServicos);
   app.use("/api/v1", routerReconfirmacao);

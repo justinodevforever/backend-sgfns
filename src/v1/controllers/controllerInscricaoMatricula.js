@@ -17,9 +17,23 @@ const getinscricaoMatricula = async (req, res) => {
     if (typeof response?.rupe === "bigint") {
       response.rupe = response?.rupe.toString();
     }
-    res.json(response);
+
+    const dataNascimento = new Date(response.dataNascimento);
+    const dataHoje = new Date();
+
+    let idade = dataHoje.getFullYear() - dataNascimento.getFullYear();
+    const mes = dataHoje.getMonth() - dataNascimento.getMonth();
+
+    if (
+      mes < 0 ||
+      (mes === 0 && dataHoje.getDate() < dataNascimento.getDate())
+    ) {
+      idade--;
+    }
+
+    res.json({ response: response, idade: idade });
   } catch (error) {
-    res.status(401).json({ message: " error" });
+    res.json({ message: " error" });
   }
 };
 const buscainscricaoMatriculaPorBi = async (req, res) => {
@@ -43,15 +57,25 @@ const buscainscricaoMatriculaPorBi = async (req, res) => {
   }
 };
 const createinscricaoMatricula = async (req, res) => {
-  const { nome, bi, contato, fk_curso, sexo, valor, fk_user, fk_ano, rupe } =
-    req.body;
+  const {
+    nome,
+    bi,
+    contato,
+    dataNascimento,
+    fk_curso,
+    sexo,
+    valor,
+    fk_user,
+    fk_ano,
+    rupe,
+  } = req.body;
   try {
     if (
       !sexo ||
       !nome ||
       !bi ||
-      !contato ||
       !fk_curso ||
+      !dataNascimento ||
       !valor ||
       !fk_user ||
       !fk_ano
@@ -70,6 +94,7 @@ const createinscricaoMatricula = async (req, res) => {
         sexo,
         valor,
         fk_user,
+        dataNascimento,
         rupe,
         fk_ano,
       },
@@ -80,7 +105,6 @@ const createinscricaoMatricula = async (req, res) => {
 
     res.status(200).json({ response: response, message: "sucess" });
   } catch (error) {
-    console.log(error.message);
     res.json({ message: "error" });
   }
 };
@@ -325,6 +349,35 @@ const relatorioInscricao = async (req, res) => {
     res.json({ message: error.message });
   }
 };
+const listaInscricao = async (req, res) => {
+  const { ano, curso } = req.body;
+  try {
+    const response = await prisma.inscricaoMatricula.findMany({
+      include: {
+        curso: true,
+        usuario: true,
+        anoLetivo: true,
+      },
+      where: {
+        anoLetivo: {
+          ano,
+        },
+
+        curso: {
+          curso,
+        },
+      },
+    });
+    response.map((p) => {
+      if (typeof p.rupe === "bigint") {
+        p.rupe = p.rupe.toString();
+      }
+    });
+    res.json(response);
+  } catch (error) {
+    res.json({ message: "error" });
+  }
+};
 
 module.exports = {
   createinscricaoMatricula,
@@ -339,4 +392,5 @@ module.exports = {
   getinscricaoMatriculaPorUsuario,
   getinscricaoMatriculaBi,
   relatorioInscricao,
+  listaInscricao,
 };
