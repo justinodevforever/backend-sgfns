@@ -37,45 +37,57 @@ const routerListaExame = require("./src/v1/routers/routerListaExameEspecial");
 
 const app = express();
 
-//config
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(
-  "/files",
-  express.static(path.resolve(__dirname, "src", "public", "upload"))
-);
+const numCPUs = os.cpus().length;
 
-app.use("/api/v1", roueterUser);
-app.use("/api/v1", routerEstudante);
-app.use("/api/v1", routerImageUSer);
-app.use("/api/v1", routerPropina);
-app.use("/api/v1", routerDeclaracoes);
-app.use("/api/v1", routerUsuarioRoles);
-app.use("/api/v1", routerRoles);
-app.use("/api/v1", routerPermissao);
-app.use("/api/v1", routerAnoFrequencia);
-app.use("/api/v1", routerAnoLetivo);
-app.use("/api/v1", routerCurso);
-app.use("/api/v1", routerDisciplina);
-app.use("/api/v1", routerUsuarioPermissao);
-app.use("/api/v1", routerCursoFrequencia);
-app.use("/api/v1", routerMes);
-app.use("/api/v1", routerSemestre);
-app.use("/api/v1", routerServicos);
-app.use("/api/v1", routerReconfirmacao);
-app.use("/api/v1", routerCadeiraAtraso);
-app.use("/api/v1", routerRecurso);
-app.use("/api/v1", routerExameEspecial);
-app.use("/api/v1", routerListaRecurso);
-app.use("/api/v1", routerFolha);
-app.use("/api/v1", routerMatricula);
-app.use("/api/v1", routerInscrincaoMatricula);
-app.use("/api/v1", routerListaCadeira);
-app.use("/api/v1", routerListaExame);
+if (cluster.isPrimary) {
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+  cluster.on("exit", (worker) => {
+    console.log(`Worker ${worker.process.pid} falhou. Criando...`);
+    cluster.fork();
+  });
+} else {
+  //config
+  app.use(cors());
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  app.use(
+    "/files",
+    express.static(path.resolve(__dirname, "src", "public", "upload"))
+  );
 
-app.listen(process.env.PORT, () =>
-  console.log(`Servidor rodando no processo ${process.pid}`)
-);
+  app.use("/api/v1", roueterUser);
+  app.use("/api/v1", routerEstudante);
+  app.use("/api/v1", routerImageUSer);
+  app.use("/api/v1", routerPropina);
+  app.use("/api/v1", routerDeclaracoes);
+  app.use("/api/v1", routerUsuarioRoles);
+  app.use("/api/v1", routerRoles);
+  app.use("/api/v1", routerPermissao);
+  app.use("/api/v1", routerAnoFrequencia);
+  app.use("/api/v1", routerAnoLetivo);
+  app.use("/api/v1", routerCurso);
+  app.use("/api/v1", routerDisciplina);
+  app.use("/api/v1", routerUsuarioPermissao);
+  app.use("/api/v1", routerCursoFrequencia);
+  app.use("/api/v1", routerMes);
+  app.use("/api/v1", routerSemestre);
+  app.use("/api/v1", routerServicos);
+  app.use("/api/v1", routerReconfirmacao);
+  app.use("/api/v1", routerCadeiraAtraso);
+  app.use("/api/v1", routerRecurso);
+  app.use("/api/v1", routerExameEspecial);
+  app.use("/api/v1", routerListaRecurso);
+  app.use("/api/v1", routerFolha);
+  app.use("/api/v1", routerMatricula);
+  app.use("/api/v1", routerInscrincaoMatricula);
+  app.use("/api/v1", routerListaCadeira);
+  app.use("/api/v1", routerListaExame);
+
+  app.listen(process.env.PORT || 3000, () =>
+    console.log(`Servidor rodando no processo ${process.pid}`)
+  );
+}
 
 module.exports = app;
