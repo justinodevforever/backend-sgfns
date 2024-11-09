@@ -7,6 +7,13 @@ const createServico = async (req, res) => {
 
     if (!valor || !tipo) return res.json({ message: "existe um campo vazio" });
 
+    const respose = await prisma.servico.findFirst({
+      where: {
+        tipo,
+      },
+    });
+    if (respose) return res.json({ message: "exist" });
+
     await prisma.servico.create({
       data: {
         valor,
@@ -53,13 +60,12 @@ const deleteServico = async (req, res) => {
 const upDateServico = async (req, res) => {
   try {
     const { id } = req.params;
-    const { valor, tipo } = req.body;
+    const { valor } = req.body;
 
-    if (!valor || !tipo) return res.json("existe campo vazio");
+    if (!valor) return res.json("existe campo vazio");
     await prisma.servico.update({
       data: {
         valor,
-        tipo,
       },
       where: {
         id,

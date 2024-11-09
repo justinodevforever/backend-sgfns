@@ -8,6 +8,7 @@ const {
   upDateAnoFrequencia,
   getAnoFrequencias,
   searchFrequencia,
+  frequenciaespecifico,
 } = require("../controllers/controllerAnoFrequencia");
 const { authorization } = require("../../authorization/auth");
 
@@ -20,5 +21,6 @@ router.delete("/ano/:id", authorization, deleteAnoFrequencia);
 router.put("/ano/:id", authorization, upDateAnoFrequencia);
 router.post("/ano/espeficico", authorization, upDateAnoFrequencia);
 router.post("/search/frequencia", authorization, searchFrequencia);
+router.get("/frequenciaespecifico/:id", authorization, frequenciaespecifico);
 
 module.exports = router;

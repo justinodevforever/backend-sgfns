@@ -8,9 +8,9 @@ const createReconfirmacao = async (req, res) => {
       rupe,
       fk_semestre,
       fk_estudante,
-      fk_user,
       fk_ano,
       fk_frequencia,
+      fk_user,
     } = req.body;
 
     if (
@@ -25,6 +25,17 @@ const createReconfirmacao = async (req, res) => {
       res.status(201).json({ message: "error" });
       return;
     }
+    const reconf = await prisma.reconfirmacao.findFirst({
+      where: {
+        fk_semestre,
+        fk_estudante,
+        fk_ano,
+        fk_frequencia,
+      },
+    });
+
+    if (reconf) return res.json({ message: "exist" });
+
     await prisma.reconfirmacao.updateMany({
       data: {
         pivo: false,
@@ -211,7 +222,7 @@ const deleteReconfirmacao = async (req, res) => {
 const upDateReconfirmacao = async (req, res) => {
   try {
     const { id } = req.params;
-    const { fk_frequencia, fk_semestre, fk_ano } = req.body;
+    const { fk_frequencia, fk_semestre, fk_ano, idEstudante } = req.body;
     if (!fk_frequencia || !fk_semestre || !fk_ano)
       return res.json({ message: "error" });
     const response = await prisma.reconfirmacao.update({
@@ -223,11 +234,19 @@ const upDateReconfirmacao = async (req, res) => {
       },
       data: {
         fk_frequencia,
-        fk_ano,
         fk_semestre,
+        fk_ano,
       },
       where: {
         id,
+      },
+    });
+    await prisma.estudante.update({
+      data: {
+        fk_frequencia,
+      },
+      where: {
+        id: idEstudante,
       },
     });
     if (typeof response.rupe === "bigint") {
@@ -235,9 +254,49 @@ const upDateReconfirmacao = async (req, res) => {
     }
     res.json({ message: "sucess", response: response });
   } catch (error) {
+    res.json({ messageError: error.message, message: "error" });
+  }
+};
+
+const listaReconfirmacao = async (req, res) => {
+  const { ano, frequencia, curso, semestre } = req.body;
+  try {
+    const response = await prisma.reconfirmacao.findMany({
+      include: {
+        estudante: {
+          include: {
+            curso: true,
+          },
+        },
+
+        frequencia: true,
+        anoLectivo: true,
+        semestre: true,
+      },
+
+      where: {
+        estudante: {
+          curso: {
+            curso,
+          },
+        },
+        frequencia: {
+          ano: frequencia,
+        },
+        anoLectivo: {
+          ano,
+        },
+        semestre: {
+          nome: semestre,
+        },
+      },
+    });
+    res.json(response);
+  } catch (error) {
     res.json({ message: error.message });
   }
 };
+
 const movimentoPropina = async (req, res) => {
   const { dataFinal, dataInicial, ano } = req.body;
   const dataI = new Date(dataInicial);
@@ -391,4 +450,5 @@ module.exports = {
   getReconfirmacaoEspecifico,
   getReconfirmacaoAtualizacao,
   movimentoPropina,
+  listaReconfirmacao,
 };

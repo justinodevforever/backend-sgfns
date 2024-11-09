@@ -5,6 +5,12 @@ const createMes = async (req, res) => {
   try {
     const { mes, algarismo } = req.body;
     if (!mes || !algarismo) return res.json({ message: "error" });
+    const respose = await prisma.mes.findFirst({
+      where: {
+        mes,
+      },
+    });
+    if (respose) return res.json({ message: "exist" });
     await prisma.mes.create({
       data: {
         mes,
@@ -57,7 +63,22 @@ const buscaMes = async (req, res) => {
 const deleteMes = async (req, res) => {
   try {
     const { id } = req.params;
+
+    const response = await prisma.mes.findFirst({
+      include: {
+        propina: true,
+      },
+      where: {
+        id,
+      },
+    });
+    if (response.propina.length > 0)
+      return res.json({
+        status: 400,
+        message: "Não Podes Eliminar Este Mês Porque Tem uma Associação!",
+      });
     await prisma.mes.delete({ where: { id } });
+    res.json({ message: "sucess" });
   } catch (error) {
     res.json(error);
   }

@@ -5,6 +5,14 @@ const createAnoLetivo = async (req, res) => {
   const { ano } = req.body;
   try {
     if (!ano) return res.json({ message: "sucess" });
+
+    const respose = await prisma.anoLectivo.findFirst({
+      where: {
+        ano,
+      },
+    });
+    if (respose) return res.json({ message: "exist" });
+
     await prisma.anoLectivo.create({
       data: {
         ano,
@@ -56,7 +64,37 @@ const buscaAnoLetivo = async (req, res) => {
 const deleteAnoLetivo = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await prisma.anoLectivo.delete({
+
+    const response = await prisma.anoLectivo.findFirst({
+      include: {
+        cadeiraAtrasos: true,
+        exameEspecial: true,
+        recursos: true,
+        reconfirmacao: true,
+        matricula: true,
+        inscricao: true,
+        propina: true,
+      },
+      where: {
+        id,
+      },
+    });
+    if (
+      response.cadeiraAtrasos.length > 0 ||
+      response.exameEspecial.length > 0 ||
+      response.recursos.length > 0 ||
+      response.inscricao.length > 0 ||
+      response.matricula.length > 0 ||
+      response.propina.length > 0 ||
+      response.reconfirmacao.length > 0
+    )
+      return res.json({
+        status: 400,
+        message:
+          "Não Podes Eliminar Este Ano Lectivo Porque Tem uma Associação!",
+      });
+
+    await prisma.anoLectivo.delete({
       where: { id },
     });
     res.json({ message: "sucess" });
@@ -69,7 +107,7 @@ const upDateAnoLetivo = async (req, res) => {
     const { id } = req.params;
     const { ano } = req.body;
     if (!ano && !id) return res.json({ message: "error" });
-    const user = await prisma.anoLectivo.update({
+    await prisma.anoLectivo.update({
       data: {
         ano,
       },
@@ -82,6 +120,29 @@ const upDateAnoLetivo = async (req, res) => {
     res.json({ message: "error" });
   }
 };
+const anoLetivoEspecifico = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) return res.json({ message: "error" });
+    const response = await prisma.anoLectivo.findFirst({
+      include: {
+        cadeiraAtrasos: true,
+        exameEspecial: true,
+        recursos: true,
+        reconfirmacao: true,
+        matricula: true,
+        inscricao,
+        propina,
+      },
+      where: {
+        id,
+      },
+    });
+    res.json(response);
+  } catch (error) {
+    res.json({ message: "error" });
+  }
+};
 
 module.exports = {
   createAnoLetivo,
@@ -90,4 +151,5 @@ module.exports = {
   deleteAnoLetivo,
   buscaAnoLetivo,
   upDateAnoLetivo,
+  anoLetivoEspecifico,
 };

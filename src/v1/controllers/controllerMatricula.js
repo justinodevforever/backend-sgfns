@@ -367,10 +367,6 @@ const countMatricula = async (req, res) => {
         anoLetivo: {
           ano,
         },
-        dataSolicitacao: {
-          gte: dataI,
-          lte: dataF,
-        },
       },
     });
     res.status(200).json(response);

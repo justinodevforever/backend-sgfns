@@ -49,6 +49,34 @@ const createPropina = async (req, res) => {
 };
 const listaEstudantes = async (req, res) => {
   const { ano, curso, frequencia } = req.body;
+  const { skip = 0, take = 25 } = req.query;
+
+  if (!ano || !curso || !frequencia) return res.json({ message: "empty" });
+
+  const numero = await prisma.estudante.count({
+    where: {
+      frequencia: {
+        ano: frequencia,
+      },
+
+      curso: {
+        curso,
+      },
+
+      propina: {
+        some: {
+          anoFrequencia: frequencia,
+          anoLectivo: {
+            ano,
+          },
+        },
+      },
+    },
+  });
+
+  const totalPage = Math.ceil(numero / take);
+  let numeroVezes = take * totalPage;
+
   try {
     const dados = await prisma.estudante.findMany({
       include: {
@@ -57,6 +85,7 @@ const listaEstudantes = async (req, res) => {
 
         propina: {
           where: {
+            anoFrequencia: frequencia,
             anoLectivo: {
               ano,
             },
@@ -85,12 +114,15 @@ const listaEstudantes = async (req, res) => {
 
         propina: {
           some: {
+            anoFrequencia: frequencia,
             anoLectivo: {
               ano,
             },
           },
         },
       },
+      take: Number(take),
+      skip: Number(skip),
     });
 
     const response = await prisma.estudante.findMany({
@@ -101,6 +133,7 @@ const listaEstudantes = async (req, res) => {
 
         propina: {
           where: {
+            anoFrequencia: frequencia,
             anoLectivo: {
               ano,
             },
@@ -135,6 +168,8 @@ const listaEstudantes = async (req, res) => {
           },
         },
       },
+      take: Number(take),
+      skip: Number(skip),
     });
 
     const mes = [
@@ -150,7 +185,6 @@ const listaEstudantes = async (req, res) => {
       "Dezembro",
       "total",
     ];
-    // const meses = Array.from({ length: 12 }, (_, i) => i + 1);
     const totalMes = mes.reduce((acc, me) => {
       const key = `${me}`;
       acc[key] = 0.0;
@@ -210,11 +244,19 @@ const listaEstudantes = async (req, res) => {
         if (typeof p.rupe === "bigint") p.rupe = p.rupe.toString();
       });
     });
+    const pagination = {
+      totalPage: totalPage,
+      numeroVezes: numeroVezes,
+      prev_page: skip > 0 && totalPage > 1 ? true : false,
+      next_page: Number(skip) >= numeroVezes || totalPage <= 1 ? false : true,
+      skip: skip,
+    };
     res.json({
       response: resul,
       totalMes: totalMes,
       totalGeral: totalGeral,
       dados: dados,
+      pagination: pagination,
     });
   } catch (error) {
     res.json({ message: error.message });

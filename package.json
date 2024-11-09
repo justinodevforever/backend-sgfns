@@ -7,7 +7,7 @@
     "node": "18"
   },
   "scripts": {
-    "dev": "nodemon cluster/cluster.js",
+    "dev": "nodemon index.js",
     "start": "node ./dist/index.js",
     "vercel-build": "npx prisma migrate deploy",
     "postinstall": "prisma generate",

@@ -6,7 +6,15 @@ const createPermissao = async (req, res) => {
   const { permissao } = req.body;
   try {
     if (!permissao) return;
-    const response = await prisma.permission.create({
+
+    const respose = await prisma.permission.findFirst({
+      where: {
+        permissao,
+      },
+    });
+    if (respose) return res.json({ message: "exist" });
+
+    await prisma.permission.create({
       data: {
         permissao: permissao,
       },
@@ -40,11 +48,25 @@ const getPermissao = async (req, res) => {
 const deletePermissao = async (req, res) => {
   const { id } = req.params;
   try {
+    const response = await prisma.permission.findFirst({
+      include: {
+        users: true,
+      },
+      where: {
+        id,
+      },
+    });
+    if (response.users.length > 0)
+      return res.json({
+        status: 400,
+        message: "Não Podes Eliminar Esta Permissão Porque Tem uma Associação!",
+      });
     await prisma.permission.delete({
       where: {
         id,
       },
     });
+    res.json({ message: "sucess" });
   } catch (error) {
     res.json(error);
   }

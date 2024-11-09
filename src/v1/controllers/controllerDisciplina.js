@@ -4,6 +4,16 @@ const prisma = new PrismaClient();
 const createDisciplina = async (req, res) => {
   const { nome, fk_ano, fk_semestre, fk_curso, abreviatura } = req.body;
 
+  const respose = await prisma.disciplina.findFirst({
+    where: {
+      fk_ano,
+      fk_semestre,
+      nome,
+      fk_curso,
+    },
+  });
+  if (respose) return res.json({ message: "exist" });
+
   try {
     if (!nome || !fk_semestre || !fk_curso || !fk_ano) {
       return res.json({ message: "error" });

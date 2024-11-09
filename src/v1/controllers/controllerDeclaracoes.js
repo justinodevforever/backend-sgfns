@@ -16,7 +16,6 @@ const createDeclaracoes = async (req, res) => {
     });
     res.json({ response: response, message: "sucess" });
   } catch (error) {
-    console.log(error.message);
     res.json({ message: "error" });
   }
 };
@@ -41,7 +40,11 @@ const getDeclaracao = async (req, res) => {
     const response = await prisma.declaracao.findFirst({
       include: {
         usuario: true,
-        estudante: true,
+        estudante: {
+          include: {
+            curso: true,
+          },
+        },
         frequencia: true,
       },
       where: {
@@ -224,6 +227,42 @@ const movimentoDeclaracao = async (req, res) => {
   res.json({ totalExiste: listaExiste, totalIntervalo: listaIntervalo });
 };
 
+const listaDeclaracao = async (req, res) => {
+  const { dataInicial, dataFinal, tipo, curso } = req.body;
+
+  const dataF = new Date(dataFinal);
+  const dataI = new Date(dataInicial);
+
+  try {
+    const response = await prisma.declaracao.findMany({
+      include: {
+        estudante: {
+          include: {
+            curso: true,
+          },
+        },
+        frequencia: true,
+        usuario: true,
+      },
+      where: {
+        dataSolicitacao: {
+          gte: dataI,
+          lte: dataF,
+        },
+        estudante: {
+          curso: {
+            curso,
+          },
+        },
+        tipoDeclaracao: tipo,
+      },
+    });
+    res.status(200).json(response);
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
 module.exports = {
   createDeclaracoes,
   getDeclaracoes,
@@ -231,4 +270,5 @@ module.exports = {
   upDateDeclaracoes,
   getDeclaracao,
   movimentoDeclaracao,
+  listaDeclaracao,
 };

@@ -5,6 +5,14 @@ const createAnoFrequencia = async (req, res) => {
   try {
     const { ano } = req.body;
     if (!ano) return res.json({ message: "error" });
+
+    const respose = await prisma.anoFrequencia.findFirst({
+      where: {
+        ano,
+      },
+    });
+    if (respose) return res.json({ message: "exist" });
+
     await prisma.anoFrequencia.create({
       data: {
         ano,
@@ -95,6 +103,36 @@ const deleteAnoFrequencia = async (req, res) => {
   try {
     const { id } = req.params;
     if (!id) return res.json({ message: "error" });
+
+    const response = await prisma.anoFrequencia.findFirst({
+      include: {
+        cadeiraAtrasos: true,
+        exameEspecial: true,
+        recursos: true,
+        reconfirmacoa: true,
+        estudante: true,
+        disciplina: true,
+        matricula: true,
+      },
+      where: {
+        id,
+      },
+    });
+    if (
+      response.cadeiraAtrasos.length > 0 ||
+      response.exameEspecial.length > 0 ||
+      response.recursos.length > 0 ||
+      response.estudante.length > 0 ||
+      response.disciplina.length > 0 ||
+      response.matricula.length > 0 ||
+      response.reconfirmacoa.length > 0
+    )
+      return res.json({
+        status: 400,
+        message:
+          "Não Podes Eliminar Esta Frequência Porque Tem uma Associação!",
+      });
+
     await prisma.anoFrequencia.delete({
       where: {
         id,
@@ -123,6 +161,29 @@ const upDateAnoFrequencia = async (req, res) => {
     res.json({ message: "error" });
   }
 };
+const frequenciaespecifico = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) return res.json({ message: "error" });
+    const response = await prisma.anoFrequencia.findFirst({
+      include: {
+        cadeiraAtrasos: true,
+        exameEspecial: true,
+        recursos: true,
+        reconfirmacoa: true,
+        estudante: true,
+        disciplina: true,
+        matricula: true,
+      },
+      where: {
+        id,
+      },
+    });
+    res.json(response);
+  } catch (error) {
+    res.json({ message: "error" });
+  }
+};
 
 module.exports = {
   createAnoFrequencia,
@@ -132,4 +193,5 @@ module.exports = {
   upDateAnoFrequencia,
   anoFrequenciasPorAno,
   searchFrequencia,
+  frequenciaespecifico,
 };
