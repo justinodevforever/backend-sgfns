@@ -38,13 +38,8 @@ const routerListaExame = require("./src/v1/routers/routerListaExameEspecial");
 require("./src/v1/database/db");
 
 const app = express();
-const server = http.createServer(app);
+
 const numCPUs = os.cpus().length;
-const io = new Server(server, {
-  cors: {
-    origin: process.env.URL_FRONT,
-  },
-});
 
 if (cluster.isPrimary) {
   for (let i = 0; i < numCPUs; i++) {
